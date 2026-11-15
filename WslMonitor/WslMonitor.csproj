@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <RootNamespace>WslMonitor</RootNamespace>
+    <AssemblyName>WslMonitor</AssemblyName>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <LangVersion>preview</LangVersion>
+    <Configurations>Debug;Release</Configurations>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\WslMonitor.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Shared tray / flyout / settings plumbing (git submodule) -->
+  <ItemGroup>
+    <ProjectReference Include="..\external\winui-app-kit\WinUIAppKit\WinUIAppKit.csproj" />
+  </ItemGroup>
+
+  <!-- NuGet packages ────────────────────────────────────────────── -->
+  <ItemGroup>
+    <!-- System.Drawing for runtime tray-icon rendering -->
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+
+    <!--
+      WinUI 3 (Windows App SDK). Kept on the 1.8 line with the shared kit and the sibling apps; the
+      MSIX manifest's Microsoft.WindowsAppRuntime.1.8 dependency must move with it.
+    -->
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+
+    <!-- Structured logging -->
+    <PackageReference Include="NLog" Version="6.2.2" />
+  </ItemGroup>
+
+  <!-- Content files to copy to output ────────────────────────────── -->
+  <ItemGroup>
+    <None Remove="NLog.config" />
+    <None Remove="Resources\WslMonitor.ico" />
+    <None Remove="Resources\WslMonitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\WslMonitor.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\WslMonitor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

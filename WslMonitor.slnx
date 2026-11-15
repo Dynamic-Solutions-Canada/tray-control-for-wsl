@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WslMonitor/WslMonitor.csproj" />
+  <Project Path="external/winui-app-kit/WinUIAppKit/WinUIAppKit.csproj" />
+</Solution>

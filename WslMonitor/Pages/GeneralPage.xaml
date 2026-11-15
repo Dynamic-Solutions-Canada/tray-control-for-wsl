@@ -1,0 +1,28 @@
+<Page
+    x:Class="WslMonitor.Pages.GeneralPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer>
+        <StackPanel Padding="36,12,36,36" Spacing="8" MaxWidth="960" HorizontalAlignment="Stretch">
+            <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,12" />
+
+            <TextBlock Text="Behaviour" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="2,0,0,2" />
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel Spacing="4">
+                    <ToggleSwitch x:Name="StartupSwitch" Header="Start with Windows" Toggled="StartupSwitch_Toggled" />
+                    <ToggleSwitch x:Name="SystemDistrosSwitch" Header="Show Docker Desktop's internal distros (Docker Desktop manages these itself)"
+                                  Toggled="SystemDistrosSwitch_Toggled" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Appearance" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="2,16,0,2" />
+            <Border Style="{StaticResource CardBorderStyle}">
+                <ComboBox x:Name="ThemeCombo" Header="App theme" MinWidth="220" SelectionChanged="ThemeCombo_SelectionChanged">
+                    <ComboBoxItem Content="Use system setting" />
+                    <ComboBoxItem Content="Light" />
+                    <ComboBoxItem Content="Dark" />
+                </ComboBox>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

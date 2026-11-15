@@ -1,0 +1,3 @@
+[submodule "external/winui-app-kit"]
+	path = external/winui-app-kit
+	url = https://github.com/Dynamic-Solutions-Canada/winui-app-kit.git

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap desktop rescap">
+
+  <!-- PLACEHOLDER identity until the app is reserved in Partner Center. When it is, replace Name
+       here AND dev_identity in windows-build.json. The build script swaps Publisher to the signing
+       cert subject for local dev builds. -->
+  <Identity
+    Name="TechnicallyReal.WslMonitor"
+    Publisher="CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E"
+    Version="VERSION_PLACEHOLDER"
+    ProcessorArchitecture="ARCH_PLACEHOLDER" />
+
+  <Properties>
+    <DisplayName>WSL Monitor</DisplayName>
+    <PublisherDisplayName>Dynamic Solutions (CA)</PublisherDisplayName>
+    <Logo>Images\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" />
+    <!-- Keep in step with Microsoft.WindowsAppSDK in WslMonitor.csproj (1.8 line). -->
+    <PackageDependency Name="Microsoft.WindowsAppRuntime.1.8" MinVersion="8000.770.947.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-US" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="WslMonitor.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="WSL Monitor"
+        BackgroundColor="transparent"
+        Square150x150Logo="Images\Square150x150Logo.png"
+        Square44x44Logo="Images\Square44x44Logo.png"
+        Description="See which WSL distros are running, and start or stop them from the system tray.">
+        <uap:SplashScreen Image="Images\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <!-- desktop: (not uap:) namespace - makeappx rejects uap: startup tasks for full-trust apps. -->
+        <desktop:Extension Category="windows.startupTask">
+          <desktop:StartupTask TaskId="WslMonitorStartup" Enabled="true" DisplayName="WSL Monitor" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

@@ -1,0 +1,10 @@
+{
+  "project": "WslMonitor/WslMonitor.csproj",
+  "package_script": "WslMonitorMSIX/build-msix.ps1",
+  "package_output": "WslMonitorMSIX/bin/msix-output",
+  "certificate": ".windows-build/signing.pfx",
+  "version_file": "Directory.Build.props",
+  "dev_identity": "TechnicallyReal.WslMonitor",
+  "signing": "shared-dev",
+  "trusted_certificate": true
+}
