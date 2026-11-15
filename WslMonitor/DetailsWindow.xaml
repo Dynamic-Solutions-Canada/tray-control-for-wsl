@@ -2,6 +2,7 @@
     x:Class="WslMonitor.DetailsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l10n="using:WinUIAppKit.Localization"
     Title="WSL Monitor">
     <Grid>
         <Grid.RowDefinitions>
@@ -28,11 +29,14 @@
                         IsSettingsVisible="True"
                         SelectionChanged="RootNavigation_SelectionChanged">
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem Content="About" Tag="about">
+                <NavigationViewItem l10n:Localize.Content="promo.title" Tag="promo">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE719;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem l10n:Localize.Content="nav.about" Tag="about">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE946;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
-            <Frame x:Name="ContentFrame" />
+            <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
         </NavigationView>
     </Grid>
 </Window>

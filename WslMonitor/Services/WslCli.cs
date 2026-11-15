@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using WinUIAppKit.Localization;
 
 namespace WslMonitor.Services;
 
@@ -11,16 +12,19 @@ public sealed record WslResult(bool Launched, bool TimedOut, int ExitCode, strin
 {
     public bool Succeeded => Launched && !TimedOut && ExitCode == 0;
 
-    /// <summary>The most useful single line for a user-facing error.</summary>
+    /// <summary>
+    /// The most useful single line for a user-facing error: WSL's own first line (already in Windows'
+    /// language), or the app's explanation when WSL said nothing.
+    /// </summary>
     public string Message
     {
         get
         {
-            if (!Launched) return "WSL isn't installed (wsl.exe not found).";
-            if (TimedOut) return "WSL didn't respond in time.";
+            if (!Launched) return UiText.Get("error.wsl-missing");
+            if (TimedOut) return UiText.Get("error.wsl-timeout");
             string text = Error.Trim().Length > 0 ? Error : Output;
             return text.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                       .FirstOrDefault() ?? $"wsl.exe exited with code {ExitCode}.";
+                       .FirstOrDefault() ?? UiText.Format("error.exit-code", ("code", ExitCode));
         }
     }
 }

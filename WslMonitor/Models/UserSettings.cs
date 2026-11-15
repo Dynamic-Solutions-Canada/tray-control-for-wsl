@@ -11,6 +11,9 @@ public sealed class UserSettings
 
     public AppThemeChoice AppTheme { get; set; }
 
+    /// <summary>Interface language identity (for example "fr-CA"), or null to follow Windows.</summary>
+    public string? Language { get; set; }
+
     /// <summary>Start at sign-in. Registered once on first run; afterwards the startup task/Run key is the truth.</summary>
     public bool Startup { get; set; } = true;
 

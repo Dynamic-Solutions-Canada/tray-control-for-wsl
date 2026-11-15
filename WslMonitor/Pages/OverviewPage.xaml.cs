@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinUIAppKit.Localization;
 using WslMonitor.Controls;
 using WslMonitor.Services;
 
@@ -22,6 +23,7 @@ public sealed partial class OverviewPage : Page
         {
             Service.Changed += Refresh;
             Refresh();
+            ShutdownText.Text = UiText.Get("overview.shutdown-desc");
             StartBehaviourText.Text = WslConfigFile.Read().StartBehaviour;
             VersionText.Text = await WslCli.VersionAsync() ?? "";
         };
@@ -33,11 +35,11 @@ public sealed partial class OverviewPage : Page
         DistroList.Children.Clear();
         if (!Service.IsWslInstalled)
         {
-            DistroList.Children.Add(Message("WSL isn't installed on this PC."));
+            DistroList.Children.Add(Message(UiText.Get("list.no-wsl")));
         }
         else if (Service.Distros.Count == 0)
         {
-            DistroList.Children.Add(Message("No WSL distros are installed."));
+            DistroList.Children.Add(Message(UiText.Get("list.no-distros")));
         }
         else
         {
@@ -61,23 +63,23 @@ public sealed partial class OverviewPage : Page
     {
         var running = Service.Distros.Where(DistroVisuals.IsOn).Select(d => d.Name).ToList();
         string what = running.Count == 0
-            ? "No distros are running; this only shuts down WSL's virtual machine."
-            : $"{string.Join(", ", running)} will shut down cleanly, then WSL's virtual machine stops. Everything running in WSL ends.";
+            ? UiText.Get("overview.confirm-none")
+            : UiText.Format("overview.confirm-some", ("names", WslMonitorService.JoinNames(running)));
 
-        if (!await ConfirmAsync("Shut down WSL?", what, "Shut down")) return;
+        if (!await ConfirmAsync(UiText.Get("overview.confirm-title"), what, UiText.Get("overview.confirm-button"))) return;
 
-        string original = ShutdownText.Text;
         var progress = new Progress<string>(line => ShutdownText.Text = line);
         string? problem = await Service.ShutdownAllAsync(progress, ConfirmForceAsync);
         Logger.Info("Shut down WSL: {Result}", problem ?? "done");
-        ShutdownText.Text = problem ?? original;
+        ShutdownText.Text = problem ?? UiText.Get("overview.shutdown-desc");
     }
 
     private Task<bool> ConfirmForceAsync(IReadOnlyList<string> stuck) => ConfirmAsync(
-        "Force shut down?",
-        $"{string.Join(", ", stuck)} didn't finish shutting down within {WslMonitorService.CleanStopLimit.TotalMinutes:0} minutes. " +
-        "Shutting down now ends whatever is still running there without warning.",
-        "Force shut down");
+        UiText.Get("overview.force-title"),
+        UiText.Format("overview.force-body",
+            ("names", WslMonitorService.JoinNames(stuck)),
+            ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes)),
+        UiText.Get("overview.force-button"));
 
     private async Task<bool> ConfirmAsync(string title, string body, string confirmText)
     {
@@ -90,7 +92,7 @@ public sealed partial class OverviewPage : Page
             Title = title,
             Content = new TextBlock { Text = body, TextWrapping = TextWrapping.Wrap },
             PrimaryButtonText = confirmText,
-            CloseButtonText = "Cancel",
+            CloseButtonText = UiText.Get("dialog.cancel"),
             DefaultButton = ContentDialogButton.Close,
             RequestedTheme = ActualTheme,
         };

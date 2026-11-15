@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using System.IO;
+using WinUIAppKit.Localization;
 using WslMonitor.Classes;
 
 namespace WslMonitor;
@@ -33,6 +34,7 @@ public partial class App : Application
         };
 
         SettingsManager.Restore();
+        UiText.Configure(typeof(App).Assembly, "WslMonitor.Strings.", AppLanguages.Supported, SettingsManager.Current.Language);
 
         _host = new MainWindow();
         _host.Activate();

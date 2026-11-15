@@ -2,6 +2,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using WinRT.Interop;
 using WinUIAppKit;
+using WinUIAppKit.Localization;
 using WinUIAppKit.Startup;
 using WinUIAppKit.Theming;
 using WinUIAppKit.Tray;
@@ -73,6 +74,7 @@ public sealed partial class MainWindow : Window
 
         Service.Changed += UpdateTrayIcon;
         AppTheme.Changed += UpdateTrayIcon;
+        UiText.Changed += UpdateTrayIcon;   // tooltip wording
         _uiSettings.ColorValuesChanged += (_, _) => DispatcherQueue.TryEnqueue(UpdateTrayIcon);
         UpdateTrayIcon();
 
@@ -108,25 +110,26 @@ public sealed partial class MainWindow : Window
         _tray.Update(png, Tooltip(distros, running));
     }
 
+    /// <summary>"WSL Monitor – 1 of 3 running" style hover text in the current interface language.</summary>
     private string Tooltip(IReadOnlyList<Distro> distros, int running)
     {
         string detail;
-        if (!Service.IsWslInstalled) detail = "WSL isn't installed";
-        else if (distros.Count == 0) detail = "no distros";
-        else if (running == 0) detail = "nothing running";
-        else if (distros.Count == 1) detail = $"{distros[0].Name} running";
-        else detail = $"{running} of {distros.Count} running";
-        return $"WSL Monitor – {detail}";
+        if (!Service.IsWslInstalled) detail = UiText.Get("tray.no-wsl");
+        else if (distros.Count == 0) detail = UiText.Get("tray.no-distros");
+        else if (running == 0) detail = UiText.Get("tray.nothing-running");
+        else if (distros.Count == 1) detail = UiText.Format("tray.one-running", ("name", distros[0].Name));
+        else detail = UiText.Format("tray.some-running", ("running", running), ("total", distros.Count));
+        return UiText.Format("tray.tooltip", ("detail", detail));
     }
 
     private void ShowContextMenu(int x, int y)
     {
         new TrayMenu()
-            .Add("Open WSL Monitor", () => DetailsWindow.ShowInstance())
-            .Add("Settings", () => DetailsWindow.ShowInstance(DetailsWindow.SettingsTarget))
-            .Add("Open logs folder", OpenLogsFolder)
+            .Add(UiText.Get("menu.open"), () => DetailsWindow.ShowInstance())
+            .Add(UiText.Get("nav.settings"), () => DetailsWindow.ShowInstance(DetailsWindow.SettingsTarget))
+            .Add(UiText.Get("menu.logs"), OpenLogsFolder)
             .AddSeparator()
-            .Add("Exit", ExitApp)
+            .Add(UiText.Get("menu.exit"), ExitApp)
             .Show(_hwnd, x, y);
     }
 

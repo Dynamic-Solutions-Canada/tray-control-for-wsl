@@ -1,3 +1,5 @@
+using WinUIAppKit.Localization;
+
 namespace WslMonitor.Models;
 
 /// <summary>What a distro is doing, as far as the app can tell.</summary>
@@ -54,7 +56,7 @@ public sealed class Distro
 
     public DistroState State { get; set; }
 
-    /// <summary>Why <see cref="DistroState.Busy"/> (e.g. "Installing").</summary>
+    /// <summary>Why <see cref="DistroState.Busy"/>, as an interface text key (e.g. "state.installing"); empty when usable.</summary>
     public string BusyReason { get; set; } = "";
 
     /// <summary>
@@ -67,7 +69,7 @@ public sealed class Distro
     public bool HasSystemd => string.Equals(InitSystem, "systemd", StringComparison.Ordinal);
 
     /// <summary>The last start/stop failure, shown until the next successful action.</summary>
-    public string? LastError { get; set; }
+    public DistroError? LastError { get; set; }
 
     /// <summary>"Ubuntu 26.04" style label, or empty when the registry has no release info.</summary>
     public string OsLabel
@@ -82,4 +84,15 @@ public sealed class Distro
 
     /// <summary>True for states where the app is waiting on WSL and start/stop must not be offered.</summary>
     public bool IsTransitioning => State is DistroState.Starting or DistroState.Stopping;
+}
+
+/// <summary>
+/// A failed action on a distro: what the app was doing (an interface text key with a
+/// <c>{{detail}}</c> placeholder) and WSL's own explanation, kept verbatim. Stored as a key rather than
+/// finished text so it follows a language change.
+/// </summary>
+public sealed record DistroError(string Key, string Detail)
+{
+    /// <summary>The message in the current interface language.</summary>
+    public string Text => UiText.Format(Key, ("detail", Detail));
 }

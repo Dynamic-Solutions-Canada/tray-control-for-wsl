@@ -25,6 +25,8 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 | Distro list and details (HKCU `...\Lxss`) | `Services/WslRegistry.cs` |
 | `.wslconfig` idle timeouts | `Services/WslConfigFile.cs` |
 | Settings | `Models/UserSettings.cs`, `Classes/SettingsManager.cs` |
+| Interface text (9 languages) | `Strings/*.json`, `Classes/AppLanguages.cs`; lookups via the kit's `UiText` / `Localize` |
+| "Our other apps" page | `external/promo` submodule (shared with the sibling apps), imported in the csproj |
 
 ## Conventions / gotchas
 
@@ -33,8 +35,11 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 - Never run `wsl --terminate` or `--shutdown` while testing from inside WSL: it ends the session doing the testing.
 - Namespace `WslMonitor.Windows` shadows WinRT `Windows.*`: always write `global::Windows...`.
 - Package identity is a **placeholder** (`TechnicallyReal.WslMonitor`) until reserved in Partner Center; update `Package.appxmanifest` and `windows-build.json` together.
+- **Every user-visible string goes through the catalogs.** Add the key to all seven `Strings/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:strings` (keys, `{{placeholders}}`, no em dashes, manifest languages). XAML uses `l10n:Localize.Text="key"` (also `Content`, `Header`, `ToolTip`, `OnContent`/`OffContent`); code uses `UiText.Get` / `UiText.Format`. Store keys, not finished text, on models (`Distro.BusyReason`, `DistroError`) so a language change relabels them. Names, paths and WSL's own output are never translated. Promo copy keys and wording match Persistent's. Translations are unreviewed machine translations.
+- **Language changes apply live:** `Localize` relabels XAML; anything built in code must also refresh on `UiText.Changed` (the details window reloads its current page, the flyout rebuilds, the tray tooltip redraws).
+- **Manifest strings** use `ms-resource:Resources/<Key>`; `build-msix.ps1` writes them from the catalogs into `resources.pri` and fails the build unless every declared language resolves. Keep resource splitting off (single package, not a bundle).
 - **PowerShell build scripts must be ASCII.** App icon and MSIX images come from `WslMonitorMSIX/generate-msix-images.ps1` (committed output).
 
 ## Building
 
-Source is authoritative in WSL. Read `.codex/docs/windows-development.md` and use the root npm commands (`npm run verify:desktop`, `build:desktop`, `install:desktop`, `package:desktop`). This PC is x64: pass `-- --platform x64`. Clone with `--recurse-submodules` (or run `git submodule update --init`) so `external/winui-app-kit` is present.
+Source is authoritative in WSL. Read `.codex/docs/windows-development.md` and use the root npm commands (`npm run verify:desktop`, `build:desktop`, `install:desktop`, `package:desktop`). This PC is x64: pass `-- --platform x64`. Clone with `--recurse-submodules` (or run `git submodule update --init`) so `external/winui-app-kit` and `external/promo` are present.

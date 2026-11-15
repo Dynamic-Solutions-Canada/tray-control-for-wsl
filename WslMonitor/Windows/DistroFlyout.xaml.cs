@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinUIAppKit.Localization;
 using WinUIAppKit.Theming;
 using WinUIAppKit.Windowing;
 using WslMonitor.Controls;
@@ -37,6 +38,7 @@ public sealed partial class DistroFlyout : Window
         _controller.Dismissed += () => _service.SetViewerActive(this, false);
 
         _service.Changed += OnServiceChanged;
+        UiText.Changed += OnServiceChanged;   // code-built rows and status relabel the same way
     }
 
     /// <summary>Tray single click: open, or close if open.</summary>
@@ -67,11 +69,11 @@ public sealed partial class DistroFlyout : Window
         var distros = _service.Distros;
         if (!_service.IsWslInstalled)
         {
-            RowsPanel.Children.Add(Message("WSL isn't installed on this PC."));
+            RowsPanel.Children.Add(Message(UiText.Get("list.no-wsl")));
         }
         else if (distros.Count == 0)
         {
-            RowsPanel.Children.Add(Message("No WSL distros are installed."));
+            RowsPanel.Children.Add(Message(UiText.Get("list.no-distros")));
         }
         else
         {
@@ -90,11 +92,13 @@ public sealed partial class DistroFlyout : Window
 
     private string StatusLine(IReadOnlyList<Distro> distros)
     {
-        if (_service.IsShuttingDown) return "Shutting down WSL…";
-        if (_service.IsStateUnknown) return "WSL isn't responding; showing last known state";
+        if (_service.IsShuttingDown) return UiText.Get("status.shutting-down");
+        if (_service.IsStateUnknown) return UiText.Get("status.unresponsive");
         if (distros.Count == 0) return "";
         int running = _service.RunningCount;
-        return running == 0 ? "Nothing running" : $"{running} of {distros.Count} running";
+        return running == 0
+            ? UiText.Get("status.nothing-running")
+            : UiText.Format("status.some-running", ("running", running), ("total", distros.Count));
     }
 
     private static TextBlock Message(string text) => new()

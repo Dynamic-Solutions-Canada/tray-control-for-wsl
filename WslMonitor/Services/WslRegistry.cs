@@ -69,15 +69,15 @@ public static class WslRegistry
 
     /// <summary>
     /// WSL's registration state: 1 is a normal installed distro; the others are transient
-    /// (2 installing, 3 uninstalling, 4 converting between WSL versions). Empty means usable.
+    /// (2 installing, 3 uninstalling, 4 converting between WSL versions), as an interface text key. Empty means usable.
     /// </summary>
     private static string BusyReasonFor(int state) => state switch
     {
         1 => "",
-        2 => "Installing",
-        3 => "Removing",
-        4 => "Converting",
-        _ => "Busy",
+        2 => "state.installing",
+        3 => "state.removing",
+        4 => "state.converting",
+        _ => "state.busy",
     };
 
     /// <summary>Size of a distro's virtual disk in bytes, or null when it can't be read.</summary>

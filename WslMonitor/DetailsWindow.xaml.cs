@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using WinUIAppKit.Localization;
 using WinUIAppKit.Theming;
 using WinUIAppKit.Windowing;
 using WslMonitor.Classes;
@@ -22,6 +23,7 @@ public sealed partial class DetailsWindow : Window
 
     private const string OverviewTag = "overview";
     private const string AboutTag = "about";
+    private const string PromoTag = "promo";
     private const string DistroTagPrefix = "distro:";
 
     private static DetailsWindow? s_instance;
@@ -53,10 +55,18 @@ public sealed partial class DetailsWindow : Window
         WindowChrome.RestorePlacement(this, SettingsManager.Current.DetailsWindow, 980, 720);
         AppTheme.Track(this);
 
+        // NavigationView's built-in Settings item takes its label from Windows' language, not ours. It
+        // only exists once the control's template is applied, hence Loaded.
+        RootNavigation.Loaded += (_, _) =>
+        {
+            if (RootNavigation.SettingsItem is NavigationViewItem settingsItem) Localize.SetContent(settingsItem, "nav.settings");
+        };
+
         RebuildDistroItems();
         Select(OverviewTag);
 
         MainWindow.Service.Changed += OnServiceChanged;
+        UiText.Changed += OnLanguageChanged;
         MainWindow.Service.SetViewerActive(this, true);
     }
 
@@ -82,6 +92,24 @@ public sealed partial class DetailsWindow : Window
         Select(target);
     }
 
+    /// <summary>
+    /// The interface language changed. Static labels relabel themselves (<see cref="Localize"/>); the
+    /// distro menu and the current page build text in code, so rebuild the menu and reload the page.
+    /// </summary>
+    private void OnLanguageChanged()
+    {
+        // Rebuild even though the distros are unchanged ("" can't be used: it is also the value with no distros).
+        _distroNames = "\0language";
+        OnServiceChanged();
+
+        if (ContentFrame.Content is Page current)
+        {
+            object? parameter = current is DistroPage distroPage ? distroPage.DistroName : null;
+            ContentFrame.Navigate(current.GetType(), parameter);
+            ContentFrame.BackStack.Clear();
+        }
+    }
+
     /// <summary>The selected page as a <see cref="Select"/> target.</summary>
     private string CurrentTarget()
     {
@@ -98,25 +126,25 @@ public sealed partial class DetailsWindow : Window
         RootNavigation.MenuItems.Clear();
         RootNavigation.MenuItems.Add(new NavigationViewItem
         {
-            Content = "Overview",
+            Content = UiText.Get("nav.overview"),
             Tag = OverviewTag,
             Icon = new FontIcon { Glyph = "" },
         });
         if (distros.Count == 0) return;
 
-        RootNavigation.MenuItems.Add(new NavigationViewItemHeader { Content = "Distros" });
+        RootNavigation.MenuItems.Add(new NavigationViewItemHeader { Content = UiText.Get("nav.distros") });
         foreach (var d in distros)
         {
             RootNavigation.MenuItems.Add(new NavigationViewItem
             {
-                Content = d.IsDefault ? $"{d.Name} (default)" : d.Name,
+                Content = d.IsDefault ? UiText.Format("nav.default-suffix", ("name", d.Name)) : d.Name,
                 Tag = DistroTagPrefix + d.Name,
                 Icon = new FontIcon { Glyph = DistroVisuals.Glyph },
             });
         }
     }
 
-    /// <summary>Select a page by target: overview, settings, about, or a distro name (unknown names fall back to Overview).</summary>
+    /// <summary>Select a page by target: overview, settings, about, promo, or a distro name (unknown names fall back to Overview).</summary>
     private void Select(string target)
     {
         if (target == SettingsTarget)
@@ -124,9 +152,10 @@ public sealed partial class DetailsWindow : Window
             RootNavigation.SelectedItem = RootNavigation.SettingsItem;
             return;
         }
-        if (target == AboutTag)
+        if (target == AboutTag || target == PromoTag)
         {
-            RootNavigation.SelectedItem = RootNavigation.FooterMenuItems.OfType<NavigationViewItem>().First();
+            RootNavigation.SelectedItem = RootNavigation.FooterMenuItems.OfType<NavigationViewItem>()
+                .First(i => (i.Tag as string) == target);
             return;
         }
 
@@ -148,6 +177,7 @@ public sealed partial class DetailsWindow : Window
 
         string tag = (args.SelectedItem as NavigationViewItem)?.Tag as string ?? OverviewTag;
         if (tag == AboutTag) Navigate(typeof(AboutPage), null);
+        else if (tag == PromoTag) Navigate(typeof(TechnicallyReal.Promo.PromotedAppsPage), null);
         else if (tag.StartsWith(DistroTagPrefix)) Navigate(typeof(DistroPage), tag[DistroTagPrefix.Length..]);
         else Navigate(typeof(OverviewPage), null);
     }
@@ -159,6 +189,12 @@ public sealed partial class DetailsWindow : Window
         ContentFrame.Navigate(page, parameter);
     }
 
+    /// <summary>The shared promo page's wording is English; translate its known copy once it is shown.</summary>
+    private void ContentFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        if (e.Content is TechnicallyReal.Promo.PromotedAppsPage promo) promo.EnableLocalization();
+    }
+
     /// <summary>Called by pages that want to jump to a distro's page (e.g. Overview's list).</summary>
     public static void ShowDistro(string name) => s_instance?.Select(name);
 
@@ -166,6 +202,7 @@ public sealed partial class DetailsWindow : Window
     {
         s_instance = null;
         MainWindow.Service.Changed -= OnServiceChanged;
+        UiText.Changed -= OnLanguageChanged;
         MainWindow.Service.SetViewerActive(this, false);
 
         if (WindowChrome.CapturePlacement(this) is { } placement)

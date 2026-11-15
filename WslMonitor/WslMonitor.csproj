@@ -53,4 +53,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <!-- Interface text: one JSON catalog per language, read by WinUIAppKit.Localization.UiText -->
+  <ItemGroup>
+    <EmbeddedResource Include="Strings\*.json" LogicalName="WslMonitor.Strings.%(Filename).json" />
+  </ItemGroup>
+
+  <!-- Shared "Our other apps" cross-promo page (submodule). Bundled data is the offline
+       fallback; the page refreshes its public manifest at runtime. -->
+  <Import Project="..\external\promo\PromotedApps.projitems" Label="Shared" />
 </Project>

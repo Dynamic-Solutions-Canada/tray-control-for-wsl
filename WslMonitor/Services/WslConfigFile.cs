@@ -1,4 +1,5 @@
 using System.IO;
+using WinUIAppKit.Localization;
 
 namespace WslMonitor.Services;
 
@@ -54,15 +55,13 @@ public sealed class WslConfigFile
     /// <summary>True when started distros stay running with nothing attached.</summary>
     public bool KeepsDistrosRunning => InstanceIdleTimeoutMs is < 0;
 
-    /// <summary>Plain-language summary of what happens to a distro started here.</summary>
+    /// <summary>Plain-language summary of what happens to a distro started here, in the current interface language.</summary>
     public string StartBehaviour => InstanceIdleTimeoutMs switch
     {
-        < 0 => "Started distros keep running until you stop them (instanceIdleTimeout=-1 in .wslconfig).",
-        { } ms => $"Started distros stop again after {FormatSeconds(ms)} with nothing running in them (instanceIdleTimeout in .wslconfig). Set it to -1 to keep them running.",
-        null => "Started distros stop again shortly after nothing is running in them (WSL's default idle timeout). Set instanceIdleTimeout=-1 under [general] in .wslconfig to keep them running.",
+        < 0 => UiText.Get("wslconfig.keep"),
+        { } ms => UiText.Format("wslconfig.timeout", ("seconds", ms / 1000.0)),
+        null => UiText.Get("wslconfig.default"),
     };
-
-    private static string FormatSeconds(int ms) => ms % 1000 == 0 ? $"{ms / 1000} s" : $"{ms / 1000.0:0.#} s";
 
     private static string StripComment(string line)
     {

@@ -1,3 +1,4 @@
+using WinUIAppKit.Localization;
 using WslMonitor.Classes;
 using WslMonitor.Models;
 
@@ -211,7 +212,7 @@ public sealed class WslMonitorService : IDisposable
         else
         {
             d.State = DistroState.Stopped;
-            d.LastError = $"Couldn't start: {result.Message}";
+            d.LastError = new DistroError("error.start", result.Message);
             Logger.Warn("Starting {Distro} failed: {Message}", d.Name, result.Message);
         }
         NotifyIfChanged();
@@ -242,7 +243,7 @@ public sealed class WslMonitorService : IDisposable
         {
             Logger.Info("Stopping {Distro} with terminate (init is {Init})", d.Name, d.InitSystem ?? "unknown");
             var result = await WslCli.TerminateAsync(d.Name);
-            if (!result.Succeeded) d.LastError = $"Couldn't stop: {result.Message}";
+            if (!result.Succeeded) d.LastError = new DistroError("error.stop", result.Message);
         }
 
         bool stopped = await WaitUntilStoppedAsync(d.Name, CleanStopLimit);
@@ -273,7 +274,7 @@ public sealed class WslMonitorService : IDisposable
         if (!result.Succeeded)
         {
             d.State = DistroState.StopTimedOut;
-            d.LastError = $"Couldn't force stop: {result.Message}";
+            d.LastError = new DistroError("error.force-stop", result.Message);
         }
         NotifyIfChanged();
         RequestRefresh();
@@ -284,11 +285,11 @@ public sealed class WslMonitorService : IDisposable
     /// its memory. If any distro misses the clean-stop limit, <paramref name="confirmForce"/> is asked
     /// (with their names) whether to shut down anyway.
     /// </summary>
-    /// <param name="progress">Short status lines for the UI.</param>
-    /// <returns>Null on success, otherwise a message explaining why it stopped short.</returns>
+    /// <param name="progress">Short status lines for the UI, in the current interface language.</param>
+    /// <returns>Null on success, otherwise a message (current interface language) explaining why it stopped short.</returns>
     public async Task<string?> ShutdownAllAsync(IProgress<string> progress, Func<IReadOnlyList<string>, Task<bool>> confirmForce)
     {
-        if (IsShuttingDown) return "A shutdown is already in progress.";
+        if (IsShuttingDown) return UiText.Get("shutdown.in-progress");
         IsShuttingDown = true;
         NotifyIfChanged();
 
@@ -297,17 +298,17 @@ public sealed class WslMonitorService : IDisposable
             var running = _distros.Where(d => d.State == DistroState.Running).ToList();
             if (running.Count > 0)
             {
-                progress.Report($"Stopping {string.Join(", ", running.Select(d => d.Name))}…");
+                progress.Report(UiText.Format("shutdown.stopping", ("names", JoinNames(running.Select(d => d.Name)))));
                 await Task.WhenAll(running.Select(StopAsync));
             }
 
             var stuck = _distros.Where(d => d.State is DistroState.StopTimedOut or DistroState.Stopping).Select(d => d.Name).ToList();
             if (stuck.Count > 0 && !await confirmForce(stuck))
-                return $"{string.Join(", ", stuck)} didn't stop cleanly; WSL was left running.";
+                return UiText.Format("shutdown.stuck", ("names", JoinNames(stuck)));
 
-            progress.Report("Shutting down WSL…");
+            progress.Report(UiText.Get("status.shutting-down"));
             var result = await WslCli.ShutdownAsync();
-            return result.Succeeded ? null : $"WSL didn't shut down: {result.Message}";
+            return result.Succeeded ? null : UiText.Format("shutdown.failed", ("detail", result.Message));
         }
         finally
         {
@@ -317,11 +318,14 @@ public sealed class WslMonitorService : IDisposable
         }
     }
 
+    /// <summary>Distro names as a list in the current language ("Ubuntu, Debian"; 「Ubuntu、Debian」).</summary>
+    public static string JoinNames(IEnumerable<string> names) => string.Join(UiText.Get("list.separator"), names);
+
     /// <summary>Make <paramref name="d"/> the default distro.</summary>
     public async Task SetDefaultAsync(Distro d)
     {
         var result = await WslCli.SetDefaultAsync(d.Name);
-        d.LastError = result.Succeeded ? null : $"Couldn't make it the default: {result.Message}";
+        d.LastError = result.Succeeded ? null : new DistroError("error.set-default", result.Message);
         NotifyIfChanged();
         RequestRefresh();
     }

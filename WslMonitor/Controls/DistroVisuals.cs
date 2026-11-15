@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinUIAppKit.Localization;
 using WslMonitor.Models;
 
 namespace WslMonitor.Controls;
@@ -14,16 +15,16 @@ public static class DistroVisuals
     /// <summary>Segoe Fluent "command prompt" glyph used as the distro icon.</summary>
     public const string Glyph = "";
 
-    /// <summary>Short state label ("Running", "Stopping…").</summary>
-    public static string StateText(Distro d) => d.State switch
+    /// <summary>Short state label ("Running", "Stopping…") in the current interface language.</summary>
+    public static string StateText(Distro d) => UiText.Get(d.State switch
     {
-        DistroState.Running => "Running",
-        DistroState.Starting => "Starting…",
-        DistroState.Stopping => "Stopping…",
-        DistroState.StopTimedOut => "Didn't stop cleanly",
-        DistroState.Busy => d.BusyReason,
-        _ => "Stopped",
-    };
+        DistroState.Running => "state.running",
+        DistroState.Starting => "state.starting",
+        DistroState.Stopping => "state.stopping",
+        DistroState.StopTimedOut => "state.stop-timed-out",
+        DistroState.Busy => d.BusyReason.Length > 0 ? d.BusyReason : "state.busy",
+        _ => "state.stopped",
+    });
 
     /// <summary>One-line summary: state · OS · WSL version · default.</summary>
     public static string Summary(Distro d)
@@ -31,7 +32,7 @@ public static class DistroVisuals
         var parts = new List<string> { StateText(d) };
         if (d.OsLabel.Length > 0) parts.Add(d.OsLabel);
         parts.Add($"WSL {d.WslVersion}");
-        if (d.IsDefault) parts.Add("Default");
+        if (d.IsDefault) parts.Add(UiText.Get("distro.default"));
         return string.Join("  ·  ", parts);
     }
 
@@ -63,15 +64,15 @@ public static class DistroVisuals
     public static TextBlock Caption(Distro d)
     {
         var res = Application.Current.Resources;
-        bool error = d.LastError != null;
+        string? error = d.LastError?.Text;
         var caption = new TextBlock
         {
-            Text = error ? d.LastError : Summary(d),
+            Text = error ?? Summary(d),
             Style = (Style)res["CaptionTextBlockStyle"],
-            Foreground = (Brush)res[error ? "SystemFillColorCriticalBrush" : "TextFillColorSecondaryBrush"],
+            Foreground = (Brush)res[error != null ? "SystemFillColorCriticalBrush" : "TextFillColorSecondaryBrush"],
             TextTrimming = TextTrimming.CharacterEllipsis,
         };
-        if (error) ToolTipService.SetToolTip(caption, d.LastError);
+        if (error != null) ToolTipService.SetToolTip(caption, error);
         return caption;
     }
 }

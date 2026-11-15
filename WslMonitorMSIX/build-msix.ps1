@@ -6,7 +6,7 @@
     1. Reads the version from Directory.Build.props (single source of truth)
     2. Publishes the app self-contained (bundles the .NET runtime), WindowsPackageType=MSIX
     3. Assembles the MSIX layout (app files + compiled XAML + stamped manifest + Images)
-    4. Generates resources.pri via makepri
+    4. Generates resources.pri via makepri (with the manifest's translated strings, checked)
     5. Packages with makeappx.exe
     6. Signs with signtool.exe (dev self-signed cert, or a CA-trusted PFX)
 
@@ -167,15 +167,84 @@ Copy-Item $imagesDir (Join-Path $layoutDir "Images") -Recurse -Force
 Write-Host "  Layout ready: $layoutDir"
 
 # -- Step 3: resources.pri ----------------------------------------------------------
+# The manifest's ms-resource:Resources/<Key> strings (Start menu / Store description) come from the
+# app's own catalogs (WslMonitor\Strings\<catalog>.json), so there is one set of translations.
+# One temporary RESW per declared <Resource Language> is written into the layout, indexed into the
+# package's primary resource map, then removed again.
 Write-Host "`n=== Generating resources.pri ===" -ForegroundColor Cyan
+$stringsDir   = Join-Path $repoRoot "WslMonitor\Strings"
+$manifestXml  = [xml](Get-Content (Join-Path $layoutDir "AppxManifest.xml") -Raw -Encoding UTF8)
+$languages    = @($manifestXml.Package.Resources.Resource | ForEach-Object { $_.Language })
+$resourceKeys = @([regex]::Matches($manifestXml.OuterXml, 'ms-resource:Resources/(\w+)') |
+    ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+# Regional identities that reuse another catalog's wording (keep in step with AppLanguages.cs).
+$catalogFor   = @{ "en-CA" = "en-US"; "fr-CA" = "fr-FR" }
+$reswRoot     = Join-Path $layoutDir "Strings"
+
+foreach ($language in $languages) {
+    $catalogName = if ($catalogFor.ContainsKey($language)) { $catalogFor[$language] } else { $language }
+    $catalogPath = Join-Path $stringsDir "$catalogName.json"
+    if (-not (Test-Path $catalogPath)) { Write-Error "No catalog $catalogName.json for manifest language $language"; exit 1 }
+    $catalog = [System.IO.File]::ReadAllText($catalogPath, [System.Text.Encoding]::UTF8) | ConvertFrom-Json
+
+    $settings = New-Object System.Xml.XmlWriterSettings
+    $settings.Indent = $true
+    $settings.Encoding = New-Object System.Text.UTF8Encoding($false)
+    $reswDir = Join-Path $reswRoot $language
+    New-Item $reswDir -ItemType Directory -Force | Out-Null
+    $writer = [System.Xml.XmlWriter]::Create((Join-Path $reswDir "Resources.resw"), $settings)
+    $writer.WriteStartElement("root")
+    foreach ($header in @(@("resmimetype", "text/microsoft-resx"), @("version", "2.0"))) {
+        $writer.WriteStartElement("resheader"); $writer.WriteAttributeString("name", $header[0])
+        $writer.WriteElementString("value", $header[1]); $writer.WriteEndElement()
+    }
+    foreach ($key in $resourceKeys) {
+        $value = $catalog.$key
+        if ([string]::IsNullOrWhiteSpace($value)) { $writer.Close(); Write-Error "Catalog $catalogName.json has no '$key' for the manifest"; exit 1 }
+        $writer.WriteStartElement("data"); $writer.WriteAttributeString("name", $key)
+        $writer.WriteAttributeString("xml", "space", $null, "preserve")
+        $writer.WriteElementString("value", $value); $writer.WriteEndElement()
+    }
+    $writer.WriteEndElement()
+    $writer.Close()
+}
+Write-Host "  Manifest strings ($($resourceKeys -join ', ')) for: $($languages -join ', ')"
+
 $existingPri = Join-Path $layoutDir "resources.pri"
 if (Test-Path $existingPri) { Remove-Item $existingPri -Force }
 $priconfigFile = Join-Path $layoutDir "priconfig.xml"
 & $makepri createconfig /cf $priconfigFile /dq en-US /o
 if ($LASTEXITCODE -ne 0) { Write-Error "makepri createconfig failed"; exit 1 }
+# The default config splits languages and scales into resources.<qualifier>.pri files, which only
+# take effect as resource packs in a bundle. This is a single package: keep every candidate in
+# resources.pri, or Windows sees only the English description (same choice as Persistent).
+$priconfig = [xml](Get-Content $priconfigFile -Raw)
+foreach ($node in @($priconfig.SelectNodes("//packaging"))) { [void]$node.ParentNode.RemoveChild($node) }
+$priconfig.Save($priconfigFile)
 & $makepri new /pr $layoutDir /cf $priconfigFile /mn (Join-Path $layoutDir "AppxManifest.xml") /of $existingPri /o
 if ($LASTEXITCODE -ne 0) { Write-Error "makepri new failed"; exit 1 }
 Remove-Item $priconfigFile -Force -ErrorAction SilentlyContinue
+Remove-Item $reswRoot -Recurse -Force
+
+# Check the manifest strings resolve from the package's primary map in every declared language, so
+# a broken index fails here rather than in Store certification.
+$dumpFile = Join-Path $msixDir "bin\resources-dump-$Platform.xml"
+& $makepri dump /if $existingPri /of $dumpFile /dt detailed /o | Out-Null
+if ($LASTEXITCODE -ne 0) { Write-Error "makepri dump failed"; exit 1 }
+$dump = [xml](Get-Content $dumpFile -Raw -Encoding UTF8)
+$identityName = $manifestXml.Package.Identity.Name
+$primaryMap = @($dump.SelectNodes("//ResourceMap[@primary='true']") | Where-Object { $_.name -ieq $identityName })
+if ($primaryMap.Count -ne 1) { Write-Error "resources.pri has no primary map named '$identityName'"; exit 1 }
+foreach ($key in $resourceKeys) {
+    $uri = "ms-resource://$identityName/Resources/$key"
+    $named = @($primaryMap[0].SelectNodes(".//NamedResource") | Where-Object { $_.uri -ieq $uri })
+    if ($named.Count -ne 1) { Write-Error "resources.pri can't resolve $uri"; exit 1 }
+    $found = @($named[0].SelectNodes("Candidate/QualifierSet/Qualifier[@name='Language']") | ForEach-Object { $_.value })
+    foreach ($language in $languages) {
+        if (-not ($found | Where-Object { $_ -ieq $language })) { Write-Error "resources.pri has no $language candidate for $uri (found: $($found -join ', '))"; exit 1 }
+    }
+}
+Write-Host "  resources.pri: map $identityName, $($resourceKeys.Count) manifest string(s) x $($languages.Count) languages"
 
 # -- Step 4: Package -----------------------------------------------------------------
 Write-Host "`n=== Packaging MSIX ===" -ForegroundColor Cyan

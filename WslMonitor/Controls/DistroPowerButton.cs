@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinUIAppKit.Localization;
 using WslMonitor.Models;
 using WslMonitor.Services;
 
@@ -49,8 +50,8 @@ public sealed partial class DistroPowerButton : Button
         switch (_distro.State)
         {
             case DistroState.Stopped:
-                Content = "Start";
-                ToolTipService.SetToolTip(this, $"Start {_distro.Name}");
+                Content = UiText.Get("power.start");
+                ToolTipService.SetToolTip(this, UiText.Format("power.start-tip", ("name", _distro.Name)));
                 break;
 
             case DistroState.Running:
@@ -58,14 +59,14 @@ public sealed partial class DistroPowerButton : Button
                 bool force = _distro.State == DistroState.StopTimedOut;
                 if (IsConfirming)
                 {
-                    Content = force ? "Force stop?" : "Stop?";
+                    Content = UiText.Get(force ? "power.force-confirm" : "power.stop-confirm");
                     Background = (Brush)res["SystemFillColorCriticalBrush"];
                     Foreground = (Brush)res["TextOnAccentFillColorPrimaryBrush"];
                     ScheduleConfirmationLapse();
                 }
                 else
                 {
-                    Content = force ? "Force stop" : "Stop";
+                    Content = UiText.Get(force ? "power.force" : "power.stop");
                 }
                 ToolTipService.SetToolTip(this, force ? ForceStopTip() : StopTip());
                 break;
@@ -91,18 +92,18 @@ public sealed partial class DistroPowerButton : Button
         return panel;
     }
 
+    /// <summary>What Stop will do: clean with systemd, immediate without, or unknown until first run.</summary>
     private string StopTip()
     {
-        if (_distro.HasSystemd)
-            return $"Shuts {_distro.Name} down cleanly: services stop and programs get a chance to exit. Everything running in it stops.";
-        if (_distro.InitSystem != null)
-            return $"{_distro.Name} doesn't run systemd, so it is stopped immediately and programs get no warning.";
-        return $"Stops {_distro.Name}. Everything running in it stops.";
+        string key = _distro.HasSystemd ? "power.stop-tip-systemd"
+                   : _distro.InitSystem != null ? "power.stop-tip-no-systemd"
+                   : "power.stop-tip-unknown";
+        return UiText.Format(key, ("name", _distro.Name));
     }
 
-    private string ForceStopTip() =>
-        $"{_distro.Name} didn't finish shutting down within {WslMonitorService.CleanStopLimit.TotalMinutes:0} minutes. " +
-        "Force stop ends it immediately; programs still running get no warning.";
+    private string ForceStopTip() => UiText.Format("power.force-tip",
+        ("name", _distro.Name),
+        ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
 
     /// <summary>Revert to the plain button when the confirmation lapses, if this button is still shown then.</summary>
     private void ScheduleConfirmationLapse()

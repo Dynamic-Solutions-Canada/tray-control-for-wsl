@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinUIAppKit.Localization;
 using WslMonitor.Models;
 using WslMonitor.Services;
 
@@ -43,7 +44,7 @@ public static class DistroRow
             Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
             BorderThickness = new Thickness(0),
         };
-        ToolTipService.SetToolTip(open, $"Show details for {d.Name}");
+        ToolTipService.SetToolTip(open, UiText.Format("row.details-tip", ("name", d.Name)));
         open.Click += (_, _) => onOpen();
 
         var power = new DistroPowerButton(d, service) { Margin = new Thickness(0, 0, 10, 0) };
