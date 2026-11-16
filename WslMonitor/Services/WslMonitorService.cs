@@ -125,8 +125,11 @@ public sealed class WslMonitorService : IDisposable
         }
     }
 
-    /// <summary>One poll: the registry for the list, wsl.exe for what is running.</summary>
-    private async Task RefreshAsync()
+    /// <summary>
+    /// One poll: the registry for the list, wsl.exe for what is running. Internal so the state-rules
+    /// harness (tests/WslMonitor.State.Tests) can run one poll at a time.
+    /// </summary>
+    internal async Task RefreshAsync()
     {
         IsWslInstalled = WslCli.IsInstalled;
         if (!IsWslInstalled)

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <!-- The production state rules, linked unchanged. WslCli, WslRegistry, SettingsManager, UiText and
+       NLog are replaced by the stand-ins in Fakes.cs, so this runs on Linux without WSL. -->
+  <ItemGroup>
+    <Compile Include="../../WslMonitor/Services/WslMonitorService.cs" Link="Linked/WslMonitorService.cs" />
+    <Compile Include="../../WslMonitor/Services/WslResult.cs" Link="Linked/WslResult.cs" />
+    <Compile Include="../../WslMonitor/Services/RegisteredDistro.cs" Link="Linked/RegisteredDistro.cs" />
+    <Compile Include="../../WslMonitor/Models/Distro.cs" Link="Linked/Distro.cs" />
+    <Compile Include="../../WslMonitor/Models/NameList.cs" Link="Linked/NameList.cs" />
+    <Compile Include="../../external/winui-app-kit/WinUIAppKit/Localization/LocalizedMessage.cs" Link="Linked/LocalizedMessage.cs" />
+  </ItemGroup>
+</Project>

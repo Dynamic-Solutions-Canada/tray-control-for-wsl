@@ -11,7 +11,7 @@
     6. Signs with signtool.exe (dev self-signed cert, or a CA-trusted PFX)
 
     Use -NoSign for Microsoft Store uploads (the Store re-signs during ingestion).
-    Normally run through the shared bridge: npm run build:desktop / install:desktop.
+    Normally run through the shared bridge: npm run package:desktop:dev / install:desktop.
     ASCII only (Windows PowerShell 5.1 reads BOM-less .ps1 as ANSI).
 
 .EXAMPLE
@@ -117,7 +117,7 @@ $msixFile = Join-Path $outputDir "WslMonitor-$version-$Platform.msix"
 if ($NoSign) {
     Write-Host "Skipping signing (Store upload mode)" -ForegroundColor Yellow
 } elseif ([string]::IsNullOrEmpty($TrustedPfxPath) -or -not (Test-Path $TrustedPfxPath)) {
-    Write-Error "No signing certificate. Build through the shared bridge (npm run build:desktop), pass -TrustedPfxPath/-TrustedPfxPassword, or use -NoSign."
+    Write-Error "No signing certificate. Build through the shared bridge (npm run package:desktop:dev), pass -TrustedPfxPath/-TrustedPfxPassword, or use -NoSign."
     exit 1
 }
 

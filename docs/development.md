@@ -17,7 +17,7 @@ Run these from the repository root in WSL:
 | Command | What it does | What it proves |
 | --- | --- | --- |
 | `npm run verify:desktop` | Debug compile on Windows | The app compiles, XAML included |
-| `npm run build:desktop` | Signed dev MSIX | The package builds; not that it installs or runs |
+| `npm run package:desktop:dev` | Signed dev MSIX | The package builds; not that it installs or runs |
 | `npm run install:desktop` | Builds the dev MSIX, updates the installed copy in place and launches it | That it installs and starts; check behaviour in the app |
 | `npm run package:desktop` | Unsigned Store MSIX | The Store package builds, with manifest text resolved for every language |
 
@@ -27,7 +27,27 @@ Never uninstall to get past an update error.
 
 ## Checks
 
-`npm run check:l10n` checks the interface text: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs. Run it with `npm run verify:desktop` before finishing a change. There are no automated tests yet.
+`npm run validate` is the Linux gate. It runs, in order:
+
+- `npm run format:check`: every C# project outside `external/` matches the root `.editorconfig`, which is winui-app-kit's file copied unchanged from the tag the app pins; never hand-edit it. `npm run format` rewrites the files.
+- `npm run check:l10n`: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs.
+- `npm test`: every portable harness under `tests/`, found by `scripts/run-tests` without a hand-kept list. Each has a README saying what it covers and does not prove. Today there is one, for the distro state rules.
+
+Formatting and tests run through `scripts/dotnet`, which uses the .NET SDK pinned in `global.json` when it is installed and otherwise its Docker image, capped at 3 GB (`KIT_DOTNET_MEMORY`). Run them as a non-root user. Run `npm run validate` and `npm run verify:desktop` before finishing a change.
+
+### Manual checks in the installed app
+
+The harness cannot see the screen, WSL or Windows. Before a release, install the build (`npm run install:desktop`) and check:
+
+- The tray icon: no dot with nothing running, amber while a distro starts or stops, green once one runs; the tooltip summary.
+- Click and double-click both open the flyout once; it lists the distros with Start or Stop, and Details opens the window.
+- Start a stopped distro; it shows Starting, then Running.
+- Stop asks for a second click (red "Stop?" for 4 seconds) and a double-click does not stop it. A systemd distro stops cleanly; Force stop appears only after the clean stop fails or times out.
+- Shut down WSL from the flyout (two clicks) and from the Overview page (dialog); a distro that will not stop cleanly makes it ask before forcing.
+- The Overview page's idle timeout explanation matches `%UserProfile%\.wslconfig`.
+- Settings: start at sign-in, Docker Desktop's distros, theme, and a language change that relabels the flyout, the window and the tray tooltip without reopening them.
+- About: the version, and "Open logs folder" opens the folder with the current log.
+- Light, dark and high contrast.
 
 ## Releases
 
@@ -35,7 +55,11 @@ There is no release process yet. The app is not yet in the Microsoft Store, and 
 
 ## Where the app stores data
 
-WSL Monitor collects no telemetry or crash reports, and sends nothing anywhere. It only reads WSL's distro list from the registry (`HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss`) and `%UserProfile%\.wslconfig`; it never changes either. Starting and stopping distros goes through `wsl.exe`.
+WSL Monitor collects no telemetry or crash reports. It reads WSL's distro list from the registry (`HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss`) and `%UserProfile%\.wslconfig`, and never edits either file or key directly. Starting and stopping distros goes through `wsl.exe`.
+
+The one network request is the "Our other apps" page: when it opens, it downloads the app catalogue (`apps.json`) and its icons from the apps-promo repository on GitHub (`raw.githubusercontent.com`), so GitHub sees the request's IP address. Nothing about the user or their distros is sent.
+
+One action changes a system setting outside the app: "Set as default" on a distro's page runs `wsl --set-default`, which changes WSL's default distro for every program, not just this app. It stays changed after uninstall.
 
 It writes:
 
@@ -44,9 +68,10 @@ It writes:
 | Settings (`settings.json`) | `%AppData%\WslMonitor\` | Removed, see below |
 | Logs (`logs.<start time>.txt`, the last few kept) | `%AppData%\WslMonitor\` | Removed, see below |
 | Start at sign-in | The package's startup task | Removed with the package |
+| "Our other apps" cache (`apps.json` and icons) | The package's `LocalState\PromotedApps\` | Removed with the package |
 
-Every install, including dev installs from `install:desktop`, is an MSIX package, so Windows redirects `%AppData%\WslMonitor\` into the package's own data folder and deletes it on uninstall. The About page's "Open logs folder" opens the real location. A copy run without a package (straight from a build output folder) writes to the real `%AppData%\WslMonitor\` and, for start at sign-in, a `HKCU\...\CurrentVersion\Run` value; both remain until removed by hand. A packaged copy removes such Run values when it starts.
+Every install, including dev installs from `install:desktop`, is an MSIX package, so Windows redirects `%AppData%\WslMonitor\` into the package's own data folder and deletes it on uninstall. The About page's "Open logs folder" opens the real location. A copy run without a package (straight from a build output folder) writes to the real `%AppData%\WslMonitor\`, keeps the promo cache in `%LocalAppData%\TechnicallyReal\PromotedApps\` and, for start at sign-in, sets a `HKCU\...\CurrentVersion\Run` value; all three remain until removed by hand. A packaged copy removes such Run values when it starts.
 
 This list has not yet been confirmed against a real uninstall.
 
-There is nothing to back up or export beyond `settings.json`. To delete all data, uninstall the app.
+There is nothing to back up or export beyond `settings.json`; the promo cache is downloaded again when needed. To delete all data, uninstall the app.
