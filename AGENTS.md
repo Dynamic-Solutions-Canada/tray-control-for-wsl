@@ -84,6 +84,7 @@ Before finishing a change, run `npm run validate` and `npm run verify:desktop`. 
 | An npm command | The Commands table above, `docs/development.md`, the `desktop` skill, `paseo.json` |
 | Where the app writes data, or a new kind of data | The data table in `docs/development.md` |
 | A state rule in `WslMonitorService` (actions, polling, Shut down WSL) | Behaviour above, the scenarios and README in `tests/WslMonitor.State.Tests/` |
+| A workflow, or what CI runs | The CI section of `docs/development.md` |
 | A test harness added or changed | Its README; `npm test` finds it by itself |
 | winui-app-kit pin bumped | Copy the kit's `.editorconfig` at that tag unchanged, then `npm run format` |
 | A language or catalog rule | Conventions above, `scripts/check-localization.py` |

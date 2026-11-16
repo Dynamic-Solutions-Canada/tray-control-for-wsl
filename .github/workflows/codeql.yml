@@ -1,0 +1,60 @@
+name: CodeQL
+
+# Local copy of the shared CodeQL baseline (CI-10): the reusable workflow it will call does not exist
+# yet, so this file follows the baseline exactly and is replaced by a call to it once it does.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Buildless analysis (build-mode: none) so CodeQL never has to compile the
+          # WinUI 3 app in CI; autobuild can't reliably produce it on a hosted runner.
+          - language: csharp
+            build-mode: none
+          - language: actions
+            build-mode: none
+
+    steps:
+      # Submodules too, so calls into winui-app-kit and the promo page resolve during extraction;
+      # codeql-config.yml keeps their own code out of the results.
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"

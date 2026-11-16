@@ -35,6 +35,10 @@ Never uninstall to get past an update error.
 
 Formatting and tests run through `scripts/dotnet`, which uses the .NET SDK pinned in `global.json` when it is installed and otherwise its Docker image, capped at 3 GB (`KIT_DOTNET_MEMORY`). Run them as a non-root user. Run `npm run validate` and `npm run verify:desktop` before finishing a change.
 
+### CI
+
+`ci.yml` runs `npm run validate` on Linux for every push to `main` and every pull request. It also compiles the app on Windows for x64 and ARM64 (Debug, the same compile as `verify:desktop`) when app source, packaging, submodules or build configuration changed. `codeql.yml` scans the C# code and the workflows on each push, each pull request and weekly, leaving out `external/`. Dependabot proposes grouped NuGet and GitHub Actions updates weekly; the Windows App SDK and NLog move with winui-app-kit instead.
+
 ### Manual checks in the installed app
 
 The harness cannot see the screen, WSL or Windows. Before a release, install the build (`npm run install:desktop`) and check:
