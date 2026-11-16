@@ -105,7 +105,11 @@ public sealed partial class DistroPowerButton : Button
     /// </summary>
     private string ForceStopTip()
     {
-        if (_distro.LastError != null) return UiText.Format("power.force-tip-generic", ("name", _distro.Name));
+        if (_distro.LastError != null)
+        {
+            return UiText.Format("power.force-tip-generic", ("name", _distro.Name));
+        }
+
         return UiText.Format("power.force-tip",
             ("name", _distro.Name),
             ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
@@ -129,10 +133,20 @@ public sealed partial class DistroPowerButton : Button
                     Render();
                     return;
                 }
-                if (!ClickConfirmation.TryConfirm(ConfirmKey)) return;   // second click of a double-click
+                if (!ClickConfirmation.TryConfirm(ConfirmKey))
+                {
+                    return;   // second click of a double-click
+                }
 
-                if (_distro.State == DistroState.StopTimedOut) await _service.ForceStopAsync(_distro);
-                else await _service.StopAsync(_distro);
+                if (_distro.State == DistroState.StopTimedOut)
+                {
+                    await _service.ForceStopAsync(_distro);
+                }
+                else
+                {
+                    await _service.StopAsync(_distro);
+                }
+
                 break;
         }
     }

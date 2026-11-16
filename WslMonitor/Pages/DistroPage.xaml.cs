@@ -65,9 +65,15 @@ public sealed partial class DistroPage : LivePage
     {
         // Force stop is offered after a failed clean-stop check too; the error explains which case it is.
         if (d.State == DistroState.StopTimedOut && d.LastError != null)
+        {
             return UiText.Get("distro.force-offered");
+        }
+
         if (d.State == DistroState.StopTimedOut)
+        {
             return UiText.Format("distro.stop-timed-out", ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
+        }
+
         return UiText.Get(DistroVisuals.StopKindOf(d) switch
         {
             StopKind.Clean => "distro.stop-systemd",
@@ -82,11 +88,22 @@ public sealed partial class DistroPage : LivePage
         DetailsGrid.RowDefinitions.Clear();
 
         AddDetail("distro.wsl-version", $"WSL {d.WslVersion}");
-        if (d.OsLabel.Length > 0) AddDetail("distro.os", d.OsLabel);
+        if (d.OsLabel.Length > 0)
+        {
+            AddDetail("distro.os", d.OsLabel);
+        }
+
         AddDetail("distro.default-label", UiText.Get(d.IsDefault ? "common.yes" : "common.no"));
         AddDetail("distro.init", d.InitSystem ?? UiText.Get("distro.init-unknown"));
-        if (d.BasePath.Length > 0) AddDetail("distro.location", d.BasePath);
-        if (WslRegistry.DiskSize(d.DiskPath) is { } bytes) AddDetail("distro.disk-size", FormatBytes(bytes));
+        if (d.BasePath.Length > 0)
+        {
+            AddDetail("distro.location", d.BasePath);
+        }
+
+        if (WslRegistry.DiskSize(d.DiskPath) is { } bytes)
+        {
+            AddDetail("distro.disk-size", FormatBytes(bytes));
+        }
     }
 
     /// <param name="labelKey">Interface text key of the label.</param>
@@ -128,6 +145,9 @@ public sealed partial class DistroPage : LivePage
 
     private async void Default_Click(object sender, RoutedEventArgs e)
     {
-        if (Service.Find(DistroName) is { } d) await Service.SetDefaultAsync(d);
+        if (Service.Find(DistroName) is { } d)
+        {
+            await Service.SetDefaultAsync(d);
+        }
     }
 }

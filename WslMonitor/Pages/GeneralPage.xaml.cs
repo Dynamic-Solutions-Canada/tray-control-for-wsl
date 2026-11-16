@@ -34,7 +34,11 @@ public sealed partial class GeneralPage : Page
     // ── Start with Windows ──────────────────────────────────────────────
     private async void StartupSwitch_Toggled(object sender, RoutedEventArgs e)
     {
-        if (_updatingStartupSwitch || _initializing) return;
+        if (_updatingStartupSwitch || _initializing)
+        {
+            return;
+        }
+
         bool requested = StartupSwitch.IsOn;
         await LoadStartupAsync(() => MainWindow.Startup.SetEnabledAsync(requested));
     }
@@ -77,12 +81,19 @@ public sealed partial class GeneralPage : Page
             _ => null,
         };
         StartupNote.Visibility = note != null ? Visibility.Visible : Visibility.Collapsed;
-        if (note != null) Localize.SetText(StartupNote, note);
+        if (note != null)
+        {
+            Localize.SetText(StartupNote, note);
+        }
     }
 
     private void SystemDistrosSwitch_Toggled(object sender, RoutedEventArgs e)
     {
-        if (_initializing) return;
+        if (_initializing)
+        {
+            return;
+        }
+
         SettingsManager.Current.ShowSystemDistros = SystemDistrosSwitch.IsOn;
         SettingsManager.Save();
         MainWindow.Service.SettingsChanged();
@@ -116,7 +127,11 @@ public sealed partial class GeneralPage : Page
 
     private void LanguageCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_initializing || LanguageCombo.SelectedItem is not ComboBoxItem item) return;
+        if (_initializing || LanguageCombo.SelectedItem is not ComboBoxItem item)
+        {
+            return;
+        }
+
         string? choice = item.Tag as string;
         SettingsManager.Current.Language = choice;
         SettingsManager.Save();
@@ -125,7 +140,11 @@ public sealed partial class GeneralPage : Page
 
     private void ThemeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_initializing) return;
+        if (_initializing)
+        {
+            return;
+        }
+
         var choice = (AppThemeChoice)ThemeCombo.SelectedIndex;
         SettingsManager.Current.AppTheme = choice;
         SettingsManager.Save();

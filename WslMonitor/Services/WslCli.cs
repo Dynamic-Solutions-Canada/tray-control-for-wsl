@@ -27,7 +27,10 @@ public static class WslCli
     public static async Task<HashSet<string>?> ListRunningAsync(IReadOnlyCollection<string> knownNames)
     {
         var result = await RunAsync(TimeSpan.FromSeconds(15), "--list", "--running", "--quiet");
-        if (!result.Launched || result.TimedOut) return null;
+        if (!result.Launched || result.TimedOut)
+        {
+            return null;
+        }
 
         // With --quiet and nothing running, WSL prints nothing and exits 0 (checked in WSL 3.0.5's
         // WslClient.cpp, ListDistributionsHelper), so any non-zero exit is a
@@ -102,7 +105,11 @@ public static class WslCli
         try
         {
             var psi = new ProcessStartInfo(file) { UseShellExecute = true };
-            foreach (var a in args) psi.ArgumentList.Add(a);
+            foreach (var a in args)
+            {
+                psi.ArgumentList.Add(a);
+            }
+
             Process.Start(psi)?.Dispose();
             return true;
         }
@@ -131,7 +138,11 @@ public static class WslCli
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8,
         };
-        foreach (var a in args) psi.ArgumentList.Add(a);
+        foreach (var a in args)
+        {
+            psi.ArgumentList.Add(a);
+        }
+
         psi.Environment["WSL_UTF8"] = "1";
 
         Process process;
@@ -172,7 +183,10 @@ public static class WslCli
 
             var result = new WslResult(true, false, process.ExitCode, output, error);
             if (result.ExitCode != 0)
+            {
                 Logger.Info("wsl.exe {Args} exited {Code}: {Message}", string.Join(' ', args), result.ExitCode, result.Message);
+            }
+
             return result;
         }
     }

@@ -27,13 +27,20 @@ public sealed class WslConfigFile
         int? instance = null, vm = null;
         try
         {
-            if (!File.Exists(FilePath)) return new WslConfigFile();
+            if (!File.Exists(FilePath))
+            {
+                return new WslConfigFile();
+            }
 
             string section = "";
             foreach (var raw in File.ReadLines(FilePath))
             {
                 string line = StripComment(raw).Trim();
-                if (line.Length == 0) continue;
+                if (line.Length == 0)
+                {
+                    continue;
+                }
+
                 if (line.StartsWith('[') && line.EndsWith(']'))
                 {
                     section = line[1..^1].Trim().ToLowerInvariant();
@@ -41,12 +48,26 @@ public sealed class WslConfigFile
                 }
 
                 int eq = line.IndexOf('=');
-                if (eq <= 0) continue;
-                string key = line[..eq].Trim();
-                if (!int.TryParse(line[(eq + 1)..].Trim(), out int value)) continue;
+                if (eq <= 0)
+                {
+                    continue;
+                }
 
-                if (section == "general" && key.Equals("instanceIdleTimeout", StringComparison.OrdinalIgnoreCase)) instance = value;
-                if (section == "wsl2" && key.Equals("vmIdleTimeout", StringComparison.OrdinalIgnoreCase)) vm = value;
+                string key = line[..eq].Trim();
+                if (!int.TryParse(line[(eq + 1)..].Trim(), out int value))
+                {
+                    continue;
+                }
+
+                if (section == "general" && key.Equals("instanceIdleTimeout", StringComparison.OrdinalIgnoreCase))
+                {
+                    instance = value;
+                }
+
+                if (section == "wsl2" && key.Equals("vmIdleTimeout", StringComparison.OrdinalIgnoreCase))
+                {
+                    vm = value;
+                }
             }
         }
         catch (Exception ex) { Logger.Warn(ex, "Couldn't read .wslconfig"); }

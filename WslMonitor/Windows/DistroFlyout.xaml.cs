@@ -54,7 +54,11 @@ public sealed partial class DistroFlyout : Window
 
     private void OnServiceChanged()
     {
-        if (!_controller.IsOpen) return;   // rebuilt on the next open anyway
+        if (!_controller.IsOpen)
+        {
+            return;   // rebuilt on the next open anyway
+        }
+
         Refresh();
         _controller.UpdateSize();
     }

@@ -88,13 +88,19 @@ public sealed class WslMonitorService : IDisposable
     public void SetViewerActive(object viewer, bool active)
     {
         bool changed = active ? _viewers.Add(viewer) : _viewers.Remove(viewer);
-        if (changed && active) RequestRefresh();
+        if (changed && active)
+        {
+            RequestRefresh();
+        }
     }
 
     /// <summary>Poll now instead of waiting for the next interval.</summary>
     public void RequestRefresh()
     {
-        if (_wake.CurrentCount == 0) _wake.Release();
+        if (_wake.CurrentCount == 0)
+        {
+            _wake.Release();
+        }
     }
 
     /// <summary>Settings that affect the visible list changed (e.g. show Docker Desktop's distros).</summary>
@@ -176,12 +182,23 @@ public sealed class WslMonitorService : IDisposable
             d.BusyReason = r.BusyReason;
 
             bool stale = StampOf(_actionStamps, d.Id) != StampOf(stampsAtStart, d.Id);
-            if (!stale) UpdateState(d, running);
+            if (!stale)
+            {
+                UpdateState(d, running);
+            }
+
             next.Add(d);
 
             // Probe once per run: the init system can change between runs (systemd enabled in wsl.conf).
-            if (d.State == DistroState.Stopped) _initProbed.Remove(d.Id);
-            if (d.State == DistroState.Running && !_initProbed.Contains(d.Id)) _ = DetectInitSystemAsync(d);
+            if (d.State == DistroState.Stopped)
+            {
+                _initProbed.Remove(d.Id);
+            }
+
+            if (d.State == DistroState.Running && !_initProbed.Contains(d.Id))
+            {
+                _ = DetectInitSystemAsync(d);
+            }
         }
 
         _distros = next;
@@ -207,7 +224,11 @@ public sealed class WslMonitorService : IDisposable
         }
         if (running == null)
         {
-            if (d.State == DistroState.Busy) d.State = DistroState.Stopped;
+            if (d.State == DistroState.Busy)
+            {
+                d.State = DistroState.Stopped;
+            }
+
             return;
         }
 
@@ -226,10 +247,17 @@ public sealed class WslMonitorService : IDisposable
     /// </summary>
     private async Task DetectInitSystemAsync(Distro d)
     {
-        if (!_initProbed.Add(d.Id)) return;
+        if (!_initProbed.Add(d.Id))
+        {
+            return;
+        }
 
         string? init = await WslCli.InitSystemAsync(d.Name);
-        if (init != null) d.InitSystem = init;
+        if (init != null)
+        {
+            d.InitSystem = init;
+        }
+
         Logger.Info("{Distro} init system: {Init}", d.Name, init ?? "(couldn't check)");
         NotifyIfChanged();
     }
@@ -240,7 +268,11 @@ public sealed class WslMonitorService : IDisposable
         var parts = _distros.Select(d =>
             $"{d.Id}|{d.Name}|{d.State}|{d.IsDefault}|{d.InitSystem}|{d.LastError}|{d.BusyReason}|{d.WslVersion}|{d.OsVersion}");
         string signature = $"{IsWslInstalled}|{IsStateUnknown}|{IsShuttingDown}|{ShutdownStatus}||{string.Join("||", parts)}";
-        if (!force && signature == _lastSignature) return;
+        if (!force && signature == _lastSignature)
+        {
+            return;
+        }
+
         _lastSignature = signature;
         Changed?.Invoke();
     }
@@ -249,7 +281,10 @@ public sealed class WslMonitorService : IDisposable
     /// <summary>Start a stopped distro. Failures are shown on the distro (<see cref="Distro.LastError"/>).</summary>
     public async Task StartAsync(Distro d)
     {
-        if (d.State != DistroState.Stopped || IsShuttingDown) return;
+        if (d.State != DistroState.Stopped || IsShuttingDown)
+        {
+            return;
+        }
 
         Logger.Info("Starting {Distro}", d.Name);
         d.State = DistroState.Starting;
@@ -285,8 +320,16 @@ public sealed class WslMonitorService : IDisposable
     /// </summary>
     public Task StopAsync(Distro d)
     {
-        if (_stopsInFlight.TryGetValue(d.Id, out var inFlight)) return inFlight;
-        if (d.State != DistroState.Running) return Task.CompletedTask;
+        if (_stopsInFlight.TryGetValue(d.Id, out var inFlight))
+        {
+            return inFlight;
+        }
+
+        if (d.State != DistroState.Running)
+        {
+            return Task.CompletedTask;
+        }
+
         return TrackStopAsync(d);
     }
 
@@ -337,7 +380,10 @@ public sealed class WslMonitorService : IDisposable
 
             // wsl.exe often exits non-zero here because the distro goes away under it, so a failure is
             // only logged; the wait below decides whether the stop worked.
-            if (!poweroff.Succeeded) Logger.Info("systemctl poweroff for {Distro}: {Message}", d.Name, poweroff.Message);
+            if (!poweroff.Succeeded)
+            {
+                Logger.Info("systemctl poweroff for {Distro}: {Message}", d.Name, poweroff.Message);
+            }
         }
         else
         {
@@ -390,7 +436,10 @@ public sealed class WslMonitorService : IDisposable
     /// </summary>
     public async Task ForceStopAsync(Distro d)
     {
-        if (d.State is not (DistroState.Running or DistroState.StopTimedOut)) return;
+        if (d.State is not (DistroState.Running or DistroState.StopTimedOut))
+        {
+            return;
+        }
 
         Logger.Info("Force-stopping {Distro}", d.Name);
         d.State = DistroState.Stopping;
@@ -406,7 +455,11 @@ public sealed class WslMonitorService : IDisposable
             d.State = stopped ? DistroState.Stopped : DistroState.StopTimedOut;
             Stamp(d);
         }
-        if (!result.Succeeded) d.LastError = new LocalizedMessage("error.force-stop", ("detail", result));
+        if (!result.Succeeded)
+        {
+            d.LastError = new LocalizedMessage("error.force-stop", ("detail", result));
+        }
+
         NotifyIfChanged();
         RequestRefresh();
     }
@@ -420,7 +473,10 @@ public sealed class WslMonitorService : IDisposable
     /// <param name="confirmForce">Asks the user; returns false (don't force) when it can't ask.</param>
     public async Task ShutdownAllAsync(Func<IReadOnlyList<string>, Task<bool>> confirmForce)
     {
-        if (IsShuttingDown) return;
+        if (IsShuttingDown)
+        {
+            return;
+        }
 
         try
         {
@@ -490,7 +546,11 @@ public sealed class WslMonitorService : IDisposable
         while (DateTime.UtcNow < deadline)
         {
             var running = await WslCli.ListRunningAsync(names);
-            if (running != null && !running.Contains(name)) return true;
+            if (running != null && !running.Contains(name))
+            {
+                return true;
+            }
+
             await Task.Delay(TimeSpan.FromSeconds(1.5));
         }
         return false;

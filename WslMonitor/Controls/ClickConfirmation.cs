@@ -37,10 +37,16 @@ public static class ClickConfirmation
     /// </summary>
     public static bool TryConfirm(string key)
     {
-        if (!IsArmed(key)) return false;
+        if (!IsArmed(key))
+        {
+            return false;
+        }
 
         var armedAt = ArmedUntil[key] - ConfirmWindow;
-        if (DateTime.UtcNow - armedAt < MinConfirmDelay) return false;
+        if (DateTime.UtcNow - armedAt < MinConfirmDelay)
+        {
+            return false;
+        }
 
         ArmedUntil.Remove(key);
         return true;
@@ -49,7 +55,10 @@ public static class ClickConfirmation
     /// <summary>Call <paramref name="render"/> once <paramref name="key"/>'s confirmation lapses, so the button reverts.</summary>
     public static void OnLapse(string key, DispatcherQueue dispatcher, Action render)
     {
-        if (!ArmedUntil.TryGetValue(key, out var until)) return;
+        if (!ArmedUntil.TryGetValue(key, out var until))
+        {
+            return;
+        }
 
         var remaining = until - DateTime.UtcNow;
         var timer = dispatcher.CreateTimer();

@@ -49,7 +49,11 @@ public sealed partial class MainWindow : Window
         // Single instance: ask the running copy to show itself, then exit.
         if (!SingleInstance.TryClaim(MutexName))
         {
-            if (!Startup.IsSilentLaunch()) SingleInstance.SignalRunningInstance(HostTitle, ShowMessageName);
+            if (!Startup.IsSilentLaunch())
+            {
+                SingleInstance.SignalRunningInstance(HostTitle, ShowMessageName);
+            }
+
             Environment.Exit(0);
         }
 
@@ -77,13 +81,20 @@ public sealed partial class MainWindow : Window
         _uiSettings.ColorValuesChanged += (_, _) => DispatcherQueue.TryEnqueue(UpdateTrayIcon);
         UpdateTrayIcon();
 
-        if (SettingsManager.IsFirstRun && SettingsManager.Current.Startup) _ = Startup.RegisterOnFirstRunAsync();
+        if (SettingsManager.IsFirstRun && SettingsManager.Current.Startup)
+        {
+            _ = Startup.RegisterOnFirstRunAsync();
+        }
+
         Startup.RemoveUnpackagedEntries();
 
         Logger.Info("Started v{Version}, packaged={Packaged}", AppEnvironment.Version, AppEnvironment.IsPackaged);
         Service.Start();
 
-        if (!Startup.IsSilentLaunch() || SettingsManager.IsFirstRun) DetailsWindow.ShowInstance();
+        if (!Startup.IsSilentLaunch() || SettingsManager.IsFirstRun)
+        {
+            DetailsWindow.ShowInstance();
+        }
     }
 
     private void HideHostWindow()
@@ -109,8 +120,16 @@ public sealed partial class MainWindow : Window
     /// <summary>Amber while anything is changing, green while something runs, plain otherwise.</summary>
     private static TrayStatus TrayStatusNow()
     {
-        if (Service.IsShuttingDown || Service.Distros.Any(d => d.IsTransitioning)) return TrayStatus.Changing;
-        if (Service.RunningCount > 0) return TrayStatus.Running;
+        if (Service.IsShuttingDown || Service.Distros.Any(d => d.IsTransitioning))
+        {
+            return TrayStatus.Changing;
+        }
+
+        if (Service.RunningCount > 0)
+        {
+            return TrayStatus.Running;
+        }
+
         return TrayStatus.Idle;
     }
 

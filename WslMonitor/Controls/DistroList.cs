@@ -33,7 +33,9 @@ public static class DistroList
         }
 
         foreach (var d in distros)
+        {
             panel.Children.Add(DistroRow.Build(d, service, () => onOpen(d)));
+        }
     }
 
     /// <summary>Secondary-coloured explanation in place of the rows, aligned with row content.</summary>

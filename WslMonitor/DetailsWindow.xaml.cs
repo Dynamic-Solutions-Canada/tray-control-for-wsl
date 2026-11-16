@@ -48,7 +48,11 @@ public sealed partial class DetailsWindow : Window
     private static void Show(string? tag)
     {
         _instance ??= new DetailsWindow();
-        if (tag != null) _instance.Select(tag);
+        if (tag != null)
+        {
+            _instance.Select(tag);
+        }
+
         WindowChrome.BringToFront(_instance);
     }
 
@@ -109,7 +113,10 @@ public sealed partial class DetailsWindow : Window
     /// <summary>Rebuild the menu when distros are added, removed or renamed, or the default changes.</summary>
     private void OnServiceChanged()
     {
-        if (MenuSignature() != _menuSignature) RebuildMenuKeepingSelection();
+        if (MenuSignature() != _menuSignature)
+        {
+            RebuildMenuKeepingSelection();
+        }
     }
 
     /// <summary>
@@ -152,7 +159,10 @@ public sealed partial class DetailsWindow : Window
             Tag = OverviewTag,
             Icon = new FontIcon { Glyph = "" },
         });
-        if (distros.Count == 0) return;
+        if (distros.Count == 0)
+        {
+            return;
+        }
 
         RootNavigation.MenuItems.Add(new NavigationViewItemHeader { Content = UiText.Get("nav.distros") });
         foreach (var d in distros)
@@ -171,7 +181,11 @@ public sealed partial class DetailsWindow : Window
     private string CurrentTag()
     {
         var selected = RootNavigation.SelectedItem;
-        if (selected != null && selected == RootNavigation.SettingsItem) return SettingsTag;
+        if (selected != null && selected == RootNavigation.SettingsItem)
+        {
+            return SettingsTag;
+        }
+
         return (selected as NavigationViewItem)?.Tag as string ?? OverviewTag;
     }
 
@@ -204,7 +218,11 @@ public sealed partial class DetailsWindow : Window
 
     private void RootNavigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
-        if (_rebuilding) return;
+        if (_rebuilding)
+        {
+            return;
+        }
+
         if (args.IsSettingsSelected)
         {
             Navigate(typeof(GeneralPage), null);
@@ -212,24 +230,47 @@ public sealed partial class DetailsWindow : Window
         }
 
         string tag = (args.SelectedItem as NavigationViewItem)?.Tag as string ?? OverviewTag;
-        if (tag == AboutTag) Navigate(typeof(AboutPage), null);
-        else if (tag == PromoTag) Navigate(typeof(TechnicallyReal.Promo.PromotedAppsPage), null);
-        else if (tag.StartsWith(DistroTagPrefix)) Navigate(typeof(DistroPage), tag[DistroTagPrefix.Length..]);
-        else Navigate(typeof(OverviewPage), null);
+        if (tag == AboutTag)
+        {
+            Navigate(typeof(AboutPage), null);
+        }
+        else if (tag == PromoTag)
+        {
+            Navigate(typeof(TechnicallyReal.Promo.PromotedAppsPage), null);
+        }
+        else if (tag.StartsWith(DistroTagPrefix))
+        {
+            Navigate(typeof(DistroPage), tag[DistroTagPrefix.Length..]);
+        }
+        else
+        {
+            Navigate(typeof(OverviewPage), null);
+        }
     }
 
     /// <summary>Show a page, unless that exact page (and distro) is already showing.</summary>
     private void Navigate(Type page, string? parameter)
     {
-        if (ContentFrame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter) return;
-        if (ContentFrame.Content?.GetType() == page && page != typeof(DistroPage)) return;
+        if (ContentFrame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter)
+        {
+            return;
+        }
+
+        if (ContentFrame.Content?.GetType() == page && page != typeof(DistroPage))
+        {
+            return;
+        }
+
         ContentFrame.Navigate(page, parameter);
     }
 
     /// <summary>The shared promo page's wording is English; translate its known copy once it is shown.</summary>
     private void ContentFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
-        if (e.Content is TechnicallyReal.Promo.PromotedAppsPage promo) promo.EnableLocalization();
+        if (e.Content is TechnicallyReal.Promo.PromotedAppsPage promo)
+        {
+            promo.EnableLocalization();
+        }
     }
 
     // ── Dialogs ─────────────────────────────────────────────────────────
@@ -240,7 +281,10 @@ public sealed partial class DetailsWindow : Window
     public static async Task<bool> ConfirmForceShutdownAsync(IReadOnlyList<string> stuck)
     {
         ShowInstance();
-        if (_instance is { } window) await window.WhenContentLoadedAsync();
+        if (_instance is { } window)
+        {
+            await window.WhenContentLoadedAsync();
+        }
 
         return await ConfirmAsync(
             UiText.Get("overview.force-title"),
@@ -254,7 +298,10 @@ public sealed partial class DetailsWindow : Window
     private Task WhenContentLoadedAsync()
     {
         var root = (FrameworkElement)Content;
-        if (root.XamlRoot != null && root.IsLoaded) return Task.CompletedTask;
+        if (root.XamlRoot != null && root.IsLoaded)
+        {
+            return Task.CompletedTask;
+        }
 
         var loaded = new TaskCompletionSource();
         void OnLoaded(object sender, RoutedEventArgs e)
@@ -273,8 +320,15 @@ public sealed partial class DetailsWindow : Window
     /// </summary>
     public static async Task<bool> ConfirmAsync(string title, string body, string confirmText)
     {
-        if (_instance is not { } window || window.Content.XamlRoot is not { } root) return false;
-        if (window._openDialog != null) return false;   // one question at a time
+        if (_instance is not { } window || window.Content.XamlRoot is not { } root)
+        {
+            return false;
+        }
+
+        if (window._openDialog != null)
+        {
+            return false;   // one question at a time
+        }
 
         var dialog = new ContentDialog
         {

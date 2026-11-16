@@ -31,9 +31,17 @@ public static class DistroVisuals
     public static string Summary(Distro d)
     {
         var parts = new List<string> { StateText(d) };
-        if (d.OsLabel.Length > 0) parts.Add(d.OsLabel);
+        if (d.OsLabel.Length > 0)
+        {
+            parts.Add(d.OsLabel);
+        }
+
         parts.Add($"WSL {d.WslVersion}");
-        if (d.IsDefault) parts.Add(UiText.Get("distro.default"));
+        if (d.IsDefault)
+        {
+            parts.Add(UiText.Get("distro.default"));
+        }
+
         return string.Join("  ·  ", parts);
     }
 
@@ -43,8 +51,16 @@ public static class DistroVisuals
     /// </summary>
     public static StopKind StopKindOf(Distro d)
     {
-        if (d.HasSystemd) return StopKind.Clean;
-        if (d.InitSystem != null) return StopKind.Immediate;
+        if (d.HasSystemd)
+        {
+            return StopKind.Clean;
+        }
+
+        if (d.InitSystem != null)
+        {
+            return StopKind.Immediate;
+        }
+
         return StopKind.Unknown;
     }
 
@@ -54,15 +70,33 @@ public static class DistroVisuals
     /// </summary>
     public static string StatusLine(WslMonitorService service)
     {
-        if (service.IsShuttingDown) return UiText.Get("status.shutting-down");
-        if (service.IsStateUnknown) return UiText.Get("status.unresponsive");
-        if (!service.IsWslInstalled) return UiText.Get("list.no-wsl");
+        if (service.IsShuttingDown)
+        {
+            return UiText.Get("status.shutting-down");
+        }
+
+        if (service.IsStateUnknown)
+        {
+            return UiText.Get("status.unresponsive");
+        }
+
+        if (!service.IsWslInstalled)
+        {
+            return UiText.Get("list.no-wsl");
+        }
 
         var distros = service.Distros;
-        if (distros.Count == 0) return UiText.Get("list.no-distros");
+        if (distros.Count == 0)
+        {
+            return UiText.Get("list.no-distros");
+        }
 
         int running = service.RunningCount;
-        if (running == 0) return UiText.Get("status.nothing-running");
+        if (running == 0)
+        {
+            return UiText.Get("status.nothing-running");
+        }
+
         return UiText.Format("status.some-running", ("running", running), ("total", distros.Count));
     }
 
@@ -98,7 +132,11 @@ public static class DistroVisuals
             Foreground = (Brush)res[error != null ? "SystemFillColorCriticalBrush" : "TextFillColorSecondaryBrush"],
             TextTrimming = TextTrimming.CharacterEllipsis,
         };
-        if (error != null) ToolTipService.SetToolTip(caption, error);
+        if (error != null)
+        {
+            ToolTipService.SetToolTip(caption, error);
+        }
+
         return caption;
     }
 }

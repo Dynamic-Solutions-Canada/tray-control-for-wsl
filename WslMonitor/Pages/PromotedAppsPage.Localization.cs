@@ -39,14 +39,26 @@ public sealed partial class PromotedAppsPage
 
     private void AttachPromoLocalization()
     {
-        if (_promoAttached) return;
+        if (_promoAttached)
+        {
+            return;
+        }
+
         _promoAttached = true;
 
         // The shared page replaces its ItemsSource after a refresh; keep the English original each time.
-        if (!ReferenceEquals(AppList.ItemsSource, _promoPresentedItems)) _promoOriginalItems = AppList.ItemsSource;
+        if (!ReferenceEquals(AppList.ItemsSource, _promoPresentedItems))
+        {
+            _promoOriginalItems = AppList.ItemsSource;
+        }
+
         _promoSourceCallback = AppList.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, (_, _) =>
         {
-            if (_promoApplying) return;
+            if (_promoApplying)
+            {
+                return;
+            }
+
             _promoOriginalItems = AppList.ItemsSource;
             RefreshPromoCopy();
         });
@@ -57,7 +69,10 @@ public sealed partial class PromotedAppsPage
         {
             foreach (var text in panel.Children.OfType<TextBlock>())
             {
-                if (KnownPromoKey(text.Text) is { } key) Localize.SetText(text, key);
+                if (KnownPromoKey(text.Text) is { } key)
+                {
+                    Localize.SetText(text, key);
+                }
             }
         }
 
@@ -67,7 +82,10 @@ public sealed partial class PromotedAppsPage
     /// <summary>Present a translated copy of the original English items, so a later change never translates a translation.</summary>
     private void RefreshPromoCopy()
     {
-        if (_promoOriginalItems is not IEnumerable<PromotedApp> apps) return;
+        if (_promoOriginalItems is not IEnumerable<PromotedApp> apps)
+        {
+            return;
+        }
 
         _promoApplying = true;
         try
@@ -100,7 +118,11 @@ public sealed partial class PromotedAppsPage
     /// </summary>
     internal void DisableLocalization()
     {
-        if (!_promoAttached) return;
+        if (!_promoAttached)
+        {
+            return;
+        }
+
         UiText.Changed -= RefreshPromoCopy;
         AppList.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, _promoSourceCallback);
         _promoAttached = false;

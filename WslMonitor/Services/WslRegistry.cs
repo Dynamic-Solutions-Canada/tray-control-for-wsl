@@ -20,14 +20,25 @@ public static class WslRegistry
         try
         {
             using var root = Registry.CurrentUser.OpenSubKey(LxssKey);
-            if (root == null) return list;
+            if (root == null)
+            {
+                return list;
+            }
 
             string defaultId = root.GetValue("DefaultDistribution") as string ?? "";
             foreach (var subName in root.GetSubKeyNames())
             {
-                if (!Guid.TryParse(subName, out var id)) continue;
+                if (!Guid.TryParse(subName, out var id))
+                {
+                    continue;
+                }
+
                 using var key = root.OpenSubKey(subName);
-                if (key?.GetValue("DistributionName") is not string name || name.Length == 0) continue;
+                if (key?.GetValue("DistributionName") is not string name || name.Length == 0)
+                {
+                    continue;
+                }
+
                 list.Add(Read(key, id, name, string.Equals(subName, defaultId, StringComparison.OrdinalIgnoreCase)));
             }
         }

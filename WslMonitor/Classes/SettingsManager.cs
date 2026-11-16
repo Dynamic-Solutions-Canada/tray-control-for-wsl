@@ -33,7 +33,10 @@ public static class SettingsManager
         Current = Store.Load(out bool firstRun);
         IsFirstRun = firstRun;
         AppTheme.Set(Current.AppTheme);
-        if (firstRun) Save();
+        if (firstRun)
+        {
+            Save();
+        }
     }
 
     public static void Save() => Store.Save(Current);

@@ -79,7 +79,11 @@ public sealed class Distro
     {
         get
         {
-            if (Flavor.Length == 0) return OsVersion;
+            if (Flavor.Length == 0)
+            {
+                return OsVersion;
+            }
+
             string family = char.ToUpperInvariant(Flavor[0]) + Flavor[1..];
             return OsVersion.Length > 0 ? $"{family} {OsVersion}" : family;
         }

@@ -72,7 +72,10 @@ public sealed partial class ShutdownButton : Button
             Render();
             return;
         }
-        if (!ClickConfirmation.TryConfirm(ConfirmKey)) return;   // second click of a double-click
+        if (!ClickConfirmation.TryConfirm(ConfirmKey))
+        {
+            return;   // second click of a double-click
+        }
 
         await _service.ShutdownAllAsync(DetailsWindow.ConfirmForceShutdownAsync);
     }

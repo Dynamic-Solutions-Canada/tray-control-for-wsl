@@ -43,7 +43,10 @@ internal static class TrayIconRenderer
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.Transparent);
             DrawTerminal(g, m, dim);
-            if (status != TrayStatus.Idle) DrawDot(g, m, status == TrayStatus.Running ? Green : Amber, darkTaskbar);
+            if (status != TrayStatus.Idle)
+            {
+                DrawDot(g, m, status == TrayStatus.Running ? Green : Amber, darkTaskbar);
+            }
         }
 
         using var small = new Bitmap(size, size, PixelFormat.Format32bppArgb);
@@ -87,8 +90,15 @@ internal static class TrayIconRenderer
     {
         float r = m * 0.20f, cx = m * 0.80f, cy = m * 0.78f;
         var ring = darkTaskbar ? Color.FromArgb(32, 32, 32) : Color.FromArgb(243, 243, 243);
-        using (var b = new SolidBrush(ring)) g.FillEllipse(b, cx - r - m * 0.05f, cy - r - m * 0.05f, 2 * r + m * 0.1f, 2 * r + m * 0.1f);
-        using (var b = new SolidBrush(color)) g.FillEllipse(b, cx - r, cy - r, 2 * r, 2 * r);
+        using (var b = new SolidBrush(ring))
+        {
+            g.FillEllipse(b, cx - r - m * 0.05f, cy - r - m * 0.05f, 2 * r + m * 0.1f, 2 * r + m * 0.1f);
+        }
+
+        using (var b = new SolidBrush(color))
+        {
+            g.FillEllipse(b, cx - r, cy - r, 2 * r, 2 * r);
+        }
     }
 
     private static GraphicsPath Rounded(RectangleF r, float radius)

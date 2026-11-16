@@ -29,14 +29,22 @@ public partial class LivePage : Page
     /// <summary>Drop subscriptions now (safe to call more than once).</summary>
     public void Detach()
     {
-        if (!_attached) return;
+        if (!_attached)
+        {
+            return;
+        }
+
         _attached = false;
         OnDetach();
     }
 
     private void Attach()
     {
-        if (_attached) return;
+        if (_attached)
+        {
+            return;
+        }
+
         _attached = true;
         OnAttach();
     }

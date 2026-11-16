@@ -56,7 +56,10 @@ public sealed partial class OverviewPage : LivePage
             ? UiText.Get("overview.confirm-none")
             : UiText.Format("overview.confirm-some", ("names", new NameList(running)));
 
-        if (!await DetailsWindow.ConfirmAsync(UiText.Get("overview.confirm-title"), what, UiText.Get("overview.confirm-button"))) return;
+        if (!await DetailsWindow.ConfirmAsync(UiText.Get("overview.confirm-title"), what, UiText.Get("overview.confirm-button")))
+        {
+            return;
+        }
 
         // Asked from the window, not this page: the user may have moved to another page meanwhile.
         await Service.ShutdownAllAsync(DetailsWindow.ConfirmForceShutdownAsync);
