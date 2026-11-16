@@ -6,6 +6,7 @@
 ## Prerequisites
 
 - WSL with this repository cloned inside it, including submodules: clone with `--recurse-submodules`, or run `git submodule update --init` (the app builds on `external/winui-app-kit` and `external/promo`).
+- [lefthook](https://lefthook.dev) for the git hooks in `lefthook.yml`: run `lefthook install` once after cloning.
 - Node.js for the root `npm run` commands, and Python 3 for the catalog check.
 - The [shared Windows build tools](https://github.com/Dynamic-Solutions-Canada/windows-build-tools), which run the Windows build from WSL and document their own Windows-side requirements, the disposable Windows TEMP copy and the local build VM. The link resolves once that repository is published.
 
@@ -20,7 +21,7 @@ Run these from the repository root in WSL:
 | `npm run install:desktop` | Builds the dev MSIX, updates the installed copy in place and launches it | That it installs and starts; check behaviour in the app |
 | `npm run package:desktop` | Unsigned Store MSIX | The Store package builds, with manifest text resolved for every language |
 
-Pass `-- --platform x64` or `-- --platform ARM64` to choose the architecture. Never uninstall to get past an update error.
+Never uninstall to get past an update error.
 
 `<Version>` in `Directory.Build.props` is the only version source. Dev builds raise the revision only in the staged copy, so the tracked version changes only for a release.
 
