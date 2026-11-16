@@ -65,6 +65,7 @@ Before finishing a change, run `npm run check:strings` and `npm run verify:deskt
 
 | Guide, doc, or skill | Read or use when | Governs |
 | --- | --- | --- |
+| [docs/development.md](docs/development.md) | Building, checking, versioning, or changing where the app writes data | Build setup, data locations |
 | [.agents/guides/ui-conventions.md](.agents/guides/ui-conventions.md) | Any window, page, flyout, row or card | `WslMonitor/**/*.xaml(.cs)`, `WslMonitor/Controls/**` |
 | [WinUI App Kit `AGENTS.md`](external/winui-app-kit/AGENTS.md) | Using the kit's tray, flyout, settings, startup, theme or localization APIs | `external/winui-app-kit/**` (read only) |
 | [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) | A Windows build, install or packaging problem | `scripts/windows-build`, `windows-build.json` |
@@ -75,8 +76,9 @@ Before finishing a change, run `npm run check:strings` and `npm run verify:deskt
 | What changed | Update |
 | --- | --- |
 | A file, service or control added, moved or removed | The Architecture table above |
-| Product behaviour users can see (Start, Stop, Shut down WSL, tray) | Behaviour above, `README.md` |
+| Product behaviour users can see (Start, Stop, Shut down WSL, tray, languages) | Behaviour above, `README.md` Features |
 | A UI pattern, shared style or control | `.agents/guides/ui-conventions.md` |
-| An npm command | The Commands table above, the `desktop` skill, `paseo.json` |
+| An npm command | The Commands table above, `docs/development.md`, the `desktop` skill, `paseo.json` |
+| Where the app writes data, or a new kind of data | The data table in `docs/development.md` |
 | A language or catalog rule | Conventions above, `scripts/check-strings.py` |
 | A guide or skill moved or removed | The guidance map above and every skill that names it |
