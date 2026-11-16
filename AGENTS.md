@@ -1,16 +1,10 @@
 # WSL Monitor: Agent Instructions
 
-## Project overview
+WSL Monitor is a resident WinUI 3 tray app for Windows users of WSL: it shows which WSL distros are running and starts or stops them. It ships as an MSIX (`WslMonitorMSIX/`) built from WSL through the shared Windows build bridge. The tray, flyout, settings-file, startup and theme plumbing come from the shared WinUI App Kit submodule at `external/winui-app-kit`, and the "Our other apps" page from the apps-promo submodule at `external/promo`.
 
-A resident WinUI 3 tray app that shows which WSL distros are running and starts or stops them. Ships as an **MSIX** (`WslMonitorMSIX/`), built from WSL through the shared Windows build bridge. Same conventions as Hub Display Switch; the tray, flyout, settings-file, startup and theme plumbing come from the shared **WinUI App Kit** submodule at `external/winui-app-kit` (read its `AGENTS.md` before changing it).
+## Standards
 
-## Behaviour
-
-- **Tray click or double-click** opens the flyout: one row per distro with Start / Stop, and a Details button. Double-click deliberately does the same as a click (the kit swallows the trailing click so it doesn't close again).
-- **Stop needs two clicks** (red "Stop?" for 4 s). Distros running systemd stop with `systemctl poweroff` (clean); others with `wsl --terminate`. After 2 minutes still running, the distro shows "Force stop" (also two clicks).
-- **Shut down WSL** (Overview page with a confirmation dialog, or the flyout's power button with two clicks like Stop): clean-stops every running distro in parallel, asks before forcing any that miss the limit (in the details window, opened if needed), then `wsl --shutdown`.
-- **Start** runs a no-op in the distro. Whether it stays up depends on `instanceIdleTimeout` in `%UserProfile%\.wslconfig`; the Overview page explains the current setting.
-- Docker Desktop's `docker-desktop*` distros are hidden unless enabled in Settings.
+This repo follows the shared standards at https://github.com/Dynamic-Solutions-Canada/app-standards. Read the index for this stack, https://github.com/Dynamic-Solutions-Canada/app-standards/blob/main/stacks/windows.md, then the topic file for the area you are changing. If `external/standards/` exists, it is the same content pinned for offline use. Where this file differs from the standards, this file wins and says why.
 
 ## Architecture
 
@@ -30,9 +24,17 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 | `.wslconfig` idle timeouts | `Services/WslConfigFile.cs` |
 | Settings | `Models/UserSettings.cs`, `Classes/SettingsManager.cs` |
 | Interface text (9 languages) | `Strings/*.json`, `Classes/AppLanguages.cs`; lookups via the kit's `UiText` / `Localize` |
-| "Our other apps" page | `external/promo` submodule (shared with the sibling apps), imported in the csproj |
+| "Our other apps" page | `external/promo` submodule, imported in the csproj |
 
-## Conventions / gotchas
+## Behaviour
+
+- **Tray click or double-click** opens the flyout: one row per distro with Start / Stop, and a Details button. Double-click deliberately does the same as a click (the kit swallows the trailing click so it doesn't close again).
+- **Stop needs two clicks** (red "Stop?" for 4 s). Distros running systemd stop with `systemctl poweroff` (clean); others with `wsl --terminate`. After 2 minutes still running, the distro shows "Force stop" (also two clicks).
+- **Shut down WSL** (Overview page with a confirmation dialog, or the flyout's power button with two clicks like Stop): clean-stops every running distro in parallel, asks before forcing any that miss the limit (in the details window, opened if needed), then `wsl --shutdown`.
+- **Start** runs a no-op in the distro. Whether it stays up depends on `instanceIdleTimeout` in `%UserProfile%\.wslconfig`; the Overview page explains the current setting.
+- Docker Desktop's `docker-desktop*` distros are hidden unless enabled in Settings.
+
+## Conventions and gotchas
 
 - `wsl.exe` writes UTF-16 for `--list` unless `WSL_UTF8=1` (set by `WslCli`). Parse `--quiet` output, never the localized `-v` table.
 - The service mutates `Distro` objects on the UI thread only and raises `Changed` only when visible state changes; views rebuild on `Changed`. Pending stop confirmations live in `DistroPowerButton` (per distro), so rebuilds don't lose them.
@@ -45,6 +47,36 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 - **Manifest strings** use `ms-resource:Resources/<Key>`; `build-msix.ps1` writes them from the catalogs into `resources.pri` and fails the build unless every declared language resolves. Keep resource splitting off (single package, not a bundle).
 - **PowerShell build scripts must be ASCII.** App icon and MSIX images come from `WslMonitorMSIX/generate-msix-images.ps1` (committed output).
 
-## Building
+## Commands
 
-Source is authoritative in WSL. Read `.codex/docs/windows-development.md` and use the root npm commands (`npm run verify:desktop`, `build:desktop`, `install:desktop`, `package:desktop`). This PC is x64: pass `-- --platform x64`. Clone with `--recurse-submodules` (or run `git submodule update --init`) so `external/winui-app-kit` and `external/promo` are present.
+Clone with `--recurse-submodules` (or run `git submodule update --init`) so `external/winui-app-kit` and `external/promo` are present. Source is authoritative in WSL; the Windows commands go through `scripts/windows-build`, documented in the [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) (the link resolves once that repo is published).
+
+| Command | Proves | Does not prove |
+| --- | --- | --- |
+| `npm run verify:desktop` | The app compiles on Windows (Debug), XAML included | That it packages or runs |
+| `npm run build:desktop` | A signed dev package builds | That it installs or runs |
+| `npm run install:desktop` | The dev package updates in place and launches | Behaviour; check it in the running app |
+| `npm run package:desktop` | An unsigned Store package builds, manifest strings resolved for every language | Signing; that it runs |
+| `npm run check:strings` | Every catalog has the same keys and placeholders, no em dashes, and the manifest languages match | That the text is translated well |
+
+Before finishing a change, run `npm run check:strings` and `npm run verify:desktop`. Use the `desktop` skill for build and install requests.
+
+## Guidance map
+
+| Guide, doc, or skill | Read or use when | Governs |
+| --- | --- | --- |
+| [.agents/guides/ui-conventions.md](.agents/guides/ui-conventions.md) | Any window, page, flyout, row or card | `WslMonitor/**/*.xaml(.cs)`, `WslMonitor/Controls/**` |
+| [WinUI App Kit `AGENTS.md`](external/winui-app-kit/AGENTS.md) | Using the kit's tray, flyout, settings, startup, theme or localization APIs | `external/winui-app-kit/**` (read only) |
+| [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) | A Windows build, install or packaging problem | `scripts/windows-build`, `windows-build.json` |
+| `desktop` skill | Building, verifying or installing locally | Local Windows builds |
+
+## Keeping docs current
+
+| What changed | Update |
+| --- | --- |
+| A file, service or control added, moved or removed | The Architecture table above |
+| Product behaviour users can see (Start, Stop, Shut down WSL, tray) | Behaviour above, `README.md` |
+| A UI pattern, shared style or control | `.agents/guides/ui-conventions.md` |
+| An npm command | The Commands table above, the `desktop` skill, `paseo.json` |
+| A language or catalog rule | Conventions above, `scripts/check-strings.py` |
+| A guide or skill moved or removed | The guidance map above and every skill that names it |

@@ -16,7 +16,7 @@ Whether a distro you start keeps running with nothing open in it depends on WSL'
 
 ## Build
 
-From WSL in this folder (see `.codex/docs/windows-development.md`):
+From WSL in this folder (see the [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools)):
 
 ```bash
 git submodule update --init
