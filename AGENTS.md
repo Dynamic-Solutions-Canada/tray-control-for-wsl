@@ -49,7 +49,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 ## Commands
 
-Clone with `--recurse-submodules` (or run `git submodule update --init`) so `external/winui-app-kit` and `external/promo` are present. Source is authoritative in WSL; the Windows commands go through `scripts/windows-build`, documented in the [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) (the link resolves once that repo is published).
+Source is authoritative in WSL, with submodules initialised (`git submodule update --init`). Setup is in `docs/development.md`; the Windows commands go through `scripts/windows-build` (see the build tools README in the guidance map).
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |
@@ -59,10 +59,15 @@ Clone with `--recurse-submodules` (or run `git submodule update --init`) so `ext
 | `npm run package:desktop` | An unsigned Store package builds, manifest strings resolved for every language | Signing; that it runs |
 | `npm run check:l10n` | Every catalog has the same keys and placeholders, no em dashes, and the manifest languages match | That the text is translated well |
 | `npm test` | Every portable harness under `tests/` passes on Linux (host .NET SDK or Docker): today the distro state rules | Anything that needs WSL, Windows or the installed app; each harness README says what it leaves out |
-| `npm run validate` | The whole Linux gate passes: `format:check`, `check:l10n`, then `npm test` | A Windows compile; also run `verify:desktop` |
-| `npm run format` | Rewrites every C# project (not `external/`) to the root `.editorconfig`, which is winui-app-kit's copied unchanged | Behaviour; review the diff |
+| `npm run check:listing` | Listing text and the current version's notes fit the Store's limits; the README tagline matches | That the listing is live or accurate |
+| `npm run validate` | The whole Linux gate passes: `format:check`, `check:l10n`, `check:listing`, then `npm test` | A Windows compile; also run `verify:desktop` |
+| `npm run format` | Rewrites every C# project (not `external/`) to the root `.editorconfig` (the kit's, unchanged) | Behaviour; review the diff |
 
 Before finishing a change, run `npm run validate` and `npm run verify:desktop`. Use the `desktop` skill for build and install requests.
+
+## Release
+
+Releases are tag-driven: a `v*` tag makes `build-msix.yml` run the gate, build both architectures as a check, and create a notes-only GitHub Release (WSL Monitor is a paid Store app, so no package is attached). Store submission is manual for now. Use the `release` skill.
 
 ## Guidance map
 
@@ -72,14 +77,15 @@ Before finishing a change, run `npm run validate` and `npm run verify:desktop`. 
 | [.agents/guides/ui-conventions.md](.agents/guides/ui-conventions.md) | Any window, page, flyout, row or card | `WslMonitor/**/*.xaml(.cs)`, `WslMonitor/Controls/**` |
 | [WinUI App Kit `AGENTS.md`](external/winui-app-kit/AGENTS.md) | Using the kit's tray, flyout, settings, startup, theme or localization APIs | `external/winui-app-kit/**` (read only) |
 | [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) | A Windows build, install or packaging problem | `scripts/windows-build`, `windows-build.json` |
+| [store-assets/microsoft/listings.md](store-assets/microsoft/listings.md) | Changing Store listing text or anything a listing claim depends on | `store-assets/microsoft/**` |
 | `desktop` skill | Building, verifying or installing locally | Local Windows builds |
+| `release` skill | Cutting a release | `Directory.Build.props`, `release-notes/**`, tags |
 
 ## Keeping docs current
 
 | What changed | Update |
 | --- | --- |
 | A file, service or control added, moved or removed | The Architecture table above |
-| Product behaviour users can see (Start, Stop, Shut down WSL, tray, languages) | Behaviour above, `README.md` Features |
 | A UI pattern, shared style or control | `.agents/guides/ui-conventions.md` |
 | An npm command | The Commands table above, `docs/development.md`, the `desktop` skill, `paseo.json` |
 | Where the app writes data, or a new kind of data | The data table in `docs/development.md` |
@@ -88,4 +94,6 @@ Before finishing a change, run `npm run validate` and `npm run verify:desktop`. 
 | A test harness added or changed | Its README; `npm test` finds it by itself |
 | winui-app-kit pin bumped | Copy the kit's `.editorconfig` at that tag unchanged, then `npm run format` |
 | A language or catalog rule | Conventions above, `scripts/check-localization.py` |
+| A feature, requirement, language or privacy behaviour users can see | Behaviour above, `README.md`, `store-assets/microsoft/listings.json` and the claims in `listings.md` |
+| Release workflow or packaging | The `release` skill and the Releases section of `docs/development.md` |
 | A guide or skill moved or removed | The guidance map above and every skill that names it |

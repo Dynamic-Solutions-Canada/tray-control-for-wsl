@@ -1,0 +1,256 @@
+{
+  "schemaVersion": 1,
+  "locales": {
+    "en-US": {
+      "title": "WSL Monitor",
+      "shortDescription": "See at a glance which of your WSL distros are running, and start or stop them from the Windows tray. Distros that use systemd stop cleanly, and Shut down WSL frees its memory in one go.",
+      "fullDescription": "WSL distros keep running in the background long after the terminal that started them is closed, and Windows gives no sign of which ones are up. WSL Monitor puts that answer in the tray: one look shows what is running, and one click starts or stops a distro, without typing wsl commands.\n\nIn the tray\n• A green dot on the icon means at least one distro is running, amber means one is starting or stopping, and no dot means nothing is running. Hover for a summary.\n• Click the icon for a list of your distros, each with a Start or Stop button.\n• Right-click to open the window, settings or the logs folder, or to exit.\n\nStops that don't lose your work\n• Stop asks for a second click, so a stray click can't end what is running in a distro.\n• Distros that use systemd (Ubuntu's default) shut down cleanly: services stop in order and programs get a chance to exit.\n• If a distro hasn't stopped after 2 minutes, you can force it, again with a second click.\n• Shut down WSL stops every running distro cleanly, asks before forcing any that won't stop, then shuts down WSL's virtual machine to free its memory.\n\nDetails for each distro\nThe details window has an overview of all your distros and a page for each one, with its WSL version, location and disk size, shortcuts to a terminal or its files, and a button to make it the default. The overview also explains WSL's idle timeout, which decides whether a distro you start keeps running with nothing open in it.\n\nYour language\nUse WSL Monitor in English, Spanish, French, German, Simplified Chinese, Brazilian Portuguese or Japanese. It follows your Windows language, or choose one in Settings, along with light or dark theme and starting with Windows.\n\nGood to know\nWSL Monitor needs WSL with at least one installed distro. Docker Desktop's own distros are hidden unless you turn them on in Settings, because Docker Desktop manages them itself. The app has no account, no ads and no tracking, and your settings and logs stay on your PC. The \"Our other apps\" page downloads a public list of our apps from GitHub when you open it.",
+      "features": [
+        "See which WSL distros are running from a colored dot on the tray icon.",
+        "Start or stop any distro from the tray with a click.",
+        "Stop asks for a second click, so a stray click can't end your work.",
+        "Distros that use systemd shut down cleanly, with services stopped in order.",
+        "Force stop a distro that hasn't stopped after 2 minutes.",
+        "Shut down WSL: stop every distro cleanly, then free WSL's memory.",
+        "A page per distro with its WSL version, location and disk size.",
+        "Open a terminal or a distro's files, or make it the default distro.",
+        "See how WSL's idle timeout affects distros you start.",
+        "Docker Desktop's own distros stay hidden unless you want them.",
+        "Starts with Windows, in light or dark theme.",
+        "In English, Spanish, French, German, Simplified Chinese, Brazilian Portuguese and Japanese.",
+        "No account, no ads, no tracking."
+      ],
+      "keywords": [
+        "WSL",
+        "Windows Subsystem for Linux",
+        "Linux distro",
+        "WSL manager",
+        "tray",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "The tray list: every distro with a Start or Stop button.",
+        "Stop asks for a second click before it ends a distro.",
+        "The overview: your distros, Shut down WSL and the idle timeout.",
+        "A distro's page: version, location, disk size and shortcuts."
+      ]
+    },
+    "en-CA": {
+      "copyFrom": "en-US"
+    },
+    "es-ES": {
+      "title": "WSL Monitor",
+      "shortDescription": "Consulta de un vistazo qué distribuciones de WSL están en ejecución, e inícialas o detenlas desde la bandeja del sistema. Las distribuciones con systemd se detienen de forma limpia, y Apagar WSL libera su memoria de una vez.",
+      "fullDescription": "Las distribuciones de WSL siguen ejecutándose en segundo plano mucho después de cerrar el terminal que las inició, y Windows no indica cuáles están activas. WSL Monitor pone esa respuesta en la bandeja del sistema: un vistazo muestra lo que se está ejecutando y un clic inicia o detiene una distribución, sin escribir comandos wsl.\n\nEn la bandeja del sistema\n• Un punto verde en el icono significa que al menos una distribución está en ejecución, ámbar que una se está iniciando o deteniendo, y sin punto que no hay nada en ejecución. Pasa el puntero por encima para ver un resumen.\n• Haz clic en el icono para ver la lista de tus distribuciones, cada una con un botón Iniciar o Detener.\n• Haz clic con el botón derecho para abrir la ventana, la configuración o la carpeta de registros, o para salir.\n\nDetenciones que no te hacen perder el trabajo\n• Detener pide un segundo clic, para que un clic accidental no termine lo que se ejecuta en una distribución.\n• Las distribuciones que usan systemd (la opción predeterminada de Ubuntu) se apagan de forma limpia: los servicios se detienen en orden y los programas tienen tiempo de cerrarse.\n• Si una distribución no se ha detenido después de 2 minutos, puedes forzar la detención, también con un segundo clic.\n• Apagar WSL detiene de forma limpia todas las distribuciones en ejecución, pregunta antes de forzar las que no se detienen y después apaga la máquina virtual de WSL para liberar su memoria.\n\nDetalles de cada distribución\nLa ventana de detalles tiene un resumen de todas tus distribuciones y una página para cada una, con su versión de WSL, su ubicación y el tamaño de su disco, accesos directos a un terminal o a sus archivos, y un botón para convertirla en la predeterminada. El resumen también explica el tiempo de inactividad de WSL, que decide si una distribución que inicias sigue en ejecución sin nada abierto.\n\nTu idioma\nUsa WSL Monitor en inglés, español, francés, alemán, chino simplificado, portugués de Brasil o japonés. Sigue el idioma de Windows, o elige uno en la configuración, junto con el tema claro u oscuro y el inicio con Windows.\n\nInformación útil\nWSL Monitor necesita WSL con al menos una distribución instalada. Las distribuciones propias de Docker Desktop están ocultas a menos que las muestres en la configuración, porque Docker Desktop las administra por su cuenta. La aplicación no tiene cuentas, ni anuncios, ni seguimiento, y tu configuración y tus registros se quedan en tu PC. La página «Nuestras otras aplicaciones» descarga de GitHub una lista pública de nuestras aplicaciones cuando la abres.",
+      "features": [
+        "Consulta qué distribuciones de WSL están en ejecución con un punto de color en el icono.",
+        "Inicia o detén cualquier distribución desde la bandeja del sistema con un clic.",
+        "Detener pide un segundo clic, para que un clic accidental no termine tu trabajo.",
+        "Las distribuciones con systemd se apagan de forma limpia, con los servicios detenidos en orden.",
+        "Fuerza la detención de una distribución que no se ha detenido después de 2 minutos.",
+        "Apagar WSL: detiene todas las distribuciones de forma limpia y libera la memoria de WSL.",
+        "Una página por distribución con su versión de WSL, ubicación y tamaño del disco.",
+        "Abre un terminal o los archivos de una distribución, o conviértela en la predeterminada.",
+        "Descubre cómo afecta el tiempo de inactividad de WSL a las distribuciones que inicias.",
+        "Las distribuciones propias de Docker Desktop siguen ocultas, salvo que las quieras ver.",
+        "Se inicia con Windows, con tema claro u oscuro.",
+        "En inglés, español, francés, alemán, chino simplificado, portugués de Brasil y japonés.",
+        "Sin cuentas, sin anuncios, sin seguimiento."
+      ],
+      "keywords": [
+        "WSL",
+        "Subsistema de Windows para Linux",
+        "distribución Linux",
+        "administrador de WSL",
+        "bandeja del sistema",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "La lista de la bandeja: cada distribución con un botón Iniciar o Detener.",
+        "Detener pide un segundo clic antes de terminar una distribución.",
+        "El resumen: tus distribuciones, Apagar WSL y el tiempo de inactividad.",
+        "La página de una distribución: versión, ubicación, tamaño del disco y accesos directos."
+      ]
+    },
+    "fr-FR": {
+      "title": "WSL Monitor",
+      "shortDescription": "Voyez en un coup d’œil quelles distributions WSL sont en cours d’exécution, et démarrez-les ou arrêtez-les depuis la zone de notification. Les distributions avec systemd s’arrêtent proprement, et Arrêter WSL libère sa mémoire d’un coup.",
+      "fullDescription": "Les distributions WSL continuent de tourner en arrière-plan bien après la fermeture du terminal qui les a lancées, et Windows n’indique pas lesquelles sont actives. WSL Monitor place cette réponse dans la zone de notification : un coup d’œil montre ce qui est en cours d’exécution, et un clic démarre ou arrête une distribution, sans taper de commandes wsl.\n\nDans la zone de notification\n• Un point vert sur l’icône signifie qu’au moins une distribution est en cours d’exécution, orange qu’une distribution démarre ou s’arrête, et aucun point que rien ne tourne. Survolez l’icône pour un résumé.\n• Cliquez sur l’icône pour la liste de vos distributions, chacune avec un bouton Démarrer ou Arrêter.\n• Cliquez avec le bouton droit pour ouvrir la fenêtre, les paramètres ou le dossier des journaux, ou pour quitter.\n\nDes arrêts qui ne font pas perdre votre travail\n• Arrêter demande un second clic, pour qu’un clic involontaire n’interrompe pas ce qui tourne dans une distribution.\n• Les distributions qui utilisent systemd (par défaut sur Ubuntu) s’arrêtent proprement : les services s’arrêtent dans l’ordre et les programmes ont le temps de se fermer.\n• Si une distribution n’est pas arrêtée au bout de 2 minutes, vous pouvez forcer l’arrêt, là aussi avec un second clic.\n• Arrêter WSL arrête proprement chaque distribution en cours d’exécution, demande avant de forcer celles qui ne s’arrêtent pas, puis arrête la machine virtuelle de WSL pour libérer sa mémoire.\n\nLes détails de chaque distribution\nLa fenêtre de détails propose une vue d’ensemble de toutes vos distributions et une page pour chacune, avec sa version de WSL, son emplacement et la taille de son disque, des raccourcis vers un terminal ou ses fichiers, et un bouton pour en faire la distribution par défaut. La vue d’ensemble explique aussi le délai d’inactivité de WSL, qui décide si une distribution que vous démarrez reste active sans rien d’ouvert.\n\nVotre langue\nUtilisez WSL Monitor en anglais, espagnol, français, allemand, chinois simplifié, portugais du Brésil ou japonais. L’application suit la langue de Windows, ou choisissez-en une dans les paramètres, ainsi que le thème clair ou sombre et le démarrage avec Windows.\n\nBon à savoir\nWSL Monitor nécessite WSL avec au moins une distribution installée. Les distributions propres à Docker Desktop sont masquées sauf si vous les affichez dans les paramètres, car Docker Desktop les gère lui-même. L’application n’a ni compte, ni publicité, ni suivi, et vos paramètres et journaux restent sur votre PC. La page « Nos autres applications » télécharge depuis GitHub une liste publique de nos applications quand vous l’ouvrez.",
+      "features": [
+        "Voyez quelles distributions WSL tournent grâce à un point de couleur sur l’icône.",
+        "Démarrez ou arrêtez n’importe quelle distribution d’un clic depuis la zone de notification.",
+        "Arrêter demande un second clic, pour qu’un clic involontaire n’interrompe pas votre travail.",
+        "Les distributions avec systemd s’arrêtent proprement, services arrêtés dans l’ordre.",
+        "Forcez l’arrêt d’une distribution qui ne s’est pas arrêtée au bout de 2 minutes.",
+        "Arrêter WSL : arrête proprement chaque distribution, puis libère la mémoire de WSL.",
+        "Une page par distribution avec sa version de WSL, son emplacement et la taille de son disque.",
+        "Ouvrez un terminal ou les fichiers d’une distribution, ou faites-en la distribution par défaut.",
+        "Comprenez l’effet du délai d’inactivité de WSL sur les distributions que vous démarrez.",
+        "Les distributions propres à Docker Desktop restent masquées, sauf si vous les voulez.",
+        "Démarre avec Windows, en thème clair ou sombre.",
+        "En anglais, espagnol, français, allemand, chinois simplifié, portugais du Brésil et japonais.",
+        "Ni compte, ni publicité, ni suivi."
+      ],
+      "keywords": [
+        "WSL",
+        "Sous-système Windows pour Linux",
+        "distribution Linux",
+        "gestionnaire WSL",
+        "zone de notification",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "La liste de la zone de notification : chaque distribution avec un bouton Démarrer ou Arrêter.",
+        "Arrêter demande un second clic avant d’arrêter une distribution.",
+        "La vue d’ensemble : vos distributions, Arrêter WSL et le délai d’inactivité.",
+        "La page d’une distribution : version, emplacement, taille du disque et raccourcis."
+      ]
+    },
+    "fr-CA": {
+      "copyFrom": "fr-FR"
+    },
+    "de-DE": {
+      "title": "WSL Monitor",
+      "shortDescription": "Sieh auf einen Blick, welche WSL-Distributionen laufen, und starte oder beende sie im Infobereich der Taskleiste. Distributionen mit systemd werden sauber heruntergefahren, und WSL herunterfahren gibt den Arbeitsspeicher auf einmal frei.",
+      "fullDescription": "WSL-Distributionen laufen im Hintergrund weiter, lange nachdem das Terminal geschlossen ist, das sie gestartet hat, und Windows zeigt nicht an, welche aktiv sind. WSL Monitor bringt diese Antwort in den Infobereich: Ein Blick zeigt, was läuft, und ein Klick startet oder beendet eine Distribution, ohne wsl-Befehle einzutippen.\n\nIm Infobereich\n• Ein grüner Punkt am Symbol bedeutet, dass mindestens eine Distribution läuft, Gelb, dass eine gerade startet oder beendet wird, und kein Punkt, dass nichts läuft. Zeige auf das Symbol, um eine Zusammenfassung zu sehen.\n• Klicke auf das Symbol, um die Liste deiner Distributionen zu sehen, jede mit einer Schaltfläche Starten oder Beenden.\n• Klicke mit der rechten Maustaste, um das Fenster, die Einstellungen oder den Protokollordner zu öffnen oder die App zu beenden.\n\nBeenden, ohne Arbeit zu verlieren\n• Beenden verlangt einen zweiten Klick, damit ein versehentlicher Klick nicht beendet, was in einer Distribution läuft.\n• Distributionen mit systemd (Standard bei Ubuntu) werden sauber heruntergefahren: Dienste stoppen in der richtigen Reihenfolge, und Programme haben Zeit, sich zu schließen.\n• Ist eine Distribution nach 2 Minuten noch nicht beendet, kannst du das Beenden erzwingen, ebenfalls mit einem zweiten Klick.\n• WSL herunterfahren fährt alle laufenden Distributionen sauber herunter, fragt nach, bevor es hängende Distributionen erzwungen beendet, und beendet danach die virtuelle Maschine von WSL, um ihren Arbeitsspeicher freizugeben.\n\nDetails zu jeder Distribution\nDas Detailfenster bietet eine Übersicht über alle deine Distributionen und eine Seite für jede einzelne, mit WSL-Version, Speicherort und Datenträgergröße, Verknüpfungen zu einem Terminal oder ihren Dateien und einer Schaltfläche, um sie zur Standarddistribution zu machen. Die Übersicht erklärt auch das Leerlauf-Timeout von WSL, das bestimmt, ob eine gestartete Distribution weiterläuft, wenn nichts in ihr geöffnet ist.\n\nDeine Sprache\nNutze WSL Monitor auf Englisch, Spanisch, Französisch, Deutsch, vereinfachtem Chinesisch, brasilianischem Portugiesisch oder Japanisch. Die App folgt der Sprache von Windows, oder du wählst eine in den Einstellungen, zusammen mit hellem oder dunklem Design und dem Start mit Windows.\n\nGut zu wissen\nWSL Monitor benötigt WSL mit mindestens einer installierten Distribution. Die internen Distributionen von Docker Desktop sind ausgeblendet, sofern du sie nicht in den Einstellungen einblendest, da Docker Desktop sie selbst verwaltet. Die App hat kein Konto, keine Werbung und kein Tracking, und deine Einstellungen und Protokolle bleiben auf deinem PC. Die Seite „Unsere anderen Apps“ lädt beim Öffnen eine öffentliche Liste unserer Apps von GitHub.",
+      "features": [
+        "Sieh an einem farbigen Punkt am Symbol, welche WSL-Distributionen laufen.",
+        "Starte oder beende jede Distribution mit einem Klick im Infobereich.",
+        "Beenden verlangt einen zweiten Klick, damit ein versehentlicher Klick deine Arbeit nicht beendet.",
+        "Distributionen mit systemd werden sauber heruntergefahren, Dienste in der richtigen Reihenfolge.",
+        "Erzwinge das Beenden einer Distribution, die nach 2 Minuten noch läuft.",
+        "WSL herunterfahren: alle Distributionen sauber beenden, dann den Arbeitsspeicher von WSL freigeben.",
+        "Eine Seite pro Distribution mit WSL-Version, Speicherort und Datenträgergröße.",
+        "Öffne ein Terminal oder die Dateien einer Distribution, oder mach sie zur Standarddistribution.",
+        "Sieh, wie sich das Leerlauf-Timeout von WSL auf gestartete Distributionen auswirkt.",
+        "Die internen Distributionen von Docker Desktop bleiben ausgeblendet, wenn du sie nicht brauchst.",
+        "Startet mit Windows, in hellem oder dunklem Design.",
+        "Auf Englisch, Spanisch, Französisch, Deutsch, vereinfachtem Chinesisch, brasilianischem Portugiesisch und Japanisch.",
+        "Kein Konto, keine Werbung, kein Tracking."
+      ],
+      "keywords": [
+        "WSL",
+        "Windows-Subsystem für Linux",
+        "Linux-Distribution",
+        "WSL-Verwaltung",
+        "Infobereich",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "Die Liste im Infobereich: jede Distribution mit einer Schaltfläche Starten oder Beenden.",
+        "Beenden verlangt einen zweiten Klick, bevor eine Distribution beendet wird.",
+        "Die Übersicht: deine Distributionen, WSL herunterfahren und das Leerlauf-Timeout.",
+        "Die Seite einer Distribution: Version, Speicherort, Datenträgergröße und Verknüpfungen."
+      ]
+    },
+    "zh-CN": {
+      "title": "WSL Monitor",
+      "shortDescription": "一眼看出哪些 WSL 发行版正在运行，并从系统托盘启动或停止它们。使用 systemd 的发行版会正常停止，“关闭 WSL”可一次性释放其内存。",
+      "fullDescription": "WSL 发行版在启动它们的终端关闭后，仍会在后台长时间运行，而 Windows 不会显示哪些正在运行。WSL Monitor 把答案放在系统托盘中：看一眼就知道哪些正在运行，单击即可启动或停止发行版，无需输入 wsl 命令。\n\n在系统托盘中\n• 图标上的绿点表示至少有一个发行版正在运行，琥珀色表示有发行版正在启动或停止，没有点表示没有任何发行版在运行。将指针悬停在图标上可查看摘要。\n• 单击图标可查看发行版列表，每个发行版都有“启动”或“停止”按钮。\n• 右键单击可打开窗口、设置或日志文件夹，或退出应用。\n\n停止时不丢失工作\n• “停止”需要再次单击确认，误点不会结束发行版中正在运行的内容。\n• 使用 systemd 的发行版（Ubuntu 的默认设置）会正常关闭：服务按顺序停止，程序有时间退出。\n• 如果发行版在 2 分钟后仍未停止，你可以强制停止，同样需要再次单击确认。\n• “关闭 WSL”会正常停止所有正在运行的发行版，在强制停止无法停止的发行版之前先询问你，然后关闭 WSL 的虚拟机以释放其内存。\n\n每个发行版的详细信息\n详细信息窗口提供所有发行版的概览，并为每个发行版提供单独的页面，显示其 WSL 版本、位置和磁盘大小，提供打开终端或其文件的快捷方式，以及将其设为默认发行版的按钮。概览还会说明 WSL 的空闲超时，它决定你启动的发行版在没有打开任何内容时是否继续运行。\n\n你的语言\nWSL Monitor 支持英语、西班牙语、法语、德语、简体中文、巴西葡萄牙语和日语。它跟随 Windows 的语言，你也可以在设置中选择语言，以及浅色或深色主题和随 Windows 启动。\n\n须知\nWSL Monitor 需要 WSL 和至少一个已安装的发行版。Docker Desktop 的内部发行版由 Docker Desktop 自行管理，因此除非你在设置中开启，否则会被隐藏。应用没有账户、广告和跟踪，你的设置和日志保存在你的电脑上。“我们的其他应用”页面在打开时会从 GitHub 下载我们应用的公开列表。",
+      "features": [
+        "通过托盘图标上的彩色圆点查看哪些 WSL 发行版正在运行。",
+        "在系统托盘中单击即可启动或停止任何发行版。",
+        "“停止”需要再次单击确认，误点不会中断你的工作。",
+        "使用 systemd 的发行版会按顺序停止服务，正常关闭。",
+        "强制停止 2 分钟后仍未停止的发行版。",
+        "关闭 WSL：正常停止所有发行版，然后释放 WSL 的内存。",
+        "每个发行版都有单独页面，显示 WSL 版本、位置和磁盘大小。",
+        "打开终端或发行版的文件，或将其设为默认发行版。",
+        "了解 WSL 空闲超时对你启动的发行版有何影响。",
+        "Docker Desktop 的内部发行版默认隐藏，需要时再显示。",
+        "随 Windows 启动，支持浅色和深色主题。",
+        "支持英语、西班牙语、法语、德语、简体中文、巴西葡萄牙语和日语。",
+        "无账户、无广告、无跟踪。"
+      ],
+      "keywords": [
+        "WSL",
+        "适用于 Linux 的 Windows 子系统",
+        "Linux 发行版",
+        "WSL 管理器",
+        "系统托盘",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "托盘列表：每个发行版都有“启动”或“停止”按钮。",
+        "“停止”在结束发行版之前需要再次单击确认。",
+        "概览：你的发行版、关闭 WSL 和空闲超时。",
+        "发行版页面：版本、位置、磁盘大小和快捷方式。"
+      ]
+    },
+    "pt-BR": {
+      "title": "WSL Monitor",
+      "shortDescription": "Veja num relance quais distribuições do WSL estão em execução e inicie ou pare-as pela bandeja do sistema. Distribuições com systemd param corretamente, e Desligar o WSL libera a memória de uma vez.",
+      "fullDescription": "As distribuições do WSL continuam em execução em segundo plano muito depois de o terminal que as iniciou ser fechado, e o Windows não mostra quais estão ativas. O WSL Monitor coloca essa resposta na bandeja do sistema: um olhar mostra o que está em execução, e um clique inicia ou para uma distribuição, sem digitar comandos wsl.\n\nNa bandeja do sistema\n• Um ponto verde no ícone significa que pelo menos uma distribuição está em execução, âmbar que uma está iniciando ou parando, e nenhum ponto que nada está em execução. Passe o ponteiro sobre o ícone para ver um resumo.\n• Clique no ícone para ver a lista das suas distribuições, cada uma com um botão Iniciar ou Parar.\n• Clique com o botão direito para abrir a janela, as configurações ou a pasta de logs, ou para sair.\n\nParadas que não fazem você perder trabalho\n• Parar pede um segundo clique, para que um clique acidental não encerre o que está em execução numa distribuição.\n• Distribuições que usam o systemd (o padrão do Ubuntu) desligam corretamente: os serviços param na ordem certa e os programas têm tempo para fechar.\n• Se uma distribuição não parar depois de 2 minutos, você pode forçar a parada, também com um segundo clique.\n• Desligar o WSL para corretamente todas as distribuições em execução, pergunta antes de forçar as que não param e depois desliga a máquina virtual do WSL para liberar a memória.\n\nDetalhes de cada distribuição\nA janela de detalhes tem uma visão geral de todas as suas distribuições e uma página para cada uma, com a versão do WSL, o local e o tamanho do disco, atalhos para um terminal ou para os arquivos dela, e um botão para torná-la a padrão. A visão geral também explica o tempo limite de inatividade do WSL, que decide se uma distribuição iniciada continua em execução sem nada aberto.\n\nSeu idioma\nUse o WSL Monitor em inglês, espanhol, francês, alemão, chinês simplificado, português do Brasil ou japonês. Ele segue o idioma do Windows, ou escolha um nas configurações, junto com o tema claro ou escuro e a inicialização com o Windows.\n\nBom saber\nO WSL Monitor precisa do WSL com pelo menos uma distribuição instalada. As distribuições internas do Docker Desktop ficam ocultas, a menos que você as mostre nas configurações, porque o Docker Desktop as gerencia por conta própria. O aplicativo não tem conta, anúncios nem rastreamento, e suas configurações e logs ficam no seu PC. A página \"Nossos outros aplicativos\" baixa do GitHub uma lista pública dos nossos aplicativos quando você a abre.",
+      "features": [
+        "Veja quais distribuições do WSL estão em execução por um ponto colorido no ícone.",
+        "Inicie ou pare qualquer distribuição pela bandeja do sistema com um clique.",
+        "Parar pede um segundo clique, para que um clique acidental não encerre seu trabalho.",
+        "Distribuições com systemd desligam corretamente, com os serviços parados na ordem certa.",
+        "Force a parada de uma distribuição que não parou depois de 2 minutos.",
+        "Desligar o WSL: para todas as distribuições corretamente e depois libera a memória do WSL.",
+        "Uma página por distribuição com a versão do WSL, o local e o tamanho do disco.",
+        "Abra um terminal ou os arquivos de uma distribuição, ou torne-a a distribuição padrão.",
+        "Entenda como o tempo limite de inatividade do WSL afeta as distribuições que você inicia.",
+        "As distribuições internas do Docker Desktop ficam ocultas, a menos que você queira vê-las.",
+        "Inicia com o Windows, com tema claro ou escuro.",
+        "Em inglês, espanhol, francês, alemão, chinês simplificado, português do Brasil e japonês.",
+        "Sem conta, sem anúncios, sem rastreamento."
+      ],
+      "keywords": [
+        "WSL",
+        "Subsistema do Windows para Linux",
+        "distribuição Linux",
+        "gerenciador do WSL",
+        "bandeja do sistema",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "A lista na bandeja: cada distribuição com um botão Iniciar ou Parar.",
+        "Parar pede um segundo clique antes de encerrar uma distribuição.",
+        "A visão geral: suas distribuições, Desligar o WSL e o tempo limite de inatividade.",
+        "A página de uma distribuição: versão, local, tamanho do disco e atalhos."
+      ]
+    },
+    "ja-JP": {
+      "title": "WSL Monitor",
+      "shortDescription": "実行中の WSL ディストリビューションがひと目でわかり、システム トレイから起動や停止ができます。systemd を使うディストリビューションは正常に停止し、「WSL をシャットダウン」でメモリをまとめて解放できます。",
+      "fullDescription": "WSL ディストリビューションは、起動したターミナルを閉じた後もバックグラウンドで実行され続けますが、Windows はどれが動いているかを表示しません。WSL Monitor はその答えをシステム トレイに表示します。ひと目で実行中のものがわかり、wsl コマンドを入力しなくても、クリック 1 回でディストリビューションを起動または停止できます。\n\nシステム トレイで\n• アイコンの緑の点は 1 つ以上のディストリビューションが実行中、黄色の点は起動中または停止中、点なしは何も実行されていないことを表します。ポインターを合わせると概要が表示されます。\n• アイコンをクリックすると、ディストリビューションの一覧が [起動] または [停止] ボタン付きで表示されます。\n• 右クリックすると、ウィンドウ、設定、ログ フォルダーを開いたり、終了したりできます。\n\n作業を失わない停止\n• [停止] は 2 回目のクリックで確定するため、誤ったクリックでディストリビューション内の作業が終了することはありません。\n• systemd を使うディストリビューション (Ubuntu の既定) は正常にシャットダウンします。サービスは順番に停止し、プログラムには終了する時間があります。\n• 2 分たっても停止しない場合は、強制停止できます。こちらも 2 回目のクリックで確定します。\n• 「WSL をシャットダウン」は、実行中のディストリビューションをすべて正常に停止し、停止しないものは強制する前に確認してから、WSL の仮想マシンをシャットダウンしてメモリを解放します。\n\n各ディストリビューションの詳細\n詳細ウィンドウには、すべてのディストリビューションの概要と、それぞれのページがあります。WSL のバージョン、場所、ディスク サイズ、ターミナルやファイルへのショートカット、既定のディストリビューションにするボタンが表示されます。概要では、起動したディストリビューションが何も開いていない状態で実行を続けるかどうかを決める、WSL のアイドル タイムアウトについても説明しています。\n\nお使いの言語で\nWSL Monitor は英語、スペイン語、フランス語、ドイツ語、簡体字中国語、ブラジル ポルトガル語、日本語で使えます。Windows の言語に従うほか、設定で言語を選べます。ライト テーマとダーク テーマ、Windows の起動時に開始する設定もあります。\n\nご注意\nWSL Monitor を使うには、WSL と 1 つ以上のインストール済みディストリビューションが必要です。Docker Desktop の内部ディストリビューションは Docker Desktop が自動で管理するため、設定で表示しない限り非表示です。アカウント、広告、トラッキングはなく、設定とログは PC に保存されます。「その他のアプリ」ページは、開いたときに当社のアプリの公開リストを GitHub からダウンロードします。",
+      "features": [
+        "トレイ アイコンの色付きの点で、実行中の WSL ディストリビューションがわかります。",
+        "システム トレイからクリック 1 回でディストリビューションを起動または停止できます。",
+        "停止は 2 回目のクリックで確定するため、誤ったクリックで作業が終了しません。",
+        "systemd を使うディストリビューションは、サービスを順番に止めて正常にシャットダウンします。",
+        "2 分たっても停止しないディストリビューションは強制停止できます。",
+        "WSL をシャットダウン: すべてのディストリビューションを正常に停止してから WSL のメモリを解放します。",
+        "ディストリビューションごとのページに WSL のバージョン、場所、ディスク サイズを表示します。",
+        "ターミナルやディストリビューションのファイルを開いたり、既定のディストリビューションにしたりできます。",
+        "WSL のアイドル タイムアウトが起動したディストリビューションにどう影響するかがわかります。",
+        "Docker Desktop の内部ディストリビューションは、必要なとき以外は非表示です。",
+        "Windows の起動時に開始し、ライト テーマとダーク テーマに対応します。",
+        "英語、スペイン語、フランス語、ドイツ語、簡体字中国語、ブラジル ポルトガル語、日本語に対応しています。",
+        "アカウント、広告、トラッキングはありません。"
+      ],
+      "keywords": [
+        "WSL",
+        "Windows Subsystem for Linux",
+        "Linux ディストリビューション",
+        "WSL 管理",
+        "システム トレイ",
+        "Ubuntu",
+        "systemd"
+      ],
+      "screenshotCaptions": [
+        "トレイの一覧: 各ディストリビューションに [起動] または [停止] ボタンがあります。",
+        "ディストリビューションを停止する前に、[停止] は 2 回目のクリックを求めます。",
+        "概要: ディストリビューション、WSL のシャットダウン、アイドル タイムアウト。",
+        "ディストリビューションのページ: バージョン、場所、ディスク サイズ、ショートカット。"
+      ]
+    }
+  }
+}

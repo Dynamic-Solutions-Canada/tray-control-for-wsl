@@ -31,6 +31,7 @@ Never uninstall to get past an update error.
 
 - `npm run format:check`: every C# project outside `external/` matches the root `.editorconfig`, which is winui-app-kit's file copied unchanged from the tag the app pins; never hand-edit it. `npm run format` rewrites the files.
 - `npm run check:l10n`: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs.
+- `npm run check:listing`: the Store listing text and the current version's release notes fit the Store's limits and match the README tagline.
 - `npm test`: every portable harness under `tests/`, found by `scripts/run-tests` without a hand-kept list. Each has a README saying what it covers and does not prove. Today there is one, for the distro state rules.
 
 Formatting and tests run through `scripts/dotnet`, which uses the .NET SDK pinned in `global.json` when it is installed and otherwise its Docker image, capped at 3 GB (`KIT_DOTNET_MEMORY`). Run them as a non-root user. Run `npm run validate` and `npm run verify:desktop` before finishing a change.
@@ -55,7 +56,15 @@ The harness cannot see the screen, WSL or Windows. Before a release, install the
 
 ## Releases
 
-There is no release process yet. The app is not yet in the Microsoft Store, and its package identity is a placeholder until the name is reserved.
+Releases follow the `release` skill ([.agents/skills/release/SKILL.md](../.agents/skills/release/SKILL.md)). In short:
+
+1. Write the notes for the new version as user-facing bullets in `release-notes/<version>.md`, plus one translated file per other wording catalog, and get them approved before anything else changes.
+2. Set `<Version>` in `Directory.Build.props`, run `npm run validate` and `npm run verify:desktop`, and commit the version and notes together as `Bump version to v<version>`.
+3. Tag `v<version>` (annotated) and push the branch and tag together.
+4. The "Build and Package" workflow (`build-msix.yml`) runs the gate, builds x64 and ARM64 packages as a check, and creates the GitHub Release from the notes. The Release carries no package: WSL Monitor is a paid Microsoft Store app, so the Store is the only download.
+5. Submit the version in Partner Center, using the notes files as each locale's "What's new". Store submission is not automated yet.
+
+The Store listing text is in `store-assets/microsoft/listings.json`, with its limits, the claims it must keep true and the console-only fields in [listings.md](../store-assets/microsoft/listings.md). `npm run check:listing` checks it and the current version's notes.
 
 ## Where the app stores data
 
@@ -63,7 +72,7 @@ WSL Monitor collects no telemetry or crash reports. It reads WSL's distro list f
 
 The one network request is the "Our other apps" page: when it opens, it downloads the app catalogue (`apps.json`) and its icons from the apps-promo repository on GitHub (`raw.githubusercontent.com`), so GitHub sees the request's IP address. Nothing about the user or their distros is sent.
 
-One action changes a system setting outside the app: "Set as default" on a distro's page runs `wsl --set-default`, which changes WSL's default distro for every program, not just this app. It stays changed after uninstall.
+One action changes a system setting outside the app: "Make default" on a distro's page runs `wsl --set-default`, which changes WSL's default distro for every program, not just this app. It stays changed after uninstall.
 
 It writes:
 

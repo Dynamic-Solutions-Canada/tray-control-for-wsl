@@ -8,9 +8,10 @@
     "install:desktop": "scripts/windows-build --install",
     "package:desktop": "scripts/windows-build --no-sign",
     "test": "scripts/run-tests",
-    "validate": "npm run format:check && npm run check:l10n && npm test",
+    "validate": "npm run format:check && npm run check:l10n && npm run check:listing && npm test",
     "format": "scripts/format",
     "format:check": "scripts/format --check",
-    "check:l10n": "python3 scripts/check-localization.py"
+    "check:l10n": "python3 scripts/check-localization.py",
+    "check:listing": "python3 scripts/check-listing.py"
   }
 }

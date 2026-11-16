@@ -1,0 +1,141 @@
+name: Build and Package
+
+# Local copy of the shared MSIX build baseline (CI-10): the reusable workflow it will call does not
+# exist yet, so this file follows the baseline and is replaced by a call to it once it does.
+#
+# On a v* tag: run the gate (CI-4), build the x64 and ARM64 packages, then create the GitHub Release
+# from the committed notes (REL-5, REL-6). workflow_dispatch runs the gate and the build only.
+#
+# This workflow publishes no binaries anywhere, on purpose (DIST-5). WSL Monitor is a paid
+# Microsoft Store app in a public repo, and an Actions artifact or Release asset on a public repo can
+# be downloaded by anyone, so attaching a signed package would give the paid app away. The install
+# route is the Microsoft Store; anyone who wants to run it from source can build it themselves
+# (docs/development.md). Store submission is not automated yet.
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+# Creates a GitHub Release, so a run in progress is never cancelled.
+concurrency:
+  group: build-msix-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # CI-4: the same gate a developer runs, before anything is built or released. Its listing check
+  # also fails when the notes for the version in Directory.Build.props are missing or too long.
+  validate:
+    name: Validate (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Submodules too: `dotnet format` loads the app project, which references winui-app-kit.
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Validate
+        run: npm run validate
+
+  build:
+    name: Package (${{ matrix.platform }})
+    needs: validate
+    runs-on: windows-2025
+    # A self-contained publish, makepri, makeappx and signing; well under this on a warm runner.
+    timeout-minutes: 45
+    strategy:
+      matrix:
+        platform: [x64, ARM64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # Nothing from this build is published; it is the automated check that manifest stamping,
+      # makepri, makeappx and signing still work, so a packaging break shows up on the tag rather
+      # than at Store submission. It signs with a throwaway self-signed certificate made for this
+      # run, with a random password that is never stored (DIST-2).
+      - name: Build MSIX
+        shell: pwsh
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          $password = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+          Write-Host "::add-mask::$password"
+          $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=WslMonitor-CI" `
+            -KeyUsage DigitalSignature -CertStoreLocation "Cert:\CurrentUser\My" `
+            -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3")
+          $pfx = Join-Path $env:RUNNER_TEMP "ci-signing.pfx"
+          Export-PfxCertificate -Cert $cert -FilePath $pfx `
+            -Password (ConvertTo-SecureString -String $password -Force -AsPlainText) | Out-Null
+          Remove-Item "Cert:\CurrentUser\My\$($cert.Thumbprint)" -DeleteKey
+          & "WslMonitorMSIX/build-msix.ps1" -Platform $env:PLATFORM -TrustedPfxPath $pfx -TrustedPfxPassword $password
+          $buildExit = $LASTEXITCODE
+          Remove-Item $pfx -Force
+          if ($buildExit -ne 0) { Write-Error "build-msix failed"; exit 1 }
+
+  release:
+    name: Create GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    # A tag gets no Release if the packages it names do not build.
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # REL-1, REL-6: the tag must name the version in Directory.Build.props, and its notes must
+      # exist. Never fall back to commit subjects or generated notes.
+      - name: Read version and notes
+        id: notes
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' Directory.Build.props | head -1)"
+          if [ "${TAG}" != "v${VERSION}" ]; then
+            echo "::error::Tag ${TAG} does not match <Version>${VERSION}</Version> in Directory.Build.props"
+            exit 1
+          fi
+          NOTES="release-notes/${VERSION}.md"
+          if [ ! -s "${NOTES}" ]; then echo "::error::Missing release notes: ${NOTES}"; exit 1; fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          {
+            echo "body<<RELEASE_EOF"
+            cat "${NOTES}"
+            echo ""
+            echo "## Get it"
+            echo ""
+            echo "WSL Monitor is not in the Microsoft Store yet. Until it is, build and install it from source with the [development guide](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/development.md)."
+            echo ""
+            echo "*AI disclosure: this release and the related code were written with the assistance of AI.*"
+            echo "RELEASE_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # Notes and the tag, no assets (see the comment at the top of this file).
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        with:
+          name: WSL Monitor ${{ steps.notes.outputs.version }}
+          body: ${{ steps.notes.outputs.body }}
+          make_latest: true
+          generate_release_notes: false
