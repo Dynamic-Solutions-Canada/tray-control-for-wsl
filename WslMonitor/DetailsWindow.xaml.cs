@@ -264,15 +264,6 @@ public sealed partial class DetailsWindow : Window
         ContentFrame.Navigate(page, parameter);
     }
 
-    /// <summary>The shared promo page's wording is English; translate its known copy once it is shown.</summary>
-    private void ContentFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
-    {
-        if (e.Content is TechnicallyReal.Promo.PromotedAppsPage promo)
-        {
-            promo.EnableLocalization();
-        }
-    }
-
     // ── Dialogs ─────────────────────────────────────────────────────────
     /// <summary>
     /// "Shut down WSL" found distros that didn't stop cleanly: open this window (wherever the shutdown
@@ -365,7 +356,6 @@ public sealed partial class DetailsWindow : Window
         switch (ContentFrame.Content)
         {
             case LivePage page: page.Detach(); break;
-            case TechnicallyReal.Promo.PromotedAppsPage promo: promo.DisableLocalization(); break;
         }
 
         if (WindowChrome.CapturePlacement(this) is { } placement)

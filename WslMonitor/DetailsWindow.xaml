@@ -36,7 +36,7 @@
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE946;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
-            <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+            <Frame x:Name="ContentFrame" />
         </NavigationView>
     </Grid>
 </Window>

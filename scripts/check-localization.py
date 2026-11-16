@@ -8,8 +8,8 @@ Fails when:
   - code or XAML uses a key that en-US doesn't define;
   - the package manifest's <Resource Language> list differs from the supported identities.
 
-Keys defined but never referenced in code are reported as warnings (some are matched by text, such
-as the promo copy). Run from anywhere: `npm run check:l10n`.
+Keys defined but never referenced in code are reported as warnings. Run from anywhere:
+`npm run check:l10n`.
 """
 import json
 import re

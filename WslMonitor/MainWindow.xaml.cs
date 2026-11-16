@@ -78,6 +78,9 @@ public sealed partial class MainWindow : Window
         Service.Changed += UpdateTrayIcon;
         AppTheme.Changed += UpdateTrayIcon;
         UiText.Changed += UpdateTrayIcon;   // tooltip wording
+        // The shared "Our other apps" page has its own strings; point it at our language choice.
+        TechnicallyReal.Promo.PromoLocalization.LocaleProvider = () => UiText.Locale;
+        UiText.Changed += TechnicallyReal.Promo.PromoLocalization.Refresh;
         _uiSettings.ColorValuesChanged += (_, _) => DispatcherQueue.TryEnqueue(UpdateTrayIcon);
         UpdateTrayIcon();
 
