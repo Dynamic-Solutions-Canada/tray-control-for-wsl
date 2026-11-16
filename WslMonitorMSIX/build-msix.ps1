@@ -168,11 +168,11 @@ Write-Host "  Layout ready: $layoutDir"
 
 # -- Step 3: resources.pri ----------------------------------------------------------
 # The manifest's ms-resource:Resources/<Key> strings (Start menu / Store description) come from the
-# app's own catalogs (WslMonitor\Strings\<catalog>.json), so there is one set of translations.
+# app's own catalogs (WslMonitor\Localization\Catalogs\<catalog>.json), so there is one set of translations.
 # One temporary RESW per declared <Resource Language> is written into the layout, indexed into the
 # package's primary resource map, then removed again.
 Write-Host "`n=== Generating resources.pri ===" -ForegroundColor Cyan
-$stringsDir   = Join-Path $repoRoot "WslMonitor\Strings"
+$stringsDir   = Join-Path $repoRoot "WslMonitor\Localization\Catalogs"
 $manifestXml  = [xml](Get-Content (Join-Path $layoutDir "AppxManifest.xml") -Raw -Encoding UTF8)
 $languages    = @($manifestXml.Package.Resources.Resource | ForEach-Object { $_.Language })
 $resourceKeys = @([regex]::Matches($manifestXml.OuterXml, 'ms-resource:Resources/(\w+)') |

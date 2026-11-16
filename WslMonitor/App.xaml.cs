@@ -35,7 +35,7 @@ public partial class App : Application
         };
 
         SettingsManager.Restore();
-        UiText.Configure(typeof(App).Assembly, "WslMonitor.Strings.", AppLanguages.Supported, SettingsManager.Current.Language);
+        UiText.Configure(typeof(App).Assembly, "WslMonitor.Localization.", AppLanguages.Supported, SettingsManager.Current.Language);
 
         _host = new MainWindow();
         _host.Activate();

@@ -22,8 +22,8 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | `wsl.exe` calls | `Services/WslCli.cs` |
 | Distro list and details (HKCU `...\Lxss`) | `Services/WslRegistry.cs` |
 | `.wslconfig` idle timeouts | `Services/WslConfigFile.cs` |
-| Settings | `Models/UserSettings.cs`, `Classes/SettingsManager.cs` |
-| Interface text (9 languages) | `Strings/*.json`, `Classes/AppLanguages.cs`; lookups via the kit's `UiText` / `Localize` |
+| Settings | `ViewModels/UserSettings.cs`, `Classes/SettingsManager.cs` |
+| Interface text (9 languages) | `Localization/Catalogs/*.json`, `Classes/AppLanguages.cs`; lookups via the kit's `UiText` / `Localize` |
 | "Our other apps" page | `external/promo` submodule, imported in the csproj |
 
 ## Behaviour
@@ -41,7 +41,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - Never run `wsl --terminate` or `--shutdown` while testing from inside WSL: it ends the session doing the testing.
 - Namespace `WslMonitor.Windows` shadows WinRT `Windows.*`: always write `global::Windows...`.
 - Package identity is a **placeholder** (`TechnicallyReal.WslMonitor`) until reserved in Partner Center; update `Package.appxmanifest` and `windows-build.json` together.
-- **Every user-visible string goes through the catalogs.** Add the key to all seven `Strings/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:strings` (keys, `{{placeholders}}`, no em dashes, manifest languages). XAML uses `l10n:Localize.Text="key"` (also `Content`, `Header`, `ToolTip`, `OnContent`/`OffContent`); code uses `UiText.Get` / `UiText.Format`. Store keys, not finished text, on models and services (`Distro.BusyReason`, `LocalizedMessage` for `Distro.LastError` and `ShutdownStatus`; pass a `WslResult` or `NameList` as a value, not its text) so a language change relabels them. Names, paths and WSL's own output are never translated. Promo copy keys match Persistent's, and so does the wording except `promo.little-launcher`, which follows the newer catalog text (Persistent still has the old one). Translations are unreviewed machine translations.
+- **Every user-visible string goes through the catalogs.** Add the key to all seven `Localization/Catalogs/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:l10n` (keys, `{{placeholders}}`, no em dashes, manifest languages). XAML uses `l10n:Localize.Text="key"` (also `Content`, `Header`, `ToolTip`, `OnContent`/`OffContent`); code uses `UiText.Get` / `UiText.Format`. Store keys, not finished text, on models and services (`Distro.BusyReason`, `LocalizedMessage` for `Distro.LastError` and `ShutdownStatus`; pass a `WslResult` or `NameList` as a value, not its text) so a language change relabels them. Names, paths and WSL's own output are never translated. Promo copy keys match Persistent's, and so does the wording except `promo.little-launcher`, which follows the newer catalog text (Persistent still has the old one). Translations are unreviewed machine translations.
 - **Language changes apply live:** `Localize` relabels XAML; anything built in code must also refresh on `UiText.Changed` (live pages redraw in `LivePage.OnAttach` handlers, the details window rebuilds its menu, the flyout rebuilds, the tray tooltip redraws). Pages are never re-navigated for a language change.
 - **Actions and polling:** every state change made by an action calls `Stamp(d)`; a poll that started before the latest stamp leaves that distro's state alone. Actions only write their outcome if the distro is still in the state they set. "Shut down WSL" progress lives in the service (`ShutdownStatus`) and its questions go through `DetailsWindow.ConfirmAsync`, never a specific page.
 - **Manifest strings** use `ms-resource:Resources/<Key>`; `build-msix.ps1` writes them from the catalogs into `resources.pri` and fails the build unless every declared language resolves. Keep resource splitting off (single package, not a bundle).
@@ -57,9 +57,9 @@ Clone with `--recurse-submodules` (or run `git submodule update --init`) so `ext
 | `npm run build:desktop` | A signed dev package builds | That it installs or runs |
 | `npm run install:desktop` | The dev package updates in place and launches | Behaviour; check it in the running app |
 | `npm run package:desktop` | An unsigned Store package builds, manifest strings resolved for every language | Signing; that it runs |
-| `npm run check:strings` | Every catalog has the same keys and placeholders, no em dashes, and the manifest languages match | That the text is translated well |
+| `npm run check:l10n` | Every catalog has the same keys and placeholders, no em dashes, and the manifest languages match | That the text is translated well |
 
-Before finishing a change, run `npm run check:strings` and `npm run verify:desktop`. Use the `desktop` skill for build and install requests.
+Before finishing a change, run `npm run check:l10n` and `npm run verify:desktop`. Use the `desktop` skill for build and install requests.
 
 ## Guidance map
 
@@ -80,5 +80,5 @@ Before finishing a change, run `npm run check:strings` and `npm run verify:deskt
 | A UI pattern, shared style or control | `.agents/guides/ui-conventions.md` |
 | An npm command | The Commands table above, `docs/development.md`, the `desktop` skill, `paseo.json` |
 | Where the app writes data, or a new kind of data | The data table in `docs/development.md` |
-| A language or catalog rule | Conventions above, `scripts/check-strings.py` |
+| A language or catalog rule | Conventions above, `scripts/check-localization.py` |
 | A guide or skill moved or removed | The guidance map above and every skill that names it |

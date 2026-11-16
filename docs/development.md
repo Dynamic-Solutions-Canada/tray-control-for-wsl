@@ -27,7 +27,7 @@ Never uninstall to get past an update error.
 
 ## Checks
 
-`npm run check:strings` checks the interface text: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs. Run it with `npm run verify:desktop` before finishing a change. There are no automated tests yet.
+`npm run check:l10n` checks the interface text: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs. Run it with `npm run verify:desktop` before finishing a change. There are no automated tests yet.
 
 ## Releases
 

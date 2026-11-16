@@ -2,7 +2,7 @@ using System.IO;
 using WinUIAppKit;
 using WinUIAppKit.Settings;
 using WinUIAppKit.Theming;
-using WslMonitor.Models;
+using WslMonitor.ViewModels;
 
 namespace WslMonitor.Classes;
 

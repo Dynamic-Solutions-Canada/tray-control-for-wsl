@@ -56,7 +56,7 @@
 
   <!-- Interface text: one JSON catalog per language, read by WinUIAppKit.Localization.UiText -->
   <ItemGroup>
-    <EmbeddedResource Include="Strings\*.json" LogicalName="WslMonitor.Strings.%(Filename).json" />
+    <EmbeddedResource Include="Localization\Catalogs\*.json" LogicalName="WslMonitor.Localization.%(Filename).json" />
   </ItemGroup>
 
   <!-- Shared "Our other apps" cross-promo page (submodule). Bundled data is the offline

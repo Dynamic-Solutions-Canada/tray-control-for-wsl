@@ -7,6 +7,6 @@
     "verify:desktop": "scripts/windows-build --build-only --configuration Debug",
     "install:desktop": "scripts/windows-build --install",
     "package:desktop": "scripts/windows-build --no-sign",
-    "check:strings": "python3 scripts/check-strings.py"
+    "check:l10n": "python3 scripts/check-localization.py"
   }
 }

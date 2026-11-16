@@ -1,7 +1,7 @@
 using WinUIAppKit.Theming;
 using WinUIAppKit.Windowing;
 
-namespace WslMonitor.Models;
+namespace WslMonitor.ViewModels;
 
 /// <summary>User settings, saved as settings.json by <see cref="Classes.SettingsManager"/>.</summary>
 public sealed class UserSettings

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check WSL Monitor's interface text catalogs (WslMonitor/Strings/*.json).
+"""Check WSL Monitor's interface text catalogs (WslMonitor/Localization/Catalogs/*.json).
 
 Fails when:
   - a catalog is missing a key that en-US has, or has a key en-US doesn't;
@@ -9,7 +9,7 @@ Fails when:
   - the package manifest's <Resource Language> list differs from the supported identities.
 
 Keys defined but never referenced in code are reported as warnings (some are matched by text, such
-as the promo copy). Run from anywhere: `npm run check:strings`.
+as the promo copy). Run from anywhere: `npm run check:l10n`.
 """
 import json
 import re
@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-STRINGS = ROOT / "WslMonitor" / "Strings"
+STRINGS = ROOT / "WslMonitor" / "Localization" / "Catalogs"
 SOURCE = ROOT / "WslMonitor"
 MANIFEST = ROOT / "WslMonitorMSIX" / "Package.appxmanifest"
 LANGUAGES_CS = SOURCE / "Classes" / "AppLanguages.cs"

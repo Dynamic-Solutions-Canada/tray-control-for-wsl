@@ -6,7 +6,7 @@ namespace WslMonitor.Classes;
 /// The interface languages WSL Monitor ships: the same nine identities, in the same order, as
 /// Persistent. Canadian English reuses US wording and Canadian French reuses French wording; they stay
 /// separate choices so the picker and Windows' preferences match them exactly. Keep this list,
-/// <c>Strings/*.json</c> and the manifest's <c>&lt;Resource Language&gt;</c> entries in step.
+/// <c>Localization/Catalogs/*.json</c> and the manifest's <c>&lt;Resource Language&gt;</c> entries in step.
 /// </summary>
 public static class AppLanguages
 {
