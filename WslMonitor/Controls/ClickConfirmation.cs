@@ -15,7 +15,7 @@ public static class ClickConfirmation
     private static readonly TimeSpan ConfirmWindow = TimeSpan.FromSeconds(4);
 
     /// <summary>Key → when its armed confirmation lapses (UTC).</summary>
-    private static readonly Dictionary<string, DateTime> s_armedUntil = new();
+    private static readonly Dictionary<string, DateTime> ArmedUntil = new();
 
     /// <summary>
     /// A confirming click must come at least this long after the arming one: a double-click delivers
@@ -26,10 +26,10 @@ public static class ClickConfirmation
 
     /// <summary>True while <paramref name="key"/>'s confirmation is showing.</summary>
     public static bool IsArmed(string key) =>
-        s_armedUntil.TryGetValue(key, out var until) && until > DateTime.UtcNow;
+        ArmedUntil.TryGetValue(key, out var until) && until > DateTime.UtcNow;
 
     /// <summary>Show the confirmation for <paramref name="key"/>.</summary>
-    public static void Arm(string key) => s_armedUntil[key] = DateTime.UtcNow + ConfirmWindow;
+    public static void Arm(string key) => ArmedUntil[key] = DateTime.UtcNow + ConfirmWindow;
 
     /// <summary>
     /// Handle the click that arrives while armed. Returns true (and disarms) when it counts as a
@@ -39,17 +39,17 @@ public static class ClickConfirmation
     {
         if (!IsArmed(key)) return false;
 
-        var armedAt = s_armedUntil[key] - ConfirmWindow;
+        var armedAt = ArmedUntil[key] - ConfirmWindow;
         if (DateTime.UtcNow - armedAt < MinConfirmDelay) return false;
 
-        s_armedUntil.Remove(key);
+        ArmedUntil.Remove(key);
         return true;
     }
 
     /// <summary>Call <paramref name="render"/> once <paramref name="key"/>'s confirmation lapses, so the button reverts.</summary>
     public static void OnLapse(string key, DispatcherQueue dispatcher, Action render)
     {
-        if (!s_armedUntil.TryGetValue(key, out var until)) return;
+        if (!ArmedUntil.TryGetValue(key, out var until)) return;
 
         var remaining = until - DateTime.UtcNow;
         var timer = dispatcher.CreateTimer();

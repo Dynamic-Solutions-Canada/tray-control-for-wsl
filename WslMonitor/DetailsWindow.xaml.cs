@@ -28,7 +28,7 @@ public sealed partial class DetailsWindow : Window
     private const string PromoTag = "promo";
     private const string DistroTagPrefix = "distro:";
 
-    private static DetailsWindow? s_instance;
+    private static DetailsWindow? _instance;
 
     private string _menuSignature = "";
     private bool _rebuilding;
@@ -47,9 +47,9 @@ public sealed partial class DetailsWindow : Window
 
     private static void Show(string? tag)
     {
-        s_instance ??= new DetailsWindow();
-        if (tag != null) s_instance.Select(tag);
-        WindowChrome.BringToFront(s_instance);
+        _instance ??= new DetailsWindow();
+        if (tag != null) _instance.Select(tag);
+        WindowChrome.BringToFront(_instance);
     }
 
     private DetailsWindow()
@@ -240,7 +240,7 @@ public sealed partial class DetailsWindow : Window
     public static async Task<bool> ConfirmForceShutdownAsync(IReadOnlyList<string> stuck)
     {
         ShowInstance();
-        if (s_instance is { } window) await window.WhenContentLoadedAsync();
+        if (_instance is { } window) await window.WhenContentLoadedAsync();
 
         return await ConfirmAsync(
             UiText.Get("overview.force-title"),
@@ -273,7 +273,7 @@ public sealed partial class DetailsWindow : Window
     /// </summary>
     public static async Task<bool> ConfirmAsync(string title, string body, string confirmText)
     {
-        if (s_instance is not { } window || window.Content.XamlRoot is not { } root) return false;
+        if (_instance is not { } window || window.Content.XamlRoot is not { } root) return false;
         if (window._openDialog != null) return false;   // one question at a time
 
         var dialog = new ContentDialog
@@ -301,7 +301,7 @@ public sealed partial class DetailsWindow : Window
     // ── Closing ─────────────────────────────────────────────────────────
     private void OnClosed(object sender, WindowEventArgs e)
     {
-        s_instance = null;
+        _instance = null;
         _openDialog?.Hide();
         MainWindow.Service.Changed -= OnServiceChanged;
         UiText.Changed -= OnLanguageChanged;
