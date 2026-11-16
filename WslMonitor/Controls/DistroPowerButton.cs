@@ -20,6 +20,13 @@ public sealed partial class DistroPowerButton : Button
 {
     private static readonly TimeSpan ConfirmWindow = TimeSpan.FromSeconds(4);
 
+    /// <summary>
+    /// A confirming click must come at least this long after the arming one: a double-click delivers
+    /// two clicks within the system double-click time, and must not arm and confirm a stop in one go.
+    /// </summary>
+    private static TimeSpan MinConfirmDelay =>
+        TimeSpan.FromMilliseconds(Math.Max(400, WinUIAppKit.Interop.NativeMethods.GetDoubleClickTime()));
+
     /// <summary>Distro id → when its pending "Stop?" confirmation lapses.</summary>
     private static readonly Dictionary<Guid, DateTime> PendingConfirmations = new();
 
@@ -36,10 +43,16 @@ public sealed partial class DistroPowerButton : Button
         Render();
     }
 
+    /// <summary>True while the red "Stop?" confirmation is showing for this distro.</summary>
     private bool IsConfirming =>
         PendingConfirmations.TryGetValue(_distro.Id, out var until) && until > DateTime.UtcNow;
 
+    /// <summary>True once the confirmation has been showing long enough for a click to count as deliberate.</summary>
+    private bool CanConfirm =>
+        IsConfirming && DateTime.UtcNow - (PendingConfirmations[_distro.Id] - ConfirmWindow) >= MinConfirmDelay;
+
     // ── Appearance ──────────────────────────────────────────────────────
+    /// <summary>Set the label, colours, tooltip and enabled state for the distro's current state.</summary>
     private void Render()
     {
         var res = Application.Current.Resources;
@@ -86,7 +99,7 @@ public sealed partial class DistroPowerButton : Button
 
     private static StackPanel Busy(string text)
     {
-        var panel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+        var panel = new StackPanel { Style = (Style)Application.Current.Resources["IconLabelStyle"] };
         panel.Children.Add(new ProgressRing { IsActive = true, Width = 14, Height = 14 });
         panel.Children.Add(new TextBlock { Text = text });
         return panel;
@@ -95,15 +108,26 @@ public sealed partial class DistroPowerButton : Button
     /// <summary>What Stop will do: clean with systemd, immediate without, or unknown until first run.</summary>
     private string StopTip()
     {
-        string key = _distro.HasSystemd ? "power.stop-tip-systemd"
-                   : _distro.InitSystem != null ? "power.stop-tip-no-systemd"
-                   : "power.stop-tip-unknown";
+        string key = DistroVisuals.StopKindOf(_distro) switch
+        {
+            StopKind.Clean => "power.stop-tip-systemd",
+            StopKind.Immediate => "power.stop-tip-no-systemd",
+            _ => "power.stop-tip-unknown",
+        };
         return UiText.Format(key, ("name", _distro.Name));
     }
 
-    private string ForceStopTip() => UiText.Format("power.force-tip",
-        ("name", _distro.Name),
-        ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
+    /// <summary>
+    /// Why Force stop is offered: the clean stop ran out of time, or (with an error on the distro) it
+    /// couldn't be attempted.
+    /// </summary>
+    private string ForceStopTip()
+    {
+        if (_distro.LastError != null) return UiText.Format("power.force-tip-generic", ("name", _distro.Name));
+        return UiText.Format("power.force-tip",
+            ("name", _distro.Name),
+            ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
+    }
 
     /// <summary>Revert to the plain button when the confirmation lapses, if this button is still shown then.</summary>
     private void ScheduleConfirmationLapse()
@@ -117,6 +141,7 @@ public sealed partial class DistroPowerButton : Button
     }
 
     // ── Actions ─────────────────────────────────────────────────────────
+    /// <summary>Start a stopped distro; for a running one, arm the confirmation or, if armed, stop it.</summary>
     private async void OnClick(object sender, RoutedEventArgs e)
     {
         switch (_distro.State)
@@ -133,6 +158,7 @@ public sealed partial class DistroPowerButton : Button
                     Render();
                     return;
                 }
+                if (!CanConfirm) return;   // second click of a double-click
 
                 PendingConfirmations.Remove(_distro.Id);
                 if (_distro.State == DistroState.StopTimedOut) await _service.ForceStopAsync(_distro);

@@ -199,7 +199,10 @@ foreach ($language in $languages) {
         $writer.WriteElementString("value", $header[1]); $writer.WriteEndElement()
     }
     foreach ($key in $resourceKeys) {
-        $value = $catalog.$key
+        # PSObject.Properties, not $catalog.$key: under StrictMode a missing property throws before
+        # the friendly error below (and would leave the writer open).
+        $property = $catalog.PSObject.Properties[$key]
+        $value = if ($property) { [string]$property.Value } else { "" }
         if ([string]::IsNullOrWhiteSpace($value)) { $writer.Close(); Write-Error "Catalog $catalogName.json has no '$key' for the manifest"; exit 1 }
         $writer.WriteStartElement("data"); $writer.WriteAttributeString("name", $key)
         $writer.WriteAttributeString("xml", "space", $null, "preserve")

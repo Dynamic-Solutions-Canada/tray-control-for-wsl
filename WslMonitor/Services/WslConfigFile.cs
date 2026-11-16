@@ -10,6 +10,8 @@ namespace WslMonitor.Services;
 /// </summary>
 public sealed class WslConfigFile
 {
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
     /// <summary><c>[general] instanceIdleTimeout</c> in milliseconds; -1 keeps distros running; null when unset.</summary>
     public int? InstanceIdleTimeoutMs { get; private init; }
 
@@ -47,7 +49,7 @@ public sealed class WslConfigFile
                 if (section == "wsl2" && key.Equals("vmIdleTimeout", StringComparison.OrdinalIgnoreCase)) vm = value;
             }
         }
-        catch (Exception ex) { NLog.LogManager.GetCurrentClassLogger().Warn(ex, "Couldn't read .wslconfig"); }
+        catch (Exception ex) { Logger.Warn(ex, "Couldn't read .wslconfig"); }
 
         return new WslConfigFile { InstanceIdleTimeoutMs = instance, VmIdleTimeoutMs = vm };
     }

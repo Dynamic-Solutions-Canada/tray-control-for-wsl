@@ -1,11 +1,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using WinUIAppKit.Localization;
 using WinUIAppKit.Theming;
 using WinUIAppKit.Windowing;
 using WslMonitor.Controls;
-using WslMonitor.Models;
 using WslMonitor.Services;
 
 namespace WslMonitor.Windows;
@@ -64,50 +62,16 @@ public sealed partial class DistroFlyout : Window
     // ── Content ─────────────────────────────────────────────────────────
     private void Refresh()
     {
-        RowsPanel.Children.Clear();
+        DistroList.Fill(RowsPanel, _service, d =>
+        {
+            _controller.Dismiss();
+            DetailsWindow.ShowDistro(d.Name);
+        });
 
-        var distros = _service.Distros;
-        if (!_service.IsWslInstalled)
-        {
-            RowsPanel.Children.Add(Message(UiText.Get("list.no-wsl")));
-        }
-        else if (distros.Count == 0)
-        {
-            RowsPanel.Children.Add(Message(UiText.Get("list.no-distros")));
-        }
-        else
-        {
-            foreach (var d in distros)
-            {
-                RowsPanel.Children.Add(DistroRow.Build(d, _service, () =>
-                {
-                    _controller.Dismiss();
-                    DetailsWindow.ShowInstance(d.Name);
-                }));
-            }
-        }
-
-        StatusText.Text = StatusLine(distros);
+        // With no distros the list's own message already says so; don't repeat it in the footer.
+        bool listExplainsItself = _service.Distros.Count == 0 && !_service.IsShuttingDown;
+        StatusText.Text = listExplainsItself ? "" : DistroVisuals.StatusLine(_service);
     }
-
-    private string StatusLine(IReadOnlyList<Distro> distros)
-    {
-        if (_service.IsShuttingDown) return UiText.Get("status.shutting-down");
-        if (_service.IsStateUnknown) return UiText.Get("status.unresponsive");
-        if (distros.Count == 0) return "";
-        int running = _service.RunningCount;
-        return running == 0
-            ? UiText.Get("status.nothing-running")
-            : UiText.Format("status.some-running", ("running", running), ("total", distros.Count));
-    }
-
-    private static TextBlock Message(string text) => new()
-    {
-        Text = text,
-        Margin = new Thickness(10, 4, 10, 8),
-        TextWrapping = TextWrapping.Wrap,
-        Foreground = (Brush)Application.Current.Resources["TextFillColorSecondaryBrush"],
-    };
 
     private void Details_Click(object sender, RoutedEventArgs e)
     {

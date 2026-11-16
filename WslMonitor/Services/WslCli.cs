@@ -10,6 +10,12 @@ namespace WslMonitor.Services;
 /// <param name="TimedOut">True when the run was killed for exceeding its time limit.</param>
 public sealed record WslResult(bool Launched, bool TimedOut, int ExitCode, string Output, string Error)
 {
+    /// <summary>
+    /// <see cref="Message"/>, so a result can be a <see cref="WinUIAppKit.Localization.LocalizedMessage"/>
+    /// value and the app's own wording in it (timeout, not installed) follows a language change.
+    /// </summary>
+    public override string ToString() => Message;
+
     public bool Succeeded => Launched && !TimedOut && ExitCode == 0;
 
     /// <summary>
@@ -54,18 +60,19 @@ public static class WslCli
         var result = await RunAsync(TimeSpan.FromSeconds(15), "--list", "--running", "--quiet");
         if (!result.Launched || result.TimedOut) return null;
 
-        var lines = result.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var names = lines.Where(l => knownNames.Contains(l, StringComparer.OrdinalIgnoreCase))
-                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        // With nothing running, WSL may exit non-zero and print a "no running distributions" sentence
-        // (localized, so it isn't matched literally). Only a WSL error code means "couldn't tell".
-        if (result.ExitCode != 0 && names.Count == 0 && LooksLikeWslError(result))
+        // With --quiet and nothing running, WSL prints nothing and exits 0 (checked in WSL 3.0.5's
+        // WslClient.cpp, ListDistributionsHelper), so any non-zero exit is a
+        // failure. Reading it as "nothing running" would show every distro stopped and make a pending
+        // stop look finished.
+        if (result.ExitCode != 0)
         {
             Logger.Warn("wsl --list --running failed: {Message}", result.Message);
             return null;
         }
-        return names;
+
+        var lines = result.Output.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return lines.Where(l => knownNames.Contains(l, StringComparer.OrdinalIgnoreCase))
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>The <c>wsl --version</c> text (WSL, kernel, WSLg and Windows versions), or null.</summary>
@@ -138,13 +145,10 @@ public static class WslCli
     }
 
     // ── Process plumbing ────────────────────────────────────────────────
-    private static bool LooksLikeWslError(WslResult r) =>
-        (r.Output + r.Error).Contains("Wsl/", StringComparison.OrdinalIgnoreCase);
-
     /// <summary>
     /// Run wsl.exe with <paramref name="args"/> (passed as separate arguments, never a joined string),
-    /// capturing output. Exceeding <paramref name="timeout"/> kills the wsl.exe process tree; that
-    /// stops our client, not the distro.
+    /// capturing output. Exceeding <paramref name="timeout"/> (waiting for exit or for its output) kills
+    /// the wsl.exe process tree; that stops our client, not the distro.
     /// </summary>
     private static async Task<WslResult> RunAsync(TimeSpan timeout, params string[] args)
     {
@@ -175,13 +179,20 @@ public static class WslCli
         using (process)
         {
             process.StandardInput.Close();
-            var stdout = process.StandardOutput.ReadToEndAsync();
-            var stderr = process.StandardError.ReadToEndAsync();
 
+            // One deadline covers the exit and the output reads: a child process that inherited the
+            // pipes can hold them open after wsl.exe exits, and an unbounded read would hang the caller
+            // (for the poll loop, forever).
             using var cts = new CancellationTokenSource(timeout);
+            var stdout = process.StandardOutput.ReadToEndAsync(cts.Token);
+            var stderr = process.StandardError.ReadToEndAsync(cts.Token);
+
+            string output, error;
             try
             {
                 await process.WaitForExitAsync(cts.Token);
+                output = await stdout;
+                error = await stderr;
             }
             catch (OperationCanceledException)
             {
@@ -190,7 +201,7 @@ public static class WslCli
                 return new WslResult(true, true, -1, "", "");
             }
 
-            var result = new WslResult(true, false, process.ExitCode, await stdout, await stderr);
+            var result = new WslResult(true, false, process.ExitCode, output, error);
             if (result.ExitCode != 0)
                 Logger.Info("wsl.exe {Args} exited {Code}: {Message}", string.Join(' ', args), result.ExitCode, result.Message);
             return result;

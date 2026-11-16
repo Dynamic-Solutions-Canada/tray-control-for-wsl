@@ -1,3 +1,4 @@
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -13,31 +14,39 @@ namespace WslMonitor;
 
 /// <summary>
 /// The full window (Mica + NavigationView, the same shape as the sibling apps' settings windows):
-/// an Overview page, one page per distro, Settings and About. Opened from the flyout's Details
-/// button, a distro row, or the tray menu. One instance at a time.
+/// an Overview page, one page per distro, Settings, Our other apps and About. Opened from the
+/// flyout's Details button, a distro row, or the tray menu. One instance at a time.
 /// </summary>
 public sealed partial class DetailsWindow : Window
 {
-    /// <summary>Navigation target for the built-in Settings item.</summary>
-    public const string SettingsTarget = "settings";
-
+    // Menu item tags. Distro items are prefixed, so a distro named like a page ("settings") can't collide.
     private const string OverviewTag = "overview";
+    private const string SettingsTag = "settings";
     private const string AboutTag = "about";
     private const string PromoTag = "promo";
     private const string DistroTagPrefix = "distro:";
 
     private static DetailsWindow? s_instance;
-    private string _distroNames = "";
-    private bool _rebuilding;
 
-    /// <summary>
-    /// Show the window (creating it if needed) and optionally navigate: a distro name, or
-    /// <see cref="SettingsTarget"/>. Null keeps the current page (Overview for a new window).
-    /// </summary>
-    public static void ShowInstance(string? target = null)
+    private string _menuSignature = "";
+    private bool _rebuilding;
+    private string? _pendingTag;            // a selection asked for before the NavigationView loaded
+    private ContentDialog? _openDialog;     // hidden when the window closes, so a waiting caller gets an answer
+
+    // ── Opening ─────────────────────────────────────────────────────────
+    /// <summary>Show the window (creating it if needed) on its current page (Overview for a new window).</summary>
+    public static void ShowInstance() => Show(null);
+
+    /// <summary>Show the window on the Settings page.</summary>
+    public static void ShowSettings() => Show(SettingsTag);
+
+    /// <summary>Show the window on a distro's page (Overview if no such distro is listed).</summary>
+    public static void ShowDistro(string name) => Show(DistroTagPrefix + name);
+
+    private static void Show(string? tag)
     {
         s_instance ??= new DetailsWindow();
-        if (target != null) s_instance.Select(target);
+        if (tag != null) s_instance.Select(tag);
         WindowChrome.BringToFront(s_instance);
     }
 
@@ -54,74 +63,85 @@ public sealed partial class DetailsWindow : Window
 
         WindowChrome.RestorePlacement(this, SettingsManager.Current.DetailsWindow, 980, 720);
         AppTheme.Track(this);
+        RootNavigation.Loaded += RootNavigation_Loaded;
 
-        // NavigationView's built-in Settings item takes its label from Windows' language, not ours. It
-        // only exists once the control's template is applied, hence Loaded.
-        RootNavigation.Loaded += (_, _) =>
-        {
-            if (RootNavigation.SettingsItem is NavigationViewItem settingsItem) Localize.SetContent(settingsItem, "nav.settings");
-        };
-
-        RebuildDistroItems();
+        RebuildMenu();
         Select(OverviewTag);
 
         MainWindow.Service.Changed += OnServiceChanged;
         UiText.Changed += OnLanguageChanged;
-        MainWindow.Service.SetViewerActive(this, true);
+
+        // Fast polling only while the window can be seen: a minimized window doesn't need it.
+        AppWindow.Changed += (_, _) => UpdateViewerState();
+        UpdateViewerState();
     }
 
-    // ── Navigation ──────────────────────────────────────────────────────
-    /// <summary>Rebuild the menu when distros are added or removed, keeping the current selection.</summary>
+    /// <summary>
+    /// The built-in Settings item exists only once the NavigationView's template is applied. Give it
+    /// our wording (its own label, tooltip and accessible name follow Windows' language) and apply any
+    /// selection that was asked for before then.
+    /// </summary>
+    private void RootNavigation_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (RootNavigation.SettingsItem is NavigationViewItem settingsItem)
+        {
+            Localize.SetContent(settingsItem, "nav.settings");
+            Localize.SetToolTip(settingsItem, "nav.settings");
+            Localize.SetName(settingsItem, "nav.settings");
+        }
+
+        if (_pendingTag is { } tag)
+        {
+            _pendingTag = null;
+            Select(tag);
+        }
+    }
+
+    private void UpdateViewerState()
+    {
+        bool minimized = AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
+        MainWindow.Service.SetViewerActive(this, AppWindow.IsVisible && !minimized);
+    }
+
+    // ── Menu ────────────────────────────────────────────────────────────
+    /// <summary>Rebuild the menu when distros are added, removed or renamed, or the default changes.</summary>
     private void OnServiceChanged()
     {
-        string names = string.Join("|", MainWindow.Service.Distros.Select(d => $"{d.Name}:{d.IsDefault}"));
-        if (names == _distroNames) return;
+        if (MenuSignature() != _menuSignature) RebuildMenuKeepingSelection();
+    }
 
+    /// <summary>
+    /// The interface language changed. Static labels and the pages relabel themselves; the distro
+    /// menu is built in code, so rebuild it.
+    /// </summary>
+    private void OnLanguageChanged() => RebuildMenuKeepingSelection();
+
+    /// <summary>What the distro menu shows, to tell whether it needs rebuilding.</summary>
+    private static string MenuSignature() =>
+        string.Join("|", MainWindow.Service.Distros.Select(d => $"{d.Name}:{d.IsDefault}"));
+
+    private void RebuildMenuKeepingSelection()
+    {
         // Clearing the menu deselects the current item; suppress the resulting navigation and put the
         // same page back afterwards (Navigate skips it when it is already showing).
-        string target = CurrentTarget();
+        string tag = CurrentTag();
         _rebuilding = true;
         try
         {
-            RebuildDistroItems();
+            RebuildMenu();
         }
         finally
         {
             _rebuilding = false;
         }
-        Select(target);
+        Select(tag);
     }
 
-    /// <summary>
-    /// The interface language changed. Static labels relabel themselves (<see cref="Localize"/>); the
-    /// distro menu and the current page build text in code, so rebuild the menu and reload the page.
-    /// </summary>
-    private void OnLanguageChanged()
-    {
-        // Rebuild even though the distros are unchanged ("" can't be used: it is also the value with no distros).
-        _distroNames = "\0language";
-        OnServiceChanged();
-
-        if (ContentFrame.Content is Page current)
-        {
-            object? parameter = current is DistroPage distroPage ? distroPage.DistroName : null;
-            ContentFrame.Navigate(current.GetType(), parameter);
-            ContentFrame.BackStack.Clear();
-        }
-    }
-
-    /// <summary>The selected page as a <see cref="Select"/> target.</summary>
-    private string CurrentTarget()
-    {
-        if (RootNavigation.SelectedItem == RootNavigation.SettingsItem) return SettingsTarget;
-        string tag = (RootNavigation.SelectedItem as NavigationViewItem)?.Tag as string ?? OverviewTag;
-        return tag.StartsWith(DistroTagPrefix) ? tag[DistroTagPrefix.Length..] : tag;
-    }
-
-    private void RebuildDistroItems()
+    /// <summary>Overview, then a "Distros" header and one item per listed distro (marked if default).</summary>
+    private void RebuildMenu()
     {
         var distros = MainWindow.Service.Distros;
-        _distroNames = string.Join("|", distros.Select(d => $"{d.Name}:{d.IsDefault}"));
+        _menuSignature = MenuSignature();
 
         RootNavigation.MenuItems.Clear();
         RootNavigation.MenuItems.Add(new NavigationViewItem
@@ -144,26 +164,40 @@ public sealed partial class DetailsWindow : Window
         }
     }
 
-    /// <summary>Select a page by target: overview, settings, about, promo, or a distro name (unknown names fall back to Overview).</summary>
-    private void Select(string target)
+    // ── Navigation ──────────────────────────────────────────────────────
+    /// <summary>The selected item's tag.</summary>
+    private string CurrentTag()
     {
-        if (target == SettingsTarget)
+        var selected = RootNavigation.SelectedItem;
+        if (selected != null && selected == RootNavigation.SettingsItem) return SettingsTag;
+        return (selected as NavigationViewItem)?.Tag as string ?? OverviewTag;
+    }
+
+    /// <summary>Select a menu item by tag. An unknown distro falls back to Overview.</summary>
+    private void Select(string tag)
+    {
+        if (tag == SettingsTag)
         {
+            if (RootNavigation.SettingsItem == null)
+            {
+                _pendingTag = tag;   // applied in RootNavigation_Loaded
+                return;
+            }
             RootNavigation.SelectedItem = RootNavigation.SettingsItem;
             return;
         }
-        if (target == AboutTag || target == PromoTag)
+
+        if (tag == AboutTag || tag == PromoTag)
         {
             RootNavigation.SelectedItem = RootNavigation.FooterMenuItems.OfType<NavigationViewItem>()
-                .First(i => (i.Tag as string) == target);
+                .First(i => (i.Tag as string) == tag);
             return;
         }
 
-        string tag = target == OverviewTag ? OverviewTag : DistroTagPrefix + target;
-        var item = RootNavigation.MenuItems.OfType<NavigationViewItem>()
-                       .FirstOrDefault(i => string.Equals(i.Tag as string, tag, StringComparison.OrdinalIgnoreCase))
-                   ?? RootNavigation.MenuItems.OfType<NavigationViewItem>().First();
-        RootNavigation.SelectedItem = item;
+        var items = RootNavigation.MenuItems.OfType<NavigationViewItem>();
+        RootNavigation.SelectedItem =
+            items.FirstOrDefault(i => string.Equals(i.Tag as string, tag, StringComparison.OrdinalIgnoreCase))
+            ?? items.First();
     }
 
     private void RootNavigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -182,6 +216,7 @@ public sealed partial class DetailsWindow : Window
         else Navigate(typeof(OverviewPage), null);
     }
 
+    /// <summary>Show a page, unless that exact page (and distro) is already showing.</summary>
     private void Navigate(Type page, string? parameter)
     {
         if (ContentFrame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter) return;
@@ -195,15 +230,54 @@ public sealed partial class DetailsWindow : Window
         if (e.Content is TechnicallyReal.Promo.PromotedAppsPage promo) promo.EnableLocalization();
     }
 
-    /// <summary>Called by pages that want to jump to a distro's page (e.g. Overview's list).</summary>
-    public static void ShowDistro(string name) => s_instance?.Select(name);
+    // ── Dialogs ─────────────────────────────────────────────────────────
+    /// <summary>
+    /// Ask a yes/no question on this window, whichever page is showing. Returns false (no) when the
+    /// window isn't open, or if it closes while the question is up, so a waiting operation never
+    /// proceeds on a guess.
+    /// </summary>
+    public static async Task<bool> ConfirmAsync(string title, string body, string confirmText)
+    {
+        if (s_instance is not { } window || window.Content.XamlRoot is not { } root) return false;
+        if (window._openDialog != null) return false;   // one question at a time
 
+        var dialog = new ContentDialog
+        {
+            XamlRoot = root,
+            Title = title,
+            Content = new TextBlock { Text = body, TextWrapping = TextWrapping.Wrap },
+            PrimaryButtonText = confirmText,
+            CloseButtonText = UiText.Get("dialog.cancel"),
+            DefaultButton = ContentDialogButton.Close,
+            RequestedTheme = ((FrameworkElement)window.Content).ActualTheme,
+        };
+
+        window._openDialog = dialog;
+        try
+        {
+            return await dialog.ShowAsync() == ContentDialogResult.Primary;
+        }
+        finally
+        {
+            window._openDialog = null;
+        }
+    }
+
+    // ── Closing ─────────────────────────────────────────────────────────
     private void OnClosed(object sender, WindowEventArgs e)
     {
         s_instance = null;
+        _openDialog?.Hide();
         MainWindow.Service.Changed -= OnServiceChanged;
         UiText.Changed -= OnLanguageChanged;
         MainWindow.Service.SetViewerActive(this, false);
+
+        // Unloaded isn't reliably raised when a window closes; drop the current page's subscriptions here.
+        switch (ContentFrame.Content)
+        {
+            case LivePage page: page.Detach(); break;
+            case TechnicallyReal.Promo.PromotedAppsPage promo: promo.DisableLocalization(); break;
+        }
 
         if (WindowChrome.CapturePlacement(this) is { } placement)
         {

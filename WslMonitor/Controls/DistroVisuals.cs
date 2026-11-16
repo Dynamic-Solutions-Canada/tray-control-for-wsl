@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinUIAppKit.Localization;
 using WslMonitor.Models;
+using WslMonitor.Services;
 
 namespace WslMonitor.Controls;
 
@@ -36,15 +37,40 @@ public static class DistroVisuals
         return string.Join("  ·  ", parts);
     }
 
-    /// <summary>True when the distro counts as on (shown with the accent colour).</summary>
-    public static bool IsOn(Distro d) =>
-        d.State is DistroState.Running or DistroState.Stopping or DistroState.StopTimedOut;
+    /// <summary>
+    /// What Stop will do, the one place this policy is decided for every label and tooltip:
+    /// a clean systemd shutdown, an immediate terminate, or not known until the distro has run.
+    /// </summary>
+    public static StopKind StopKindOf(Distro d)
+    {
+        if (d.HasSystemd) return StopKind.Clean;
+        if (d.InitSystem != null) return StopKind.Immediate;
+        return StopKind.Unknown;
+    }
+
+    /// <summary>
+    /// One-line status of all listed distros ("2 of 3 running", "Shutting down WSL…"), shared by the
+    /// flyout footer and the tray tooltip. Empty when there are no distros to summarise.
+    /// </summary>
+    public static string StatusLine(WslMonitorService service)
+    {
+        if (service.IsShuttingDown) return UiText.Get("status.shutting-down");
+        if (service.IsStateUnknown) return UiText.Get("status.unresponsive");
+        if (!service.IsWslInstalled) return UiText.Get("list.no-wsl");
+
+        var distros = service.Distros;
+        if (distros.Count == 0) return UiText.Get("list.no-distros");
+
+        int running = service.RunningCount;
+        if (running == 0) return UiText.Get("status.nothing-running");
+        return UiText.Format("status.some-running", ("running", running), ("total", distros.Count));
+    }
 
     /// <summary>Round icon badge: accent-filled when the distro is on, subtle otherwise.</summary>
     public static Border Badge(Distro d, double size = 40)
     {
         var res = Application.Current.Resources;
-        bool on = IsOn(d);
+        bool on = d.IsOn;
         return new Border
         {
             Width = size,
@@ -75,4 +101,17 @@ public static class DistroVisuals
         if (error != null) ToolTipService.SetToolTip(caption, error);
         return caption;
     }
+}
+
+/// <summary>What Stop does for a distro (see <see cref="DistroVisuals.StopKindOf"/>).</summary>
+public enum StopKind
+{
+    /// <summary>systemd shuts it down cleanly.</summary>
+    Clean,
+
+    /// <summary>No systemd: WSL ends it immediately.</summary>
+    Immediate,
+
+    /// <summary>Not known until it has run once.</summary>
+    Unknown,
 }

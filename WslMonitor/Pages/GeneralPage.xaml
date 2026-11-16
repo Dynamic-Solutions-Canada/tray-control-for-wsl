@@ -4,22 +4,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:l10n="using:WinUIAppKit.Localization">
     <ScrollViewer>
-        <StackPanel Padding="36,12,36,36" Spacing="8" MaxWidth="960" HorizontalAlignment="Stretch">
-            <TextBlock l10n:Localize.Text="nav.settings" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,12" />
+        <StackPanel Style="{StaticResource PageContentStyle}">
+            <TextBlock l10n:Localize.Text="nav.settings" Style="{StaticResource PageTitleStyle}" />
 
-            <TextBlock l10n:Localize.Text="settings.behaviour" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="2,0,0,2" />
+            <TextBlock l10n:Localize.Text="settings.behaviour" Style="{StaticResource FirstSectionHeaderStyle}" />
             <Border Style="{StaticResource CardBorderStyle}">
                 <StackPanel Spacing="4">
                     <ToggleSwitch x:Name="StartupSwitch" l10n:Localize.Header="settings.startup"
                                   l10n:Localize.OnContent="toggle.on" l10n:Localize.OffContent="toggle.off"
                                   Toggled="StartupSwitch_Toggled" />
+                    <TextBlock x:Name="StartupNote" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="Collapsed" Margin="0,-4,0,8" />
                     <ToggleSwitch x:Name="SystemDistrosSwitch" l10n:Localize.Header="settings.system-distros"
                                   l10n:Localize.OnContent="toggle.on" l10n:Localize.OffContent="toggle.off"
                                   Toggled="SystemDistrosSwitch_Toggled" />
                 </StackPanel>
             </Border>
 
-            <TextBlock l10n:Localize.Text="settings.appearance" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="2,16,0,2" />
+            <TextBlock l10n:Localize.Text="settings.appearance" Style="{StaticResource SectionHeaderStyle}" />
             <Border Style="{StaticResource CardBorderStyle}">
                 <StackPanel Spacing="12">
                     <ComboBox x:Name="LanguageCombo" l10n:Localize.Header="settings.language" MinWidth="220"

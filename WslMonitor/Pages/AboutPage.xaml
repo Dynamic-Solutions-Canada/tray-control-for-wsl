@@ -1,11 +1,12 @@
-<Page
+<pages:LivePage
     x:Class="WslMonitor.Pages.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:l10n="using:WinUIAppKit.Localization">
+    xmlns:l10n="using:WinUIAppKit.Localization"
+    xmlns:pages="using:WslMonitor.Pages">
     <ScrollViewer>
-        <StackPanel Padding="36,12,36,36" Spacing="8" MaxWidth="960" HorizontalAlignment="Stretch">
-            <TextBlock l10n:Localize.Text="nav.about" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,12" />
+        <StackPanel Style="{StaticResource PageContentStyle}">
+            <TextBlock l10n:Localize.Text="nav.about" Style="{StaticResource PageTitleStyle}" />
             <Border Style="{StaticResource CardBorderStyle}">
                 <Grid ColumnSpacing="16">
                     <Grid.ColumnDefinitions>
@@ -32,8 +33,8 @@
                         <TextBlock x:Name="LogsPath" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                     <Button Grid.Column="1" VerticalAlignment="Center" Click="OpenLogs_Click">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE838;" FontSize="14" />
+                        <StackPanel Style="{StaticResource IconLabelStyle}">
+                            <FontIcon Glyph="&#xE838;" Style="{StaticResource ButtonGlyphStyle}" />
                             <TextBlock l10n:Localize.Text="menu.logs" />
                         </StackPanel>
                     </Button>
@@ -41,4 +42,4 @@
             </Border>
         </StackPanel>
     </ScrollViewer>
-</Page>
+</pages:LivePage>

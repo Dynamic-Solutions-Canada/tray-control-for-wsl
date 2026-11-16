@@ -92,8 +92,15 @@ public sealed partial class PromotedAppsPage
 
     private static string PromoCopy(string value) => KnownPromoKey(value) is { } key ? UiText.Get(key) : value;
 
-    private void PromoUnloaded(object sender, RoutedEventArgs args)
+    private void PromoUnloaded(object sender, RoutedEventArgs args) => DisableLocalization();
+
+    /// <summary>
+    /// Stop following language changes (Unloaded, or the window closing, which doesn't reliably raise
+    /// Unloaded). Safe to call more than once.
+    /// </summary>
+    internal void DisableLocalization()
     {
+        if (!_promoAttached) return;
         UiText.Changed -= RefreshPromoCopy;
         AppList.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, _promoSourceCallback);
         _promoAttached = false;

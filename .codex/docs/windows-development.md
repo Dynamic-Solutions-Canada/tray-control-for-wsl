@@ -1,10 +1,10 @@
 # Windows desktop workflow
 
-From the WSL repository root, use the same commands across all four apps:
+From the WSL repository root, use the same commands as the sibling WinUI apps:
 
 | Command | Result |
 | --- | --- |
-| `npm run build:desktop` | Signed ARM64 Release dev package |
+| `npm run build:desktop` | Signed Release dev package (ARM64 unless `--platform x64`; this PC is x64) |
 | `npm run verify:desktop` | Full Windows Debug compile |
 | `npm run install:desktop` | Build, update in place, launch |
 | `npm run install:desktop -- --skip-build` | Reinstall the latest successful dev package |

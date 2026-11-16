@@ -7,6 +7,7 @@ using WinUIAppKit.Startup;
 using WinUIAppKit.Theming;
 using WinUIAppKit.Tray;
 using WslMonitor.Classes;
+using WslMonitor.Controls;
 using WslMonitor.Models;
 using WslMonitor.Services;
 using WslMonitor.Windows;
@@ -33,7 +34,6 @@ public sealed partial class MainWindow : Window
     public static StartupRegistration Startup { get; } = new("WslMonitorStartup", "WSL Monitor");
 
     public static WslMonitorService Service { get; private set; } = null!;
-    public static MainWindow Instance { get; private set; } = null!;
 
     private readonly IntPtr _hwnd;
     private readonly SUBCLASSPROC _wndProc;   // held in a field so the GC can't collect the delegate
@@ -53,7 +53,6 @@ public sealed partial class MainWindow : Window
             Environment.Exit(0);
         }
 
-        Instance = this;
         _hwnd = WindowNative.GetWindowHandle(this);
         HideHostWindow();
 
@@ -100,33 +99,26 @@ public sealed partial class MainWindow : Window
     // ── Tray icon ───────────────────────────────────────────────────────
     private void UpdateTrayIcon()
     {
-        var distros = Service.Distros;
-        int running = Service.RunningCount;
-        var status = distros.Any(d => d.IsTransitioning) || Service.IsShuttingDown ? TrayStatus.Changing
-                   : running > 0 ? TrayStatus.Running
-                   : TrayStatus.Idle;
+        var png = TrayIconRenderer.Render(TrayStatusNow(), TrayIcon.TaskbarIsDark(), TrayIcon.IconPixelSize);
 
-        var png = TrayIconRenderer.Render(status, TrayIcon.TaskbarIsDark(), TrayIcon.IconPixelSize);
-        _tray.Update(png, Tooltip(distros, running));
+        // Same summary as the flyout footer, so the two can't disagree.
+        string tooltip = UiText.Format("tray.tooltip", ("detail", DistroVisuals.StatusLine(Service)));
+        _tray.Update(png, tooltip);
     }
 
-    /// <summary>"WSL Monitor – 1 of 3 running" style hover text in the current interface language.</summary>
-    private string Tooltip(IReadOnlyList<Distro> distros, int running)
+    /// <summary>Amber while anything is changing, green while something runs, plain otherwise.</summary>
+    private static TrayStatus TrayStatusNow()
     {
-        string detail;
-        if (!Service.IsWslInstalled) detail = UiText.Get("tray.no-wsl");
-        else if (distros.Count == 0) detail = UiText.Get("tray.no-distros");
-        else if (running == 0) detail = UiText.Get("tray.nothing-running");
-        else if (distros.Count == 1) detail = UiText.Format("tray.one-running", ("name", distros[0].Name));
-        else detail = UiText.Format("tray.some-running", ("running", running), ("total", distros.Count));
-        return UiText.Format("tray.tooltip", ("detail", detail));
+        if (Service.IsShuttingDown || Service.Distros.Any(d => d.IsTransitioning)) return TrayStatus.Changing;
+        if (Service.RunningCount > 0) return TrayStatus.Running;
+        return TrayStatus.Idle;
     }
 
     private void ShowContextMenu(int x, int y)
     {
         new TrayMenu()
-            .Add(UiText.Get("menu.open"), () => DetailsWindow.ShowInstance())
-            .Add(UiText.Get("nav.settings"), () => DetailsWindow.ShowInstance(DetailsWindow.SettingsTarget))
+            .Add(UiText.Get("menu.open"), DetailsWindow.ShowInstance)
+            .Add(UiText.Get("nav.settings"), DetailsWindow.ShowSettings)
             .Add(UiText.Get("menu.logs"), OpenLogsFolder)
             .AddSeparator()
             .Add(UiText.Get("menu.exit"), ExitApp)

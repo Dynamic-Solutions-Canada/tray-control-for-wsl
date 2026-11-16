@@ -7,7 +7,8 @@ namespace WslMonitor;
 
 /// <summary>
 /// Application entry point (WinUI 3). The app is resident: <see cref="MainWindow"/> is a hidden host
-/// that owns the tray icon, the WSL monitor service, the tray flyout and the details window.
+/// that owns the tray icon, the WSL monitor service and the tray flyout; the details window is a
+/// single instance opened through <see cref="DetailsWindow"/>'s static Show methods.
 /// </summary>
 public partial class App : Application
 {

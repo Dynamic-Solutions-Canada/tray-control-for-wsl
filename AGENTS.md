@@ -18,8 +18,11 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 |---|---|
 | Host (hidden, resident, owns tray + service) | `MainWindow.xaml(.cs)` |
 | Tray flyout | `Windows/DistroFlyout.xaml(.cs)` |
-| Full window (Overview, per-distro pages, Settings, About) | `DetailsWindow.xaml(.cs)`, `Pages/*` |
-| Shared distro UI (row, Start/Stop button, labels) | `Controls/DistroRow.cs`, `Controls/DistroPowerButton.cs`, `Controls/DistroVisuals.cs` |
+| Tray icon artwork (idle / running / changing) | `Classes/TrayIconRenderer.cs` |
+| Full window (Overview, per-distro pages, Settings, About) | `DetailsWindow.xaml(.cs)`, `Pages/*`; pages that follow live state derive from `Pages/LivePage.cs` |
+| Distro model and state | `Models/Distro.cs` |
+| Shared distro UI (list and empty states, row, Start/Stop button, labels, status line, Stop policy) | `Controls/DistroList.cs`, `Controls/DistroRow.cs`, `Controls/DistroPowerButton.cs`, `Controls/DistroVisuals.cs` |
+| Shared page and button styles | `App.xaml` (`PageContentStyle`, `PageTitleStyle`, `SectionHeaderStyle`, `IconLabelStyle`, `CardBorderStyle`) |
 | Polling, state machine, actions | `Services/WslMonitorService.cs` |
 | `wsl.exe` calls | `Services/WslCli.cs` |
 | Distro list and details (HKCU `...\Lxss`) | `Services/WslRegistry.cs` |
@@ -35,8 +38,9 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 - Never run `wsl --terminate` or `--shutdown` while testing from inside WSL: it ends the session doing the testing.
 - Namespace `WslMonitor.Windows` shadows WinRT `Windows.*`: always write `global::Windows...`.
 - Package identity is a **placeholder** (`TechnicallyReal.WslMonitor`) until reserved in Partner Center; update `Package.appxmanifest` and `windows-build.json` together.
-- **Every user-visible string goes through the catalogs.** Add the key to all seven `Strings/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:strings` (keys, `{{placeholders}}`, no em dashes, manifest languages). XAML uses `l10n:Localize.Text="key"` (also `Content`, `Header`, `ToolTip`, `OnContent`/`OffContent`); code uses `UiText.Get` / `UiText.Format`. Store keys, not finished text, on models (`Distro.BusyReason`, `DistroError`) so a language change relabels them. Names, paths and WSL's own output are never translated. Promo copy keys and wording match Persistent's. Translations are unreviewed machine translations.
-- **Language changes apply live:** `Localize` relabels XAML; anything built in code must also refresh on `UiText.Changed` (the details window reloads its current page, the flyout rebuilds, the tray tooltip redraws).
+- **Every user-visible string goes through the catalogs.** Add the key to all seven `Strings/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:strings` (keys, `{{placeholders}}`, no em dashes, manifest languages). XAML uses `l10n:Localize.Text="key"` (also `Content`, `Header`, `ToolTip`, `OnContent`/`OffContent`); code uses `UiText.Get` / `UiText.Format`. Store keys, not finished text, on models and services (`Distro.BusyReason`, `LocalizedMessage` for `Distro.LastError` and `ShutdownStatus`; pass a `WslResult` or `NameList` as a value, not its text) so a language change relabels them. Names, paths and WSL's own output are never translated. Promo copy keys match Persistent's, and so does the wording except `promo.little-launcher`, which follows the newer catalog text (Persistent still has the old one). Translations are unreviewed machine translations.
+- **Language changes apply live:** `Localize` relabels XAML; anything built in code must also refresh on `UiText.Changed` (live pages redraw in `LivePage.OnAttach` handlers, the details window rebuilds its menu, the flyout rebuilds, the tray tooltip redraws). Pages are never re-navigated for a language change.
+- **Actions and polling:** every state change made by an action calls `Stamp(d)`; a poll that started before the latest stamp leaves that distro's state alone. Actions only write their outcome if the distro is still in the state they set. "Shut down WSL" progress lives in the service (`ShutdownStatus`) and its questions go through `DetailsWindow.ConfirmAsync`, never a specific page.
 - **Manifest strings** use `ms-resource:Resources/<Key>`; `build-msix.ps1` writes them from the catalogs into `resources.pri` and fails the build unless every declared language resolves. Keep resource splitting off (single package, not a bundle).
 - **PowerShell build scripts must be ASCII.** App icon and MSIX images come from `WslMonitorMSIX/generate-msix-images.ps1` (committed output).
 

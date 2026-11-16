@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinUIAppKit.Localization;
+using WinUIAppKit.Startup;
 using WinUIAppKit.Theming;
 using WslMonitor.Classes;
 
@@ -24,28 +25,59 @@ public sealed partial class GeneralPage : Page
             FillLanguages();
             SystemDistrosSwitch.IsOn = settings.ShowSystemDistros;
 
-            _updatingStartupSwitch = true;
-            try { StartupSwitch.IsOn = await MainWindow.Startup.IsEnabledAsync(); }
-            catch (Exception ex) { Logger.Warn(ex, "Couldn't read startup state"); }
-            finally { _updatingStartupSwitch = false; }
-
+            // The other controls are live from here; the startup switch has its own guard while it loads.
             _initializing = false;
+            await LoadStartupAsync(() => MainWindow.Startup.GetStatusAsync());
         };
     }
 
+    // ── Start with Windows ──────────────────────────────────────────────
     private async void StartupSwitch_Toggled(object sender, RoutedEventArgs e)
     {
         if (_updatingStartupSwitch || _initializing) return;
+        bool requested = StartupSwitch.IsOn;
+        await LoadStartupAsync(() => MainWindow.Startup.SetEnabledAsync(requested));
+    }
+
+    /// <summary>
+    /// Run a startup query or change and show its outcome. Windows may refuse a change (the user
+    /// turned the app off in Settings, or a policy decides); the switch then shows the real state,
+    /// is disabled, and a note says where the decision lives. On an error the real state is re-read.
+    /// </summary>
+    private async Task LoadStartupAsync(Func<Task<StartupStatus>> operation)
+    {
         _updatingStartupSwitch = true;
         try
         {
-            bool result = await MainWindow.Startup.SetEnabledAsync(StartupSwitch.IsOn);
-            StartupSwitch.IsOn = result;   // the user or policy may refuse
-            SettingsManager.Current.Startup = result;
-            SettingsManager.Save();
+            ShowStartup(await operation());
         }
-        catch (Exception ex) { Logger.Warn(ex, "Couldn't change startup state"); }
-        finally { _updatingStartupSwitch = false; }
+        catch (Exception ex)
+        {
+            Logger.Warn(ex, "Couldn't read or change the startup state");
+            try { ShowStartup(await MainWindow.Startup.GetStatusAsync()); } catch { }
+        }
+        finally
+        {
+            _updatingStartupSwitch = false;
+        }
+    }
+
+    private void ShowStartup(StartupStatus status)
+    {
+        StartupSwitch.IsOn = status.IsOn();
+        StartupSwitch.IsEnabled = status.CanChange();
+        SettingsManager.Current.Startup = status.IsOn();
+        SettingsManager.Save();
+
+        string? note = status switch
+        {
+            StartupStatus.DisabledByUser => "settings.startup-user-off",
+            StartupStatus.DisabledByPolicy => "settings.startup-policy-off",
+            StartupStatus.EnabledByPolicy => "settings.startup-policy-on",
+            _ => null,
+        };
+        StartupNote.Visibility = note != null ? Visibility.Visible : Visibility.Collapsed;
+        if (note != null) Localize.SetText(StartupNote, note);
     }
 
     private void SystemDistrosSwitch_Toggled(object sender, RoutedEventArgs e)

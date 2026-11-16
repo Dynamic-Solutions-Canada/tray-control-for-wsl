@@ -68,15 +68,19 @@ public static class WslRegistry
     }
 
     /// <summary>
-    /// WSL's registration state: 1 is a normal installed distro; the others are transient
-    /// (2 installing, 3 uninstalling, 4 converting between WSL versions), as an interface text key. Empty means usable.
+    /// WSL's registration state (its LxssDistributionState enum) as an interface text key; empty means
+    /// usable. 1 Installed and 2 Running are usable (in practice a running distro still reads 1); the
+    /// rest are transient: 3 Installing, 4 Uninstalling, 5 Converting (between WSL versions),
+    /// 6 Exporting, 7 Compacting (its disk).
     /// </summary>
     private static string BusyReasonFor(int state) => state switch
     {
-        1 => "",
-        2 => "state.installing",
-        3 => "state.removing",
-        4 => "state.converting",
+        1 or 2 => "",
+        3 => "state.installing",
+        4 => "state.removing",
+        5 => "state.converting",
+        6 => "state.exporting",
+        7 => "state.compacting",
         _ => "state.busy",
     };
 

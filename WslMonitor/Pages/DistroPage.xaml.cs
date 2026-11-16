@@ -10,22 +10,26 @@ using WslMonitor.Services;
 namespace WslMonitor.Pages;
 
 /// <summary>One distro: state with Start / Stop, quick launches, and its registration details.</summary>
-public sealed partial class DistroPage : Page
+public sealed partial class DistroPage : LivePage
 {
     private static WslMonitorService Service => MainWindow.Service;
 
     /// <summary>The distro this page shows (navigation parameter).</summary>
     public string DistroName { get; private set; } = "";
 
-    public DistroPage()
+    public DistroPage() => InitializeComponent();
+
+    protected override void OnAttach()
     {
-        InitializeComponent();
-        Loaded += (_, _) =>
-        {
-            Service.Changed += Refresh;
-            Refresh();
-        };
-        Unloaded += (_, _) => Service.Changed -= Refresh;
+        Service.Changed += Refresh;
+        UiText.Changed += Refresh;   // the status and details are built in code
+        Refresh();
+    }
+
+    protected override void OnDetach()
+    {
+        Service.Changed -= Refresh;
+        UiText.Changed -= Refresh;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -59,11 +63,17 @@ public sealed partial class DistroPage : Page
     /// <summary>What Stop will do for this distro, in plain words.</summary>
     private static string StopBehaviour(Distro d)
     {
+        // Force stop is offered after a failed clean-stop check too; the error explains which case it is.
+        if (d.State == DistroState.StopTimedOut && d.LastError != null)
+            return UiText.Get("distro.force-offered");
         if (d.State == DistroState.StopTimedOut)
             return UiText.Format("distro.stop-timed-out", ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
-        if (d.HasSystemd) return UiText.Get("distro.stop-systemd");
-        if (d.InitSystem != null) return UiText.Get("distro.stop-no-systemd");
-        return UiText.Get("distro.stop-unknown");
+        return UiText.Get(DistroVisuals.StopKindOf(d) switch
+        {
+            StopKind.Clean => "distro.stop-systemd",
+            StopKind.Immediate => "distro.stop-no-systemd",
+            _ => "distro.stop-unknown",
+        });
     }
 
     private void BuildDetails(Distro d)
