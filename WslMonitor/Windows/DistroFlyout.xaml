@@ -26,10 +26,13 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="StatusText" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
-            <Button Grid.Column="1" Click="Details_Click" l10n:Localize.ToolTip="flyout.details-tip">
+            <!-- Shut down WSL (built in code: it follows the service's state) -->
+            <ContentPresenter x:Name="ShutdownHost" Grid.Column="1" VerticalAlignment="Center" />
+            <Button Grid.Column="2" Click="Details_Click" l10n:Localize.ToolTip="flyout.details-tip">
                 <StackPanel Style="{StaticResource IconLabelStyle}">
                     <FontIcon Glyph="&#xE8A7;" Style="{StaticResource ButtonGlyphStyle}" />
                     <TextBlock l10n:Localize.Text="flyout.details" />

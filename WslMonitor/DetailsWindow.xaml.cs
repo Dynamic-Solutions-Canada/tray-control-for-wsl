@@ -8,6 +8,8 @@ using WinUIAppKit.Theming;
 using WinUIAppKit.Windowing;
 using WslMonitor.Classes;
 using WslMonitor.Controls;
+using WslMonitor.Models;
+using WslMonitor.Services;
 using WslMonitor.Pages;
 
 namespace WslMonitor;
@@ -231,6 +233,39 @@ public sealed partial class DetailsWindow : Window
     }
 
     // ── Dialogs ─────────────────────────────────────────────────────────
+    /// <summary>
+    /// "Shut down WSL" found distros that didn't stop cleanly: open this window (wherever the shutdown
+    /// was started, including the tray flyout) and ask whether to cut them off. False means don't.
+    /// </summary>
+    public static async Task<bool> ConfirmForceShutdownAsync(IReadOnlyList<string> stuck)
+    {
+        ShowInstance();
+        if (s_instance is { } window) await window.WhenContentLoadedAsync();
+
+        return await ConfirmAsync(
+            UiText.Get("overview.force-title"),
+            UiText.Format("overview.force-body",
+                ("names", new NameList(stuck)),
+                ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes)),
+            UiText.Get("overview.force-button"));
+    }
+
+    /// <summary>Completes once the window's content has a XamlRoot (immediately if it already has).</summary>
+    private Task WhenContentLoadedAsync()
+    {
+        var root = (FrameworkElement)Content;
+        if (root.XamlRoot != null && root.IsLoaded) return Task.CompletedTask;
+
+        var loaded = new TaskCompletionSource();
+        void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            root.Loaded -= OnLoaded;
+            loaded.TrySetResult();
+        }
+        root.Loaded += OnLoaded;
+        return loaded.Task;
+    }
+
     /// <summary>
     /// Ask a yes/no question on this window, whichever page is showing. Returns false (no) when the
     /// window isn't open, or if it closes while the question is up, so a waiting operation never

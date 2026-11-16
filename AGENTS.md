@@ -8,7 +8,7 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 
 - **Tray click or double-click** opens the flyout: one row per distro with Start / Stop, and a Details button. Double-click deliberately does the same as a click (the kit swallows the trailing click so it doesn't close again).
 - **Stop needs two clicks** (red "Stop?" for 4 s). Distros running systemd stop with `systemctl poweroff` (clean); others with `wsl --terminate`. After 2 minutes still running, the distro shows "Force stop" (also two clicks).
-- **Shut down WSL** (Overview page, confirmation dialog): clean-stops every running distro in parallel, asks before forcing any that miss the limit, then `wsl --shutdown`.
+- **Shut down WSL** (Overview page with a confirmation dialog, or the flyout's power button with two clicks like Stop): clean-stops every running distro in parallel, asks before forcing any that miss the limit (in the details window, opened if needed), then `wsl --shutdown`.
 - **Start** runs a no-op in the distro. Whether it stays up depends on `instanceIdleTimeout` in `%UserProfile%\.wslconfig`; the Overview page explains the current setting.
 - Docker Desktop's `docker-desktop*` distros are hidden unless enabled in Settings.
 
@@ -22,6 +22,7 @@ A resident WinUI 3 tray app that shows which WSL distros are running and starts 
 | Full window (Overview, per-distro pages, Settings, About) | `DetailsWindow.xaml(.cs)`, `Pages/*`; pages that follow live state derive from `Pages/LivePage.cs` |
 | Distro model and state | `Models/Distro.cs` |
 | Shared distro UI (list and empty states, row, Start/Stop button, labels, status line, Stop policy) | `Controls/DistroList.cs`, `Controls/DistroRow.cs`, `Controls/DistroPowerButton.cs`, `Controls/DistroVisuals.cs` |
+| Two-click confirmation (Stop, Force stop, Shut down WSL) | `Controls/ClickConfirmation.cs`; flyout shutdown button `Controls/ShutdownButton.cs` |
 | Shared page and button styles | `App.xaml` (`PageContentStyle`, `PageTitleStyle`, `SectionHeaderStyle`, `IconLabelStyle`, `CardBorderStyle`) |
 | Polling, state machine, actions | `Services/WslMonitorService.cs` |
 | `wsl.exe` calls | `Services/WslCli.cs` |

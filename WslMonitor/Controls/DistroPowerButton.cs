@@ -10,26 +10,13 @@ namespace WslMonitor.Controls;
 /// <summary>
 /// The Start / Stop button for one distro, used in the tray flyout and the details window.
 /// <para>
-/// Stopping takes two clicks: the first turns the button into a red "Stop?" for a few seconds, the
-/// second stops the distro. Everything running in it ends, and for this user's main distro that
-/// includes their development tools, so a stray click must not do it. The pending confirmation is
-/// remembered per distro (not per button) because lists are rebuilt as WSL state is polled.
+/// Stopping takes two clicks (<see cref="ClickConfirmation"/>): the first turns the button into a red
+/// "Stop?" for a few seconds, the second stops the distro. Everything running in it ends, and for
+/// this user's main distro that includes their development tools, so a stray click must not do it.
 /// </para>
 /// </summary>
 public sealed partial class DistroPowerButton : Button
 {
-    private static readonly TimeSpan ConfirmWindow = TimeSpan.FromSeconds(4);
-
-    /// <summary>
-    /// A confirming click must come at least this long after the arming one: a double-click delivers
-    /// two clicks within the system double-click time, and must not arm and confirm a stop in one go.
-    /// </summary>
-    private static TimeSpan MinConfirmDelay =>
-        TimeSpan.FromMilliseconds(Math.Max(400, WinUIAppKit.Interop.NativeMethods.GetDoubleClickTime()));
-
-    /// <summary>Distro id → when its pending "Stop?" confirmation lapses.</summary>
-    private static readonly Dictionary<Guid, DateTime> PendingConfirmations = new();
-
     private readonly Distro _distro;
     private readonly WslMonitorService _service;
 
@@ -43,13 +30,8 @@ public sealed partial class DistroPowerButton : Button
         Render();
     }
 
-    /// <summary>True while the red "Stop?" confirmation is showing for this distro.</summary>
-    private bool IsConfirming =>
-        PendingConfirmations.TryGetValue(_distro.Id, out var until) && until > DateTime.UtcNow;
-
-    /// <summary>True once the confirmation has been showing long enough for a click to count as deliberate.</summary>
-    private bool CanConfirm =>
-        IsConfirming && DateTime.UtcNow - (PendingConfirmations[_distro.Id] - ConfirmWindow) >= MinConfirmDelay;
+    /// <summary><see cref="ClickConfirmation"/> key for this distro's stop.</summary>
+    private string ConfirmKey => "stop:" + _distro.Id;
 
     // ── Appearance ──────────────────────────────────────────────────────
     /// <summary>Set the label, colours, tooltip and enabled state for the distro's current state.</summary>
@@ -70,12 +52,12 @@ public sealed partial class DistroPowerButton : Button
             case DistroState.Running:
             case DistroState.StopTimedOut:
                 bool force = _distro.State == DistroState.StopTimedOut;
-                if (IsConfirming)
+                if (ClickConfirmation.IsArmed(ConfirmKey))
                 {
                     Content = UiText.Get(force ? "power.force-confirm" : "power.stop-confirm");
                     Background = (Brush)res["SystemFillColorCriticalBrush"];
                     Foreground = (Brush)res["TextOnAccentFillColorPrimaryBrush"];
-                    ScheduleConfirmationLapse();
+                    ClickConfirmation.OnLapse(ConfirmKey, DispatcherQueue, Render);
                 }
                 else
                 {
@@ -129,17 +111,6 @@ public sealed partial class DistroPowerButton : Button
             ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes));
     }
 
-    /// <summary>Revert to the plain button when the confirmation lapses, if this button is still shown then.</summary>
-    private void ScheduleConfirmationLapse()
-    {
-        var remaining = PendingConfirmations[_distro.Id] - DateTime.UtcNow;
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = remaining > TimeSpan.Zero ? remaining : TimeSpan.FromMilliseconds(1);
-        timer.IsRepeating = false;
-        timer.Tick += (_, _) => Render();
-        timer.Start();
-    }
-
     // ── Actions ─────────────────────────────────────────────────────────
     /// <summary>Start a stopped distro; for a running one, arm the confirmation or, if armed, stop it.</summary>
     private async void OnClick(object sender, RoutedEventArgs e)
@@ -152,15 +123,14 @@ public sealed partial class DistroPowerButton : Button
 
             case DistroState.Running:
             case DistroState.StopTimedOut:
-                if (!IsConfirming)
+                if (!ClickConfirmation.IsArmed(ConfirmKey))
                 {
-                    PendingConfirmations[_distro.Id] = DateTime.UtcNow + ConfirmWindow;
+                    ClickConfirmation.Arm(ConfirmKey);
                     Render();
                     return;
                 }
-                if (!CanConfirm) return;   // second click of a double-click
+                if (!ClickConfirmation.TryConfirm(ConfirmKey)) return;   // second click of a double-click
 
-                PendingConfirmations.Remove(_distro.Id);
                 if (_distro.State == DistroState.StopTimedOut) await _service.ForceStopAsync(_distro);
                 else await _service.StopAsync(_distro);
                 break;

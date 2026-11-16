@@ -59,11 +59,6 @@ public sealed partial class OverviewPage : LivePage
         if (!await DetailsWindow.ConfirmAsync(UiText.Get("overview.confirm-title"), what, UiText.Get("overview.confirm-button"))) return;
 
         // Asked from the window, not this page: the user may have moved to another page meanwhile.
-        await Service.ShutdownAllAsync(stuck => DetailsWindow.ConfirmAsync(
-            UiText.Get("overview.force-title"),
-            UiText.Format("overview.force-body",
-                ("names", new NameList(stuck)),
-                ("minutes", (int)WslMonitorService.CleanStopLimit.TotalMinutes)),
-            UiText.Get("overview.force-button")));
+        await Service.ShutdownAllAsync(DetailsWindow.ConfirmForceShutdownAsync);
     }
 }

@@ -9,8 +9,8 @@ using WslMonitor.Services;
 namespace WslMonitor.Windows;
 
 /// <summary>
-/// Tray flyout: one row per distro with its state and a Start / Stop button, plus a Details button
-/// for the full window. Window behaviour (placement, acrylic, parking, dismissal) comes from the
+/// Tray flyout: one row per distro with its state and a Start / Stop button, plus Shut down WSL and
+/// a Details button for the full window. Window behaviour (placement, acrylic, parking, dismissal) comes from the
 /// shared <see cref="FlyoutController"/>; this class only builds content.
 /// </summary>
 public sealed partial class DistroFlyout : Window
@@ -67,6 +67,8 @@ public sealed partial class DistroFlyout : Window
             _controller.Dismiss();
             DetailsWindow.ShowDistro(d.Name);
         });
+
+        ShutdownHost.Content = new ShutdownButton(_service);
 
         // With no distros the list's own message already says so; don't repeat it in the footer.
         bool listExplainsItself = _service.Distros.Count == 0 && !_service.IsShuttingDown;
