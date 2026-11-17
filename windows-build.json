@@ -6,5 +6,9 @@
   "version_file": "Directory.Build.props",
   "dev_identity": "TechnicallyReal.WslMonitor",
   "signing": "shared-dev",
-  "trusted_certificate": true
+  "trusted_certificate": true,
+  "listing": {
+    "product_name": "WSL Monitor",
+    "catalog_dir": "WslMonitor/Localization/Catalogs"
+  }
 }

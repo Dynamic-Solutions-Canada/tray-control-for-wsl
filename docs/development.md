@@ -30,11 +30,12 @@ Never uninstall to get past an update error.
 `npm run validate` is the Linux gate. It runs, in order:
 
 - `npm run format:check`: every C# project outside `external/` matches the root `.editorconfig`, which is winui-app-kit's file copied unchanged from the tag the app pins; never hand-edit it. `npm run format` rewrites the files.
+- `npm run check:gitignore`: `.gitignore` ends with winui-app-kit's shared block, unchanged.
 - `npm run check:l10n`: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs.
 - `npm run check:listing`: the Store listing text and the current version's release notes fit the Store's limits and match the README tagline.
-- `npm test`: every portable harness under `tests/`, found by `scripts/run-tests` without a hand-kept list. Each has a README saying what it covers and does not prove. Today there is one, for the distro state rules.
+- `npm test`: every portable harness under `tests/`, found by winui-app-kit's `scripts/run-tests` without a hand-kept list. Each has a README saying what it covers and does not prove: the distro state rules, and the settings file (the kit's real store and this app's schema steps, against real files).
 
-Formatting and tests run through `scripts/dotnet`, which uses the .NET SDK pinned in `global.json` when it is installed and otherwise its Docker image, capped at 3 GB (`KIT_DOTNET_MEMORY`). Run them as a non-root user. Run `npm run validate` and `npm run verify:desktop` before finishing a change.
+Formatting and tests run through winui-app-kit's `scripts/dotnet`, which uses the .NET SDK pinned in `global.json` when it is installed and otherwise its Docker image, capped at 3 GB (`KIT_DOTNET_MEMORY`). Run them as a non-root user. Run `npm run validate` and `npm run verify:desktop` before finishing a change.
 
 ### CI
 
@@ -50,7 +51,9 @@ The harness cannot see the screen, WSL or Windows. Before a release, install the
 - Stop asks for a second click (red "Stop?" for 4 seconds) and a double-click does not stop it. A systemd distro stops cleanly; Force stop appears only after the clean stop fails or times out.
 - Shut down WSL from the flyout (two clicks) and from the Overview page (dialog); a distro that will not stop cleanly makes it ask before forcing.
 - The Overview page's idle timeout explanation matches `%UserProfile%\.wslconfig`.
-- Settings: start at sign-in, Docker Desktop's distros, theme, and a language change that relabels the flyout, the window and the tray tooltip without reopening them.
+- Settings: start at sign-in, Docker Desktop's distros, theme, and a language change that relabels the flyout, the window and the tray tooltip without reopening them. Reset settings asks first, then puts theme, language and Docker distros back to their defaults without changing Start with Windows.
+- Settings from an earlier version survive the update, and a second launch opens the window of the copy already running instead of starting another.
+- Exit from the tray menu removes the tray icon and ends the app, and the log for that run ends with "Exit requested".
 - About: the version, and "Open logs folder" opens the folder with the current log.
 - Light, dark and high contrast.
 
@@ -79,12 +82,15 @@ It writes:
 | What | Where | After uninstall |
 | --- | --- | --- |
 | Settings (`settings.json`) | `%AppData%\WslMonitor\` | Removed, see below |
+| Settings backups: `settings.json.v<version>.bak` before an upgrade, `.bad` for an unreadable file, `.<time>.reset` after Reset settings | `%AppData%\WslMonitor\` | Removed, see below |
 | Logs (`logs.<start time>.txt`, the last few kept) | `%AppData%\WslMonitor\` | Removed, see below |
 | Start at sign-in | The package's startup task | Removed with the package |
 | "Our other apps" cache (`apps.json` and icons) | The package's `LocalState\PromotedApps\` | Removed with the package |
 
 Every install, including dev installs from `install:desktop`, is an MSIX package, so Windows redirects `%AppData%\WslMonitor\` into the package's own data folder and deletes it on uninstall. The About page's "Open logs folder" opens the real location. A copy run without a package (straight from a build output folder) writes to the real `%AppData%\WslMonitor\`, keeps the promo cache in `%LocalAppData%\TechnicallyReal\PromotedApps\` and, for start at sign-in, sets a `HKCU\...\CurrentVersion\Run` value; all three remain until removed by hand. A packaged copy removes such Run values when it starts.
 
+Windows redirects only folders the packaged app creates itself: if `%AppData%\WslMonitor\` already existed when the package was first installed (from a copy run without a package), the packaged app keeps using the real folder, and it remains after uninstall. Hub Display Switch saw this on 2026-11-16; it applies to this app the same way.
+
 This list has not yet been confirmed against a real uninstall.
 
-There is nothing to back up or export beyond `settings.json`; the promo cache is downloaded again when needed. To delete all data, uninstall the app.
+There is nothing to back up or export beyond `settings.json`; the promo cache is downloaded again when needed. Reset settings (Settings page) starts again from the defaults and keeps the old file as a `.reset` backup. To delete all data, uninstall the app.

@@ -9,4 +9,4 @@ Does not prove:
 - The 2 minute clean-stop limit and 30 second force-stop limit expiring: they wait on the real clock, so every stand-in reports a stopped distro at once. The init-check failure reaches the same "Force stop" state without waiting.
 - That `wsl.exe` and the registry behave as the stand-ins do, the polling intervals, or anything on screen (two-click confirmation, the flyout, the details window). Those need the installed app; see the manual checks in [docs/development.md](../../docs/development.md).
 
-Run with `npm test`, or alone with `scripts/dotnet run --project tests/WslMonitor.State.Tests`.
+Run with `npm test`, or alone with `external/winui-app-kit/scripts/dotnet run --project tests/WslMonitor.State.Tests`.

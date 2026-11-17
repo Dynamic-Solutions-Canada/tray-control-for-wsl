@@ -10,7 +10,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 | Area | Files |
 |---|---|
-| Host (hidden, resident, owns tray + service) | `MainWindow.xaml(.cs)` |
+| Host (the kit's `HostWindow`, started by `AppBootstrap`; owns tray + service) | `App.xaml.cs`, `MainWindow.xaml(.cs)` |
 | Tray flyout | `Windows/DistroFlyout.xaml(.cs)` |
 | Tray icon artwork (idle / running / changing) | `Classes/TrayIconRenderer.cs` |
 | Full window (Overview, per-distro pages, Settings, About) | `DetailsWindow.xaml(.cs)`, `Pages/*`; pages that follow live state derive from `Pages/LivePage.cs` |
@@ -22,7 +22,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | `wsl.exe` calls | `Services/WslCli.cs` |
 | Distro list and details (HKCU `...\Lxss`) | `Services/WslRegistry.cs` |
 | `.wslconfig` idle timeouts | `Services/WslConfigFile.cs` |
-| Settings | `ViewModels/UserSettings.cs`, `Classes/SettingsManager.cs` |
+| Settings (the kit's versioned store, with Reset) | `ViewModels/UserSettings.cs`, `Classes/SettingsManager.cs`, `Classes/SettingsMigrations.cs` |
 | Interface text (9 languages) | `Localization/Catalogs/*.json`, `Classes/AppLanguages.cs`; lookups via the kit's `UiText` / `Localize` |
 | "Our other apps" page | `external/promo` submodule, imported in the csproj |
 
@@ -39,17 +39,17 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - `wsl.exe` writes UTF-16 for `--list` unless `WSL_UTF8=1` (set by `WslCli`). Parse `--quiet` output, never the localized `-v` table.
 - The service mutates `Distro` objects on the UI thread only and raises `Changed` only when visible state changes; views rebuild on `Changed`. Pending stop confirmations live in `DistroPowerButton` (per distro), so rebuilds don't lose them.
 - Never run `wsl --terminate` or `--shutdown` while testing from inside WSL: it ends the session doing the testing.
-- Namespace `WslMonitor.Windows` shadows WinRT `Windows.*`: always write `global::Windows...`.
+- The kit's [Gotchas](external/winui-app-kit/README.md#gotchas) apply here and are not repeated (identity values, single instance before settings, the `WslMonitor.Windows` namespace, flyouts, physical paths, interface text). This app's identity values are the constants at the top of `MainWindow.xaml.cs`.
 - Package identity is a **placeholder** (`TechnicallyReal.WslMonitor`) until reserved in Partner Center; update `Package.appxmanifest` and `windows-build.json` together.
-- **Every user-visible string goes through the catalogs.** Add the key to all seven `Localization/Catalogs/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:l10n` (keys, `{{placeholders}}`, no em dashes, manifest languages). XAML uses `l10n:Localize.Text="key"` (also `Content`, `Header`, `ToolTip`, `OnContent`/`OffContent`); code uses `UiText.Get` / `UiText.Format`. Store keys, not finished text, on models and services (`Distro.BusyReason`, `LocalizedMessage` for `Distro.LastError` and `ShutdownStatus`; pass a `WslResult` or `NameList` as a value, not its text) so a language change relabels them. Names, paths and WSL's own output are never translated. The "Our other apps" page translates its own text through `PromoLocalization.LocaleProvider`, set in `MainWindow`; the catalogs hold only its navigation label (`promo.title`), and the page itself is never patched. Translations are unreviewed machine translations.
-- **Language changes apply live:** `Localize` relabels XAML; anything built in code must also refresh on `UiText.Changed` (live pages redraw in `LivePage.OnAttach` handlers, the details window rebuilds its menu, the flyout rebuilds, the tray tooltip redraws). Pages are never re-navigated for a language change.
+- **Every user-visible string goes through the catalogs.** Add the key to all seven `Localization/Catalogs/*.json` (en-CA and fr-CA reuse en-US and fr-FR), then run `npm run check:l10n` (keys, `{{placeholders}}`, no em dashes, manifest languages). On models and services, store keys, not text (`Distro.BusyReason`, `LocalizedMessage` for `Distro.LastError` and `ShutdownStatus`; pass a `WslResult` or `NameList` as a value, not its text). Names, paths and WSL's own output are never translated. The "Our other apps" page translates its own text through `PromoLocalization.LocaleProvider`, set in `MainWindow`; the catalogs hold only its navigation label (`promo.title`), and the page itself is never patched. Translations are unreviewed machine translations.
+- **Language changes apply live:** code-built UI here refreshes on `UiText.Changed`: live pages redraw in `LivePage.OnAttach` handlers, the details window rebuilds its menu, the flyout rebuilds, the tray tooltip redraws. Pages are never re-navigated for a language change.
 - **Actions and polling:** every state change made by an action calls `Stamp(d)`; a poll that started before the latest stamp leaves that distro's state alone. Actions only write their outcome if the distro is still in the state they set. "Shut down WSL" progress lives in the service (`ShutdownStatus`) and its questions go through `DetailsWindow.ConfirmAsync`, never a specific page.
 - **Manifest strings** use `ms-resource:Resources/<Key>`; `build-msix.ps1` writes them from the catalogs into `resources.pri` and fails the build unless every declared language resolves. Keep resource splitting off (single package, not a bundle).
 - **PowerShell build scripts must be ASCII.** App icon and MSIX images come from `WslMonitorMSIX/generate-msix-images.ps1` (committed output).
 
 ## Commands
 
-Source is authoritative in WSL, with submodules initialised (`git submodule update --init`). Setup is in `docs/development.md`; the Windows commands go through `scripts/windows-build` (see the build tools README in the guidance map).
+Source is authoritative in WSL, with submodules initialised (`git submodule update --init`). Setup is in `docs/development.md`; the Windows commands go through winui-app-kit's `scripts/windows-build` (see the build tools README in the guidance map).
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |
@@ -57,17 +57,17 @@ Source is authoritative in WSL, with submodules initialised (`git submodule upda
 | `npm run package:desktop:dev` | A signed dev package builds | That it installs or runs |
 | `npm run install:desktop` | The dev package updates in place and launches | Behaviour; check it in the running app |
 | `npm run package:desktop` | An unsigned Store package builds, manifest strings resolved for every language | Signing; that it runs |
-| `npm run check:l10n` | Every catalog has the same keys and placeholders, no em dashes, and the manifest languages match | That the text is translated well |
-| `npm test` | Every portable harness under `tests/` passes on Linux (host .NET SDK or Docker): today the distro state rules | Anything that needs WSL, Windows or the installed app; each harness README says what it leaves out |
+| `npm run check:l10n` | Catalogs share keys and placeholders, have no em dashes, and match the manifest languages | That the text is translated well |
+| `npm test` | Every harness under `tests/` passes on Linux: the distro state rules and the settings file | What needs WSL, Windows or the installed app (see each README) |
 | `npm run check:listing` | Listing text and the current version's notes fit the Store's limits; the README tagline matches | That the listing is live or accurate |
-| `npm run validate` | The whole Linux gate passes: `format:check`, `check:l10n`, `check:listing`, then `npm test` | A Windows compile; also run `verify:desktop` |
+| `npm run validate` | The Linux gate: `format:check`, `check:gitignore`, `check:l10n`, `check:listing`, `npm test` | A Windows compile; also run `verify:desktop` |
 | `npm run format` | Rewrites every C# project (not `external/`) to the root `.editorconfig` (the kit's, unchanged) | Behaviour; review the diff |
 
 Before finishing a change, run `npm run validate` and `npm run verify:desktop`. Use the `desktop` skill for build and install requests.
 
 ## Release
 
-Releases are tag-driven: a `v*` tag makes `build-msix.yml` run the gate, build both architectures as a check, and create a notes-only GitHub Release (WSL Monitor is a paid Store app, so no package is attached). Store submission is manual for now. Use the `release` skill.
+A `v*` tag makes `build-msix.yml` run the gate, build both architectures as a check, and create a notes-only GitHub Release (a paid Store app attaches no package). Store submission is manual for now. Use the `release` skill.
 
 ## Guidance map
 
@@ -76,7 +76,7 @@ Releases are tag-driven: a `v*` tag makes `build-msix.yml` run the gate, build b
 | [docs/development.md](docs/development.md) | Building, checking, versioning, or changing where the app writes data | Build setup, data locations |
 | [.agents/guides/ui-conventions.md](.agents/guides/ui-conventions.md) | Any window, page, flyout, row or card | `WslMonitor/**/*.xaml(.cs)`, `WslMonitor/Controls/**` |
 | [WinUI App Kit `AGENTS.md`](external/winui-app-kit/AGENTS.md) | Using the kit's tray, flyout, settings, startup, theme or localization APIs | `external/winui-app-kit/**` (read only) |
-| [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) | A Windows build, install or packaging problem | `scripts/windows-build`, `windows-build.json` |
+| [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) | A Windows build, install or packaging problem | `windows-build.json`, the kit's `scripts/windows-build` |
 | [store-assets/microsoft/listings.md](store-assets/microsoft/listings.md) | Changing Store listing text or anything a listing claim depends on | `store-assets/microsoft/**` |
 | `desktop` skill | Building, verifying or installing locally | Local Windows builds |
 | `release` skill | Cutting a release | `Directory.Build.props`, `release-notes/**`, tags |
@@ -91,6 +91,7 @@ Releases are tag-driven: a `v*` tag makes `build-msix.yml` run the gate, build b
 | Where the app writes data, or a new kind of data | The data table in `docs/development.md` |
 | A state rule in `WslMonitorService` (actions, polling, Shut down WSL) | Behaviour above, the scenarios and README in `tests/WslMonitor.State.Tests/` |
 | A workflow, or what CI runs | The CI section of `docs/development.md` |
+| A setting added, renamed or removed | A step in `Classes/SettingsMigrations.cs` when the file's shape changes, and a scenario in `tests/WslMonitor.Settings.Tests/` |
 | A test harness added or changed | Its README; `npm test` finds it by itself |
 | winui-app-kit pin bumped | Copy the kit's `.editorconfig` at that tag unchanged, then `npm run format` |
 | A language or catalog rule | Conventions above, `scripts/check-localization.py` |

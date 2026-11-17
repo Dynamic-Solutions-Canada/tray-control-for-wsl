@@ -33,7 +33,6 @@ public sealed partial class DetailsWindow : Window
     private string _menuSignature = "";
     private bool _rebuilding;
     private string? _pendingTag;            // a selection asked for before the NavigationView loaded
-    private ContentDialog? _openDialog;     // hidden when the window closes, so a waiting caller gets an answer
 
     // ── Opening ─────────────────────────────────────────────────────────
     /// <summary>Show the window (creating it if needed) on its current page (Overview for a new window).</summary>
@@ -305,49 +304,25 @@ public sealed partial class DetailsWindow : Window
     }
 
     /// <summary>
-    /// Ask a yes/no question on this window, whichever page is showing. Returns false (no) when the
-    /// window isn't open, or if it closes while the question is up, so a waiting operation never
+    /// Ask a yes/no question on this window, whichever page is showing, through the kit's
+    /// <see cref="ConfirmDialog"/>. Returns false (no) when the window isn't open, when it already
+    /// shows a question, or if it closes while the question is up, so a waiting operation never
     /// proceeds on a guess.
     /// </summary>
-    public static async Task<bool> ConfirmAsync(string title, string body, string confirmText)
+    public static Task<bool> ConfirmAsync(string title, string body, string confirmText)
     {
-        if (_instance is not { } window || window.Content.XamlRoot is not { } root)
+        if (_instance is not { } window)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
-        if (window._openDialog != null)
-        {
-            return false;   // one question at a time
-        }
-
-        var dialog = new ContentDialog
-        {
-            XamlRoot = root,
-            Title = title,
-            Content = new TextBlock { Text = body, TextWrapping = TextWrapping.Wrap },
-            PrimaryButtonText = confirmText,
-            CloseButtonText = UiText.Get("dialog.cancel"),
-            DefaultButton = ContentDialogButton.Close,
-            RequestedTheme = ((FrameworkElement)window.Content).ActualTheme,
-        };
-
-        window._openDialog = dialog;
-        try
-        {
-            return await dialog.ShowAsync() == ContentDialogResult.Primary;
-        }
-        finally
-        {
-            window._openDialog = null;
-        }
+        return ConfirmDialog.ConfirmAsync(window, title, body, confirmText);
     }
 
     // ── Closing ─────────────────────────────────────────────────────────
     private void OnClosed(object sender, WindowEventArgs e)
     {
         _instance = null;
-        _openDialog?.Hide();
         MainWindow.Service.Changed -= OnServiceChanged;
         UiText.Changed -= OnLanguageChanged;
         MainWindow.Service.SetViewerActive(this, false);

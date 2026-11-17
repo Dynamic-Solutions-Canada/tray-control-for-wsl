@@ -3,12 +3,13 @@ using WinUIAppKit.Windowing;
 
 namespace WslMonitor.ViewModels;
 
-/// <summary>User settings, saved as settings.json by <see cref="Classes.SettingsManager"/>.</summary>
+/// <summary>
+/// User settings, saved as settings.json by <see cref="Classes.SettingsManager"/>. The kit's store owns
+/// the file's <c>SchemaVersion</c>; never declare one here. A change to the shape needs a step in
+/// <see cref="Classes.SettingsMigrations"/>.
+/// </summary>
 public sealed class UserSettings
 {
-    /// <summary>Settings file format, for future migrations.</summary>
-    public int Version { get; set; } = 1;
-
     public AppThemeChoice AppTheme { get; set; }
 
     /// <summary>Interface language identity (for example "fr-CA"), or null to follow Windows.</summary>

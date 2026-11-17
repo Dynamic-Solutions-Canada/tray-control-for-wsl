@@ -18,17 +18,45 @@ public sealed partial class GeneralPage : Page
     public GeneralPage()
     {
         InitializeComponent();
-        Loaded += async (_, _) =>
-        {
-            var settings = SettingsManager.Current;
-            ThemeCombo.SelectedIndex = Math.Clamp((int)settings.AppTheme, 0, 2);
-            FillLanguages();
-            SystemDistrosSwitch.IsOn = settings.ShowSystemDistros;
+        Loaded += async (_, _) => await LoadControlsAsync();
+    }
 
-            // The other controls are live from here; the startup switch has its own guard while it loads.
-            _initializing = false;
-            await LoadStartupAsync(() => MainWindow.Startup.GetStatusAsync());
-        };
+    /// <summary>
+    /// Show the current settings in the controls, on load and again after a reset. Change handlers
+    /// ignore the updates this makes; the startup switch reads Windows' own state.
+    /// </summary>
+    private async Task LoadControlsAsync()
+    {
+        _initializing = true;
+        var settings = SettingsManager.Current;
+        ThemeCombo.SelectedIndex = Math.Clamp((int)settings.AppTheme, 0, 2);
+        FillLanguages();
+        SystemDistrosSwitch.IsOn = settings.ShowSystemDistros;
+
+        // The other controls are live from here; the startup switch has its own guard while it loads.
+        _initializing = false;
+        await LoadStartupAsync(() => MainWindow.Startup.GetStatusAsync());
+    }
+
+    // ── Reset ───────────────────────────────────────────────────────────
+    /// <summary>
+    /// "Reset settings" (CONF-4): asks first (the kit's dialog defaults to Cancel), then resets, lets
+    /// the service re-apply the Docker distros setting, and reloads this page's controls.
+    /// </summary>
+    private async void ResetSettings_Click(object sender, RoutedEventArgs e)
+    {
+        bool confirmed = await DetailsWindow.ConfirmAsync(
+            UiText.Get("settings.reset-title"),
+            UiText.Get("settings.reset-body"),
+            UiText.Get("settings.reset-confirm"));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        SettingsManager.Reset();
+        MainWindow.Service.SettingsChanged();
+        await LoadControlsAsync();
     }
 
     // ── Start with Windows ──────────────────────────────────────────────

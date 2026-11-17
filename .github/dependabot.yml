@@ -1,12 +1,14 @@
 version: 2
 
-# Weekly, grouped updates (HYG-8). The app's package versions are in WslMonitor/WslMonitor.csproj; the
-# harness under tests/ has no package references. The Windows App SDK and NLog are shared with
-# winui-app-kit and move with a kit tag, not here, so they are ignored below.
+# Weekly, grouped updates (HYG-8). Versions live in the root Directory.Packages.props (central package
+# management); the harness under tests/ has no package references. The shared versions it imports from
+# winui-app-kit (Windows App SDK, NLog, CommunityToolkit.Mvvm) move with a kit tag, not here, so they
+# are ignored below.
 
 updates:
   - package-ecosystem: nuget
     directories:
+      - "/"
       - "/WslMonitor"
     schedule:
       interval: weekly
@@ -14,10 +16,10 @@ updates:
       nuget:
         patterns: ["*"]
     ignore:
-      # Owned by winui-app-kit (PLAT-5); an app never moves ahead of the kit. The Windows App SDK is
-      # also tied to the manifest's Microsoft.WindowsAppRuntime.1.8 dependency.
+      # Owned by winui-app-kit's WinUIAppKit.Packages.props (PLAT-5); an app never moves ahead of the kit.
       - dependency-name: Microsoft.WindowsAppSDK
       - dependency-name: NLog
+      - dependency-name: CommunityToolkit.Mvvm
 
   - package-ecosystem: github-actions
     directory: "/"

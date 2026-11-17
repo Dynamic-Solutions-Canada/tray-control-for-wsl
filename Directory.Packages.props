@@ -1,0 +1,9 @@
+<Project>
+  <!-- Central package management (PLAT-5): the family's shared versions come from winui-app-kit and
+       are never overridden here. This app has no packages of its own yet; add them below. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)external/winui-app-kit/build/WinUIAppKit.Packages.props" />
+</Project>

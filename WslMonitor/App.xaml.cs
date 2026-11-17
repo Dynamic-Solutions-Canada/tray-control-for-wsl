@@ -1,6 +1,8 @@
 using Microsoft.UI.Xaml;
 using System.IO;
+using WinUIAppKit.Hosting;
 using WinUIAppKit.Localization;
+using WinUIAppKit.Logging;
 using WslMonitor.Classes;
 
 namespace WslMonitor;
@@ -18,27 +20,36 @@ public partial class App : Application
     /// <summary>256 px PNG of the app icon for in-app images (.ico frames get stretched).</summary>
     public static string IconPngPath => Path.Combine(AppContext.BaseDirectory, "Resources", "WslMonitor.png");
 
-    public App() => InitializeComponent();
+    public App()
+    {
+        // The shared NLog config writes to %AppData%\<data folder>; name it before anything logs.
+        AppLogging.UseDataFolder(SettingsManager.DataFolderName);
+        InitializeComponent();
+    }
 
+    /// <summary>
+    /// Starts the app through the kit's <see cref="AppBootstrap"/>: crash logging first (LOG-7), then
+    /// <see cref="ClaimInstanceAndRestoreSettings"/>, then the hidden host window.
+    /// </summary>
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        AppDomain.CurrentDomain.UnhandledException += (_, a) =>
+        _host = AppBootstrap.Launch(this, ClaimInstanceAndRestoreSettings, () => new MainWindow());
+    }
+
+    /// <summary>
+    /// The settings step of the launch. The single instance is claimed first, so a second launch asks
+    /// the running copy to show itself and exits without touching the settings file (the store writes
+    /// the file it loads).
+    /// </summary>
+    private static void ClaimInstanceAndRestoreSettings()
+    {
+        if (!MainWindow.ClaimSingleInstance())
         {
-            NLog.LogManager.GetCurrentClassLogger().Error(a.ExceptionObject as Exception, "Unhandled exception");
-            NLog.LogManager.Flush();
-        };
-        UnhandledException += (_, e) =>
-        {
-            NLog.LogManager.GetCurrentClassLogger().Error(e.Exception, "Unhandled UI exception");
-            NLog.LogManager.Flush();
-            e.Handled = true;
-        };
+            Environment.Exit(0);
+        }
 
         SettingsManager.Restore();
         UiText.Configure(typeof(App).Assembly, "WslMonitor.Localization.", AppLanguages.Supported, SettingsManager.Current.Language);
-
-        _host = new MainWindow();
-        _host.Activate();
     }
 
     private Window? _host;

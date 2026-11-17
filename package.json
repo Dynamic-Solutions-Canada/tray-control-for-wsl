@@ -3,15 +3,16 @@
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
-    "package:desktop:dev": "scripts/windows-build --dev",
-    "verify:desktop": "scripts/windows-build --build-only --configuration Debug",
-    "install:desktop": "scripts/windows-build --install",
-    "package:desktop": "scripts/windows-build --no-sign",
-    "test": "scripts/run-tests",
-    "validate": "npm run format:check && npm run check:l10n && npm run check:listing && npm test",
+    "package:desktop:dev": "external/winui-app-kit/scripts/windows-build --dev",
+    "verify:desktop": "external/winui-app-kit/scripts/windows-build --build-only --configuration Debug",
+    "install:desktop": "external/winui-app-kit/scripts/windows-build --install",
+    "package:desktop": "external/winui-app-kit/scripts/windows-build --no-sign",
+    "test": "external/winui-app-kit/scripts/run-tests",
+    "validate": "npm run format:check && npm run check:gitignore && npm run check:l10n && npm run check:listing && npm test",
     "format": "scripts/format",
     "format:check": "scripts/format --check",
     "check:l10n": "python3 scripts/check-localization.py",
-    "check:listing": "python3 scripts/check-listing.py"
+    "check:listing": "python3 external/winui-app-kit/scripts/check-listing.py",
+    "check:gitignore": "external/winui-app-kit/scripts/check-gitignore ."
   }
 }

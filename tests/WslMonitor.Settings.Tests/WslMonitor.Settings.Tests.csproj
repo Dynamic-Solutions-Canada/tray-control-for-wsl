@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>WslMonitor.Settings.Tests</RootNamespace>
+  </PropertyGroup>
+  <!-- The real settings store from winui-app-kit and the app's real schema steps and settings class,
+       linked unchanged. The kit's theme and window types are the stand-ins in Stubs.cs, so this runs
+       on Linux. -->
+  <ItemGroup>
+    <Compile Include="../../external/winui-app-kit/WinUIAppKit/Settings/JsonSettingsStore.cs" Link="Linked/JsonSettingsStore.cs" />
+    <Compile Include="../../external/winui-app-kit/WinUIAppKit/Settings/AtomicFile.cs" Link="Linked/AtomicFile.cs" />
+    <Compile Include="../../WslMonitor/Classes/SettingsMigrations.cs" Link="Linked/SettingsMigrations.cs" />
+    <Compile Include="../../WslMonitor/ViewModels/UserSettings.cs" Link="Linked/UserSettings.cs" />
+  </ItemGroup>
+  <!-- Versions come from Directory.Packages.props (the kit's shared versions). -->
+  <ItemGroup>
+    <PackageReference Include="NLog" />
+  </ItemGroup>
+</Project>
