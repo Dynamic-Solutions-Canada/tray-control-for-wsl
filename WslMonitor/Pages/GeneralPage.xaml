@@ -2,21 +2,21 @@
     x:Class="WslMonitor.Pages.GeneralPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:l10n="using:WinUIAppKit.Localization">
+    xmlns:l10n="using:WinUIAppKit.Localization"
+    xmlns:kitc="using:WinUIAppKit.Controls">
     <ScrollViewer>
         <StackPanel Style="{StaticResource PageContentStyle}">
             <TextBlock l10n:Localize.Text="nav.settings" Style="{StaticResource PageTitleStyle}" />
 
+            <!-- The kit's "settings were reset" notice goes here, after an unreadable settings file (CONF-2) -->
+            <ContentPresenter x:Name="NoticeHost" />
+
             <TextBlock l10n:Localize.Text="settings.behaviour" Style="{StaticResource FirstSectionHeaderStyle}" />
             <Border Style="{StaticResource CardBorderStyle}">
-                <StackPanel Spacing="4">
-                    <ToggleSwitch x:Name="StartupSwitch" l10n:Localize.Header="settings.startup"
-                                  l10n:Localize.OnContent="toggle.on" l10n:Localize.OffContent="toggle.off"
-                                  Toggled="StartupSwitch_Toggled" />
-                    <TextBlock x:Name="StartupNote" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="Collapsed" Margin="0,-4,0,8" />
+                <StackPanel Spacing="12">
+                    <kitc:StartupSetting x:Name="StartupRow" />
                     <ToggleSwitch x:Name="SystemDistrosSwitch" l10n:Localize.Header="settings.system-distros"
-                                  l10n:Localize.OnContent="toggle.on" l10n:Localize.OffContent="toggle.off"
+                                  l10n:Localize.OnContent="kit.settings.on" l10n:Localize.OffContent="kit.settings.off"
                                   Toggled="SystemDistrosSwitch_Toggled" />
                 </StackPanel>
             </Border>
@@ -24,14 +24,8 @@
             <TextBlock l10n:Localize.Text="settings.appearance" Style="{StaticResource SectionHeaderStyle}" />
             <Border Style="{StaticResource CardBorderStyle}">
                 <StackPanel Spacing="12">
-                    <ComboBox x:Name="LanguageCombo" l10n:Localize.Header="settings.language" MinWidth="220"
-                              SelectionChanged="LanguageCombo_SelectionChanged" />
-                    <ComboBox x:Name="ThemeCombo" l10n:Localize.Header="settings.theme" MinWidth="220"
-                              SelectionChanged="ThemeCombo_SelectionChanged">
-                        <ComboBoxItem l10n:Localize.Content="settings.use-system" />
-                        <ComboBoxItem l10n:Localize.Content="settings.theme-light" />
-                        <ComboBoxItem l10n:Localize.Content="settings.theme-dark" />
-                    </ComboBox>
+                    <kitc:LanguageSetting x:Name="LanguageRow" />
+                    <kitc:ThemeSetting x:Name="ThemeRow" />
                 </StackPanel>
             </Border>
 

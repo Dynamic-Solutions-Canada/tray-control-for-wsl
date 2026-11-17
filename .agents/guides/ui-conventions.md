@@ -8,10 +8,11 @@ This app's own interface conventions. The shared family rules are in the standar
 ## Details window and pages
 
 - `DetailsWindow` has a custom 48 px title bar (16 px icon, caption-style title) over a left `NavigationView`. The menu is built in code: Overview, then a "Distros" header with one item per distro; Settings is the built-in settings item; "Our other apps" and About are footer items, in that order.
-- Every page is `ScrollViewer` then `StackPanel Style="{StaticResource PageContentStyle}"`, a `PageTitleStyle` title, then sections. A section is a `SectionHeaderStyle` heading (`FirstSectionHeaderStyle` for the first one under the title) above a `CardBorderStyle` card. These styles live in `App.xaml`; use them rather than repeating margins or brushes.
-- Settings controls sit inside the card with their own `Header` (`ToggleSwitch`, `ComboBox`); a note under a control is a secondary-coloured `CaptionTextBlockStyle` text block.
+- Every page is `ScrollViewer` then `StackPanel Style="{StaticResource PageContentStyle}"`, a `PageTitleStyle` title, then sections. A section is a `SectionHeaderStyle` heading (`FirstSectionHeaderStyle` for the first one under the title) above a `CardBorderStyle` card. These styles come from winui-app-kit's shared XAML (merged in `App.xaml`); use them rather than repeating margins or brushes.
+- The Settings page uses the kit's `StartupSetting`, `LanguageSetting` and `ThemeSetting` rows and saves what they report; app-specific controls sit in the same cards with their own `Header`. A note under a control is a secondary-coloured `CaptionTextBlockStyle` text block.
+- About is the kit's `AboutPage`, filled from `AboutContent.Create()`; never build an app About page or restyle its cards. Product-specific cards go in `AboutInfo.ExtraCards`.
 - Pages that follow WSL's live state derive from `LivePage` and redraw from its `OnAttach` handlers, both on the service's `Changed` and on a language change. Pages are never re-navigated to refresh.
-- Questions that block an action go through `DetailsWindow.ConfirmAsync` (a `ContentDialog`), never a dialog owned by one page, so they work whichever page is showing.
+- Questions that block an action go through `DetailsWindow.ConfirmAsync` (the kit's `ConfirmDialog`), never a dialog owned by one page, so they work whichever page is showing.
 
 ## Tray flyout
 

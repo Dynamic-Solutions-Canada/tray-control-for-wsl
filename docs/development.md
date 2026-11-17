@@ -31,8 +31,9 @@ Signed dev builds (`package:desktop:dev`, `install:desktop`) install under the s
 
 - `npm run format:check`: every C# project outside `external/` matches the root `.editorconfig`, which is winui-app-kit's file copied unchanged from the tag the app pins; never hand-edit it. `npm run format` rewrites the files.
 - `npm run check:gitignore`: `.gitignore` ends with winui-app-kit's shared block, unchanged.
-- `npm run check:l10n`: every catalog has the same keys and `{{placeholders}}`, no text contains an em dash, and the languages declared in the package manifest match the catalogs.
+- `npm run check:l10n`: winui-app-kit's catalog check, set up by the `localization` block in `windows-build.json`. Every catalog has the same keys and `{{placeholders}}`, every key is used and every used key exists, no text contains an em dash, the app defines no `kit.` key, and the manifest languages match the family's list.
 - `npm run check:listing`: the Store listing text and the current version's release notes fit the Store's limits and match the README tagline.
+- `npm run check:notices`: `WslMonitor/THIRD-PARTY-NOTICES.txt` matches the packages the project restores. After adding, removing or updating a NuGet package, run `npm run generate:notices` and commit the file. The script lists every package except build tooling, with its full licence text, and fails on a licence it has no text for.
 - `npm test`: every portable harness under `tests/`, found by winui-app-kit's `scripts/run-tests` without a hand-kept list. Each has a README saying what it covers and does not prove: the distro state rules, and the settings file (the kit's real store and this app's schema steps, against real files).
 
 Formatting and tests run through winui-app-kit's `scripts/dotnet`, which uses the .NET SDK pinned in `global.json` when it is installed and otherwise its Docker image, capped at 3 GB (`KIT_DOTNET_MEMORY`). Run them as a non-root user. Run `npm run validate` and `npm run verify:desktop` before finishing a change.
@@ -54,7 +55,8 @@ The harness cannot see the screen, WSL or Windows. Before a release, install the
 - Settings: start at sign-in, Docker Desktop's distros, theme, and a language change that relabels the flyout, the window and the tray tooltip without reopening them. Reset settings asks first, then puts theme, language and Docker distros back to their defaults without changing Start with Windows.
 - Settings from an earlier version survive the update, and a second launch opens the window of the copy already running instead of starting another.
 - Exit from the tray menu removes the tray icon and ends the app, and the log for that run ends with "Exit requested".
-- About: the version, and "Open logs folder" opens the folder with the current log.
+- About: the identity card with the icon and version, Check for updates (opens the Store's updates page when installed from a package), each link (the privacy policy page must be live before the first release), and "Open logs folder" opening the folder with the current log.
+- A settings file that can't be read (replace `settings.json` with text that isn't JSON, then start the app): the window opens on Settings with the "settings were reset" notice naming the `.bad` backup, also when started at sign-in.
 - Light, dark and high contrast.
 
 ## Releases
@@ -73,7 +75,12 @@ The Store listing text is in `store-assets/microsoft/listings.json`, with its li
 
 WSL Monitor collects no telemetry or crash reports. It reads WSL's distro list from the registry (`HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss`) and `%UserProfile%\.wslconfig`, and never edits either file or key directly. Starting and stopping distros goes through `wsl.exe`.
 
-The one network request is the "Our other apps" page: when it opens, it downloads the app catalogue (`apps.json`) and its icons from the apps-promo repository on GitHub (`raw.githubusercontent.com`), so GitHub sees the request's IP address. Nothing about the user or their distros is sent.
+The app makes two network requests, both only when the user acts, and sends nothing about the user or their distros:
+
+- **"Our other apps":** when the page opens, it downloads the app catalogue (`apps.json`) and its icons from the apps-promo repository on GitHub (`raw.githubusercontent.com`), so GitHub sees the request's IP address.
+- **Check for updates (About page):** a packaged install opens the Microsoft Store's updates page and makes no request itself. A copy run without a package asks this repo's GitHub Releases (`api.github.com`) for the latest version.
+
+The About page's links (source, privacy policy, support, licence, third-party notices) open in the browser only when clicked.
 
 One action changes a system setting outside the app: "Make default" on a distro's page runs `wsl --set-default`, which changes WSL's default distro for every program, not just this app. It stays changed after uninstall.
 

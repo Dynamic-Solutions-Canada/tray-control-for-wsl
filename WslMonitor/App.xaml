@@ -6,47 +6,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- The family's page, card and button styles (UI-3), from winui-app-kit's shared XAML -->
+                <ResourceDictionary Source="ms-appx:///WinUIAppKit/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <!-- Override default NavigationView background to transparent for Mica -->
-            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="NavigationViewContentGridBorderBrush" Color="Transparent" />
-
-            <!-- Settings card (matches Little Launcher / Repilot pages) -->
-            <Style x:Key="CardBorderStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="16,14" />
-            </Style>
-
-            <!-- Page layout shared by every details-window page -->
-            <Style x:Key="PageContentStyle" TargetType="StackPanel">
-                <Setter Property="Padding" Value="36,12,36,36" />
-                <Setter Property="Spacing" Value="8" />
-                <Setter Property="MaxWidth" Value="960" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-            </Style>
-            <Style x:Key="PageTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
-                <Setter Property="Margin" Value="0,0,0,12" />
-            </Style>
-            <!-- Heading above a card; the first one on a page sits right under the title -->
-            <Style x:Key="SectionHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}">
-                <Setter Property="Margin" Value="2,16,0,2" />
-            </Style>
-            <Style x:Key="FirstSectionHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource SectionHeaderStyle}">
-                <Setter Property="Margin" Value="2,0,0,2" />
-            </Style>
-
-            <!-- Button content: a small glyph followed by a label -->
-            <Style x:Key="IconLabelStyle" TargetType="StackPanel">
-                <Setter Property="Orientation" Value="Horizontal" />
-                <Setter Property="Spacing" Value="8" />
-            </Style>
-            <Style x:Key="ButtonGlyphStyle" TargetType="FontIcon">
-                <Setter Property="FontSize" Value="14" />
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

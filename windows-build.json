@@ -10,8 +10,13 @@
   "store_identity": "DynamicSolutionsCA.WSLMonitor",
   "store_publisher": "CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E",
   "store_identity_switch": "-UseStoreIdentity",
+  "localization": {
+    "catalog_dir": "WslMonitor/Localization/Catalogs",
+    "extra_key_patterns": [
+      "DescriptionKey\\s*=\\s*\"([^\"]+)\""
+    ]
+  },
   "listing": {
-    "product_name": "WSL Monitor",
-    "catalog_dir": "WslMonitor/Localization/Catalogs"
+    "product_name": "WSL Monitor"
   }
 }

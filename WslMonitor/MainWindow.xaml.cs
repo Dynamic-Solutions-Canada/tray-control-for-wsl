@@ -105,7 +105,13 @@ public sealed partial class MainWindow : Window
         Logger.Info("Started v{Version}, packaged={Packaged}", AppEnvironment.Version, AppEnvironment.IsPackaged);
         Service.Start();
 
-        if (!Startup.IsSilentLaunch() || SettingsManager.IsFirstRun)
+        // An unreadable settings file was replaced by defaults: say so on this launch, even a silent
+        // one, because the next launch loads the new file normally (CONF-2). Startup is not re-registered.
+        if (SettingsManager.NeedsResetNotice)
+        {
+            DetailsWindow.ShowSettings();
+        }
+        else if (!Startup.IsSilentLaunch() || SettingsManager.IsFirstRun)
         {
             DetailsWindow.ShowInstance();
         }

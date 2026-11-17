@@ -44,6 +44,18 @@ public sealed partial class DetailsWindow : Window
     /// <summary>Show the window on a distro's page (Overview if no such distro is listed).</summary>
     public static void ShowDistro(string name) => Show(DistroTagPrefix + name);
 
+    /// <summary>
+    /// Open the Settings page afresh after Reset settings, so the kit's rows, which read their state
+    /// when created, show the defaults. Unlike a language change, a reset changes what the rows hold.
+    /// </summary>
+    public static void ReloadSettingsPage()
+    {
+        if (_instance?.ContentFrame.Content is GeneralPage)
+        {
+            _instance.ContentFrame.Navigate(typeof(GeneralPage), null);
+        }
+    }
+
     private static void Show(string? tag)
     {
         _instance ??= new DetailsWindow();
@@ -231,7 +243,7 @@ public sealed partial class DetailsWindow : Window
         string tag = (args.SelectedItem as NavigationViewItem)?.Tag as string ?? OverviewTag;
         if (tag == AboutTag)
         {
-            Navigate(typeof(AboutPage), null);
+            Navigate(typeof(WinUIAppKit.Pages.AboutPage), AboutContent.Create());
         }
         else if (tag == PromoTag)
         {
@@ -248,9 +260,10 @@ public sealed partial class DetailsWindow : Window
     }
 
     /// <summary>Show a page, unless that exact page (and distro) is already showing.</summary>
-    private void Navigate(Type page, string? parameter)
+    /// <param name="parameter">The distro name for a distro page, the <see cref="WinUIAppKit.Pages.AboutInfo"/> for About, otherwise null.</param>
+    private void Navigate(Type page, object? parameter)
     {
-        if (ContentFrame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter)
+        if (ContentFrame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter as string)
         {
             return;
         }

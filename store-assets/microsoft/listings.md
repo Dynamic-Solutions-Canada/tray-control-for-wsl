@@ -26,7 +26,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 - Start runs a no-op in the distro; whether it stays running depends on WSL's idle timeout, which the Overview page explains. Don't promise that a started distro keeps running.
 - "Make default" changes WSL's default distro for every program.
 - Docker Desktop's internal distros are hidden unless turned on in Settings.
-- Privacy: no account, ads, analytics or telemetry. Settings and logs are local. The only network request is the "Our other apps" page fetching the public promo list from GitHub when it opens.
+- Privacy: no account, ads, analytics or telemetry. Settings and logs are local. The only network request a Store install makes is the "Our other apps" page fetching the public promo list from GitHub when it opens; Check for updates opens the Store instead (a copy run without a package asks GitHub Releases).
 - The "Our other apps" page follows the app's language; only the app descriptions it downloads (from the shared apps-promo catalog) are in English.
 - The interface is in English, Spanish, French, German, Simplified Chinese, Brazilian Portuguese and Japanese, following Windows or a choice in Settings. Distro names, paths and WSL's own messages are never translated.
 - Requires Windows 11 (the manifest's minimum version) and WSL with at least one installed distro.
@@ -40,7 +40,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 | Category | Not set; suggested Developer tools |
 | Pricing | Paid, US $0.99 (price tier Tier1012), with the same free trial as the other paid apps; the trial length is set in Partner Center (D-014) |
 | Age rating | Questionnaire not completed |
-| Privacy policy URL | Not available yet; it comes from the maintainer (D-017) |
+| Privacy policy URL | https://www.dynamic-solutions.ca/privacy/wsl-monitor (registered, BRAND-10; the About page links it, and the page must be live before the first submission) |
 
 ## Screenshots (not captured yet)
 
@@ -48,5 +48,5 @@ Planned set, in caption order: the tray list above the taskbar, a distro's Stop 
 
 ## Open questions before submission
 
-- Category, age rating and the privacy policy URL (above).
+- Category and age rating (above), and the privacy policy page going live.
 - Add the product ID to the shared promo catalog (apps-promo) once the listing is live.

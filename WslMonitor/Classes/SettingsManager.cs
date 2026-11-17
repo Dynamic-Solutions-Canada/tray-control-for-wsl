@@ -32,6 +32,23 @@ public static class SettingsManager
     /// </summary>
     public static bool IsFirstRun { get; private set; }
 
+    /// <summary>
+    /// The load result when the file was unreadable and the user has not been told yet (CONF-2);
+    /// null otherwise. Taken once by the Settings page through <see cref="TakeResetNotice"/>.
+    /// </summary>
+    private static SettingsLoadResult<UserSettings>? _pendingResetNotice;
+
+    /// <summary>True on the launch that found the settings file unreadable, until the Settings page shows the notice.</summary>
+    public static bool NeedsResetNotice => _pendingResetNotice != null;
+
+    /// <summary>Hand the pending reset notice to the page that shows it, once; null when there is none.</summary>
+    public static SettingsLoadResult<UserSettings>? TakeResetNotice()
+    {
+        var notice = _pendingResetNotice;
+        _pendingResetNotice = null;
+        return notice;
+    }
+
     /// <summary>Real folder of settings and logs, for Explorer.</summary>
     public static string PhysicalDataDirectory => AppEnvironment.PhysicalDataDirectory(DataFolderName);
 
@@ -45,6 +62,7 @@ public static class SettingsManager
         var result = Store.Load();
         Current = result.Settings;
         IsFirstRun = result.Outcome == SettingsLoadOutcome.FirstRun;
+        _pendingResetNotice = result.NeedsResetNotice ? result : null;
         Logger.Info("Settings: {Outcome} (file schema {FileVersion}, backup {Backup})",
             result.Outcome, result.FileSchemaVersion?.ToString() ?? "none", result.BackupPath ?? "none");
         AppTheme.Set(Current.AppTheme);

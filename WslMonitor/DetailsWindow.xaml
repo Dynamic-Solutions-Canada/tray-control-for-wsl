@@ -29,10 +29,10 @@
                         IsSettingsVisible="True"
                         SelectionChanged="RootNavigation_SelectionChanged">
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem l10n:Localize.Content="promo.title" Tag="promo">
+                <NavigationViewItem l10n:Localize.Content="kit.nav.other-apps" Tag="promo">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE719;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem l10n:Localize.Content="nav.about" Tag="about">
+                <NavigationViewItem l10n:Localize.Content="kit.nav.about" Tag="about">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE946;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
