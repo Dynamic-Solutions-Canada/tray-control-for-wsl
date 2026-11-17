@@ -10,7 +10,10 @@
     5. Packages with makeappx.exe
     6. Signs with signtool.exe (dev self-signed cert, or a CA-trusted PFX)
 
-    Use -NoSign for Microsoft Store uploads (the Store re-signs during ingestion).
+    Use -NoSign for Microsoft Store uploads (the Store re-signs during ingestion); they keep the
+    Store identity from Package.appxmanifest. Signed builds are dev builds: they are stamped with the
+    separate dev identity name (DIST-3), so a dev install never replaces a Store install. Add
+    -UseStoreIdentity to sign with the Store identity instead, for testing over a Store install.
     Normally run through the shared bridge: npm run package:desktop:dev / install:desktop.
     ASCII only (Windows PowerShell 5.1 reads BOM-less .ps1 as ANSI).
 
@@ -28,11 +31,20 @@ param(
 
     [string]$TrustedPfxPath = "",
     [string]$TrustedPfxPassword = "",
+    [switch]$UseStoreIdentity,
     [switch]$NoSign
 )
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
+
+# The dev identity name (windows-build.json dev_identity). Dev installs from before the Store
+# reservation used it, so they keep updating in place.
+$devIdentityName = "TechnicallyReal.WslMonitor"
+
+if ($UseStoreIdentity -and $NoSign) {
+    throw "UseStoreIdentity is for signed local testing, not Store upload builds."
+}
 
 # -- Paths ---------------------------------------------------------------------
 $msixDir     = $PSScriptRoot
@@ -152,9 +164,22 @@ $manifestContent = (Get-Content $manifestSrc -Raw) `
     -replace 'ARCH_PLACEHOLDER', $msixArch `
     -replace 'VERSION_PLACEHOLDER', $msixVersion
 
-# For dev (non-Store) signing, swap Publisher to the signing cert subject.
+# Signed builds: Publisher becomes the signing cert subject. Unless -UseStoreIdentity is set, the
+# identity Name becomes the dev identity, so dev and Store installs never replace each other.
 if (-not $NoSign) {
     $signCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($TrustedPfxPath, $TrustedPfxPassword)
+    if ($UseStoreIdentity) {
+        [xml]$storeManifest = $manifestContent
+        if ($signCert.Subject -ne $storeManifest.Package.Identity.Publisher) {
+            throw "Store-identity testing requires the Store publisher's signing certificate."
+        }
+        Write-Host "  Keeping Store identity for local testing: $($storeManifest.Package.Identity.Name)"
+    }
+    elseif ($manifestContent -match '<Identity[^>]+Name="([^"]+)"') {
+        $manifestContent = $manifestContent.Replace("Name=`"$($Matches[1])`"", "Name=`"$devIdentityName`"")
+        Write-Host "  Stamped dev Name=$devIdentityName"
+    }
+
     if ($manifestContent -match '<Identity[^>]+Publisher="([^"]+)"') {
         $manifestContent = $manifestContent.Replace("Publisher=`"$($Matches[1])`"", "Publisher=`"$($signCert.Subject)`"")
         Write-Host "  Stamped Publisher=$($signCert.Subject)"

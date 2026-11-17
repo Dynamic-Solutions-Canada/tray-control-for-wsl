@@ -36,7 +36,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 | Field | Value |
 | --- | --- |
 | Store ID | 9MTQWTX87B8J (https://apps.microsoft.com/detail/9MTQWTX87B8J, live once the first submission is published) |
-| Package identity | `DynamicSolutionsCA.WSLMonitor`, publisher `CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E` (the manifest switches to it in a later change; until then it carries a placeholder) |
+| Package identity | `DynamicSolutionsCA.WSLMonitor`, publisher `CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E` (dev builds use `TechnicallyReal.WslMonitor`) |
 | Category | Not set; suggested Developer tools |
 | Pricing | Paid, US $0.99 (price tier Tier1012), with the same free trial as the other paid apps; the trial length is set in Partner Center (D-014) |
 | Age rating | Questionnaire not completed |

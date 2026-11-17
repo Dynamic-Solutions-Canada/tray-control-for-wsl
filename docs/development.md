@@ -21,7 +21,7 @@ Run these from the repository root in WSL:
 | `npm run install:desktop` | Builds the dev MSIX, updates the installed copy in place and launches it | That it installs and starts; check behaviour in the app |
 | `npm run package:desktop` | Unsigned Store MSIX | The Store package builds, with manifest text resolved for every language |
 
-Never uninstall to get past an update error.
+Signed dev builds (`package:desktop:dev`, `install:desktop`) install under the separate dev identity `TechnicallyReal.WslMonitor`, so they never replace a Store install; `npm run install:desktop -- --store-identity` signs with the Store identity to test an update over one. `npm run package:desktop` keeps the Store identity, `DynamicSolutionsCA.WSLMonitor`, for upload. Never uninstall to get past an update error.
 
 `<Version>` in `Directory.Build.props` is the only version source. Dev builds raise the revision only in the staged copy, so the tracked version changes only for a release.
 
@@ -65,7 +65,7 @@ Releases follow the `release` skill ([.agents/skills/release/SKILL.md](../.agent
 2. Set `<Version>` in `Directory.Build.props`, run `npm run validate` and `npm run verify:desktop`, and commit the version and notes together as `Bump version to v<version>`.
 3. Tag `v<version>` (annotated) and push the branch and tag together.
 4. The "Build and Package" workflow (`build-msix.yml`) runs the gate, builds x64 and ARM64 packages as a check, and creates the GitHub Release from the notes. The Release carries no package: WSL Monitor is a paid Microsoft Store app, so the Store is the only download.
-5. Submit the version in Partner Center, using the notes files as each locale's "What's new". Store submission is not automated yet.
+5. Submit the version in Partner Center, using the notes files as each locale's "What's new". Store submission is not automated yet: the Store workflow will call a shared reusable workflow from winui-app-kit once that is released, instead of keeping a copy here. The app is reserved as `DynamicSolutionsCA.WSLMonitor` (Store ID 9MTQWTX87B8J) but not yet published.
 
 The Store listing text is in `store-assets/microsoft/listings.json`, with its limits, the claims it must keep true and the console-only fields in [listings.md](../store-assets/microsoft/listings.md). `npm run check:listing` checks it and the current version's notes.
 

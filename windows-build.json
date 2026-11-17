@@ -7,6 +7,9 @@
   "dev_identity": "TechnicallyReal.WslMonitor",
   "signing": "shared-dev",
   "trusted_certificate": true,
+  "store_identity": "DynamicSolutionsCA.WSLMonitor",
+  "store_publisher": "CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E",
+  "store_identity_switch": "-UseStoreIdentity",
   "listing": {
     "product_name": "WSL Monitor",
     "catalog_dir": "WslMonitor/Localization/Catalogs"
