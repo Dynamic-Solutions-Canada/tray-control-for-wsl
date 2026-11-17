@@ -89,6 +89,7 @@
   "state.stop-timed-out": "正常に停止しませんでした",
   "state.stopped": "停止",
   "state.stopping": "停止中…",
+  "status.checking": "WSL を確認しています…",
   "status.nothing-running": "実行中のものはありません",
   "status.shutting-down": "WSL をシャットダウンしています…",
   "status.some-running": "{{total}} 個中 {{running}} 個が実行中",

@@ -89,6 +89,7 @@
   "state.stop-timed-out": "未能正常停止",
   "state.stopped": "已停止",
   "state.stopping": "正在停止…",
+  "status.checking": "正在检查 WSL…",
   "status.nothing-running": "没有正在运行的发行版",
   "status.shutting-down": "正在关闭 WSL…",
   "status.some-running": "{{total}} 个中有 {{running}} 个正在运行",

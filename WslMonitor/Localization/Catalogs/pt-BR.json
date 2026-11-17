@@ -89,6 +89,7 @@
   "state.stop-timed-out": "Não parou corretamente",
   "state.stopped": "Parada",
   "state.stopping": "Parando…",
+  "status.checking": "Verificando o WSL…",
   "status.nothing-running": "Nada em execução",
   "status.shutting-down": "Desligando o WSL…",
   "status.some-running": "{{running}} de {{total}} em execução",

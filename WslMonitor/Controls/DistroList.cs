@@ -19,6 +19,13 @@ public static class DistroList
     {
         panel.Children.Clear();
 
+        // Before the first poll the list is empty only because nothing has been read yet.
+        if (!service.HasPolled)
+        {
+            panel.Children.Add(EmptyMessage(UiText.Get("status.checking")));
+            return;
+        }
+
         if (!service.IsWslInstalled)
         {
             panel.Children.Add(EmptyMessage(UiText.Get("list.no-wsl")));

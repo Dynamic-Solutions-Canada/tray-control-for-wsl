@@ -60,6 +60,12 @@ public sealed class WslMonitorService : IDisposable
     /// <summary>True when the last poll couldn't get running state from WSL (states shown are the last known).</summary>
     public bool IsStateUnknown { get; private set; }
 
+    /// <summary>
+    /// False until the first poll has finished. Before then the distro list is empty because nothing has
+    /// been read yet, not because none are installed, so views say "Checking WSL…" instead.
+    /// </summary>
+    public bool HasPolled { get; private set; }
+
     /// <summary>True while "Shut down WSL" is in progress; individual actions are disabled meanwhile.</summary>
     public bool IsShuttingDown { get; private set; }
 
@@ -141,6 +147,7 @@ public sealed class WslMonitorService : IDisposable
         if (!IsWslInstalled)
         {
             _distros = new();
+            HasPolled = true;
             NotifyIfChanged();
             return;
         }
@@ -155,6 +162,7 @@ public sealed class WslMonitorService : IDisposable
         var running = registered.Count == 0
             ? new HashSet<string>()
             : await WslCli.ListRunningAsync(registered.Select(r => r.Name).ToList());
+        HasPolled = true;
         Apply(registered, running, stamps);
     }
 
@@ -267,7 +275,7 @@ public sealed class WslMonitorService : IDisposable
     {
         var parts = _distros.Select(d =>
             $"{d.Id}|{d.Name}|{d.State}|{d.IsDefault}|{d.InitSystem}|{d.LastError}|{d.BusyReason}|{d.WslVersion}|{d.OsVersion}");
-        string signature = $"{IsWslInstalled}|{IsStateUnknown}|{IsShuttingDown}|{ShutdownStatus}||{string.Join("||", parts)}";
+        string signature = $"{HasPolled}|{IsWslInstalled}|{IsStateUnknown}|{IsShuttingDown}|{ShutdownStatus}||{string.Join("||", parts)}";
         if (!force && signature == _lastSignature)
         {
             return;

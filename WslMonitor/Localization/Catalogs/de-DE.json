@@ -89,6 +89,7 @@
   "state.stop-timed-out": "Nicht sauber beendet",
   "state.stopped": "Beendet",
   "state.stopping": "Wird beendet…",
+  "status.checking": "WSL wird geprüft…",
   "status.nothing-running": "Nichts läuft",
   "status.shutting-down": "WSL wird heruntergefahren…",
   "status.some-running": "{{running}} von {{total}} aktiv",

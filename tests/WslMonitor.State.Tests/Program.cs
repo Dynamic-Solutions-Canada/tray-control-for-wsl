@@ -10,6 +10,7 @@ var scenarios = new List<(string Name, Func<Task> Body)>
 {
     ("a poll lists registered distros and their running state", PollListsDistros),
     ("Changed is raised only when something visible changed", ChangedOnlyOnChange),
+    ("the service says it has not polled until its first poll finishes", HasPolledAfterFirstPoll),
     ("Docker Desktop's distros are hidden unless the setting is on", SystemDistrosHidden),
     ("a registry busy state wins over running state", BusyWins),
     ("when WSL can't say what is running, the last state is kept", UnknownKeepsState),
@@ -83,6 +84,18 @@ static async Task ChangedOnlyOnChange()
     WslCli.Running = new() { "Ubuntu" };
     await service.RefreshAsync();
     Check(changes == 2, "a state change raises Changed");
+}
+
+static async Task HasPolledAfterFirstPoll()
+{
+    // Nothing registered: before the first poll an empty list must not read as "none installed".
+    var service = new WslMonitorService();
+    int changes = 0;
+    service.Changed += () => changes++;
+    Check(!service.HasPolled && service.Distros.Count == 0, "a new service has not polled and lists nothing");
+    await service.RefreshAsync();
+    Check(service.HasPolled, "the first poll marks the service as polled");
+    Check(changes == 1, "the first poll raises Changed even when the list stays empty");
 }
 
 static async Task SystemDistrosHidden()

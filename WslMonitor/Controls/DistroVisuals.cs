@@ -70,6 +70,11 @@ public static class DistroVisuals
     /// </summary>
     public static string StatusLine(WslMonitorService service)
     {
+        if (!service.HasPolled)
+        {
+            return UiText.Get("status.checking");
+        }
+
         if (service.IsShuttingDown)
         {
             return UiText.Get("status.shutting-down");

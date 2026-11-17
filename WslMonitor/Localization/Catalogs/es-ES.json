@@ -89,6 +89,7 @@
   "state.stop-timed-out": "No se detuvo de forma limpia",
   "state.stopped": "Detenida",
   "state.stopping": "Deteniendo…",
+  "status.checking": "Comprobando WSL…",
   "status.nothing-running": "Nada en ejecución",
   "status.shutting-down": "Apagando WSL…",
   "status.some-running": "{{running}} de {{total}} en ejecución",

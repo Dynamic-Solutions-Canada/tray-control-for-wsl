@@ -35,6 +35,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - **Shut down WSL** (Overview dialog, or the flyout's power button with two clicks): clean-stops every running distro in parallel, asks before forcing any that miss the limit, then `wsl --shutdown`.
 - **Start** runs a no-op in the distro. Whether it stays up depends on `instanceIdleTimeout` in `%UserProfile%\.wslconfig`; the Overview page explains the current setting.
 - Docker Desktop's `docker-desktop*` distros are hidden unless enabled.
+- Until the first poll finishes, the tray tooltip, flyout and Overview say "Checking WSL…" (`HasPolled`), never "No WSL distros are installed".
 
 ## Conventions and gotchas
 
