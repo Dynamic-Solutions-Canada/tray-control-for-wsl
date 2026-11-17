@@ -9,7 +9,7 @@
 
   <!-- The Store identity reserved in Partner Center (Store ID 9MTQWTX87B8J). Permanent: never change
        it. Signed dev builds are stamped with the dev identity (dev_identity in windows-build.json) and
-       the signing cert's publisher by build-msix.ps1; Store uploads (-NoSign) keep these values. -->
+       the signing cert's publisher by the kit's build-msix.ps1; Store uploads (-NoSign) keep these values. -->
   <Identity
     Name="DynamicSolutionsCA.WSLMonitor"
     Publisher="CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E"

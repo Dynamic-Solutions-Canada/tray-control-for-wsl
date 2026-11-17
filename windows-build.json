@@ -1,6 +1,10 @@
 {
   "project": "WslMonitor/WslMonitor.csproj",
-  "package_script": "WslMonitorMSIX/build-msix.ps1",
+  "package_script": "external/winui-app-kit/build/build-msix.ps1",
+  "msix_dir": "WslMonitorMSIX",
+  "manifest_strings": {
+    "catalog_dir": "WslMonitor/Localization/Catalogs"
+  },
   "package_output": "WslMonitorMSIX/bin/msix-output",
   "certificate": ".windows-build/signing.pfx",
   "version_file": "Directory.Build.props",
@@ -9,7 +13,7 @@
   "trusted_certificate": true,
   "store_identity": "DynamicSolutionsCA.WSLMonitor",
   "store_publisher": "CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E",
-  "store_identity_switch": "-UseStoreIdentity",
+  "store_identity_switch": "-StoreIdentity",
   "localization": {
     "catalog_dir": "WslMonitor/Localization/Catalogs",
     "extra_key_patterns": [
