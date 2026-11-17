@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -48,6 +49,8 @@ public static class DistroRow
         };
         ClearButtonHighlight(open);
         ToolTipService.SetToolTip(open, UiText.Format("row.details-tip", ("name", d.Name)));
+        // The content is a badge and text in a grid, which gives the button no accessible name of its own.
+        AutomationProperties.SetName(open, d.Name);
         open.Click += (_, _) => onOpen();
 
         var power = new DistroPowerButton(d, service) { Margin = new Thickness(0, 0, 10, 0) };

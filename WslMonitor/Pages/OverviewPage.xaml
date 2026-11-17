@@ -32,7 +32,7 @@
                         <TextBlock x:Name="ShutdownText" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                     </StackPanel>
-                    <Button x:Name="ShutdownButton" Grid.Column="1" VerticalAlignment="Center" Click="Shutdown_Click">
+                    <Button x:Name="ShutdownButton" Grid.Column="1" VerticalAlignment="Center" Click="Shutdown_Click" l10n:Localize.Name="overview.shutdown">
                         <StackPanel Style="{StaticResource IconLabelStyle}">
                             <FontIcon Glyph="&#xE7E8;" Style="{StaticResource ButtonGlyphStyle}" />
                             <TextBlock l10n:Localize.Text="overview.shutdown" />

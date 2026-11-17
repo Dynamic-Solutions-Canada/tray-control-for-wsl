@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinUIAppKit.Localization;
@@ -40,6 +41,7 @@ public sealed partial class DistroPowerButton : Button
         var res = Application.Current.Resources;
         ClearValue(BackgroundProperty);
         ClearValue(ForegroundProperty);
+        ClearValue(AutomationProperties.NameProperty);   // text content names the button itself
         IsEnabled = !_service.IsShuttingDown;
 
         switch (_distro.State)
@@ -69,6 +71,7 @@ public sealed partial class DistroPowerButton : Button
             case DistroState.Starting:
             case DistroState.Stopping:
                 Content = Busy(DistroVisuals.StateText(_distro));
+                AutomationProperties.SetName(this, DistroVisuals.StateText(_distro));   // spinner + text has no name
                 IsEnabled = false;
                 break;
 

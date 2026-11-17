@@ -25,7 +25,7 @@ This app's own interface conventions. The shared family rules are in the standar
 - A row is `DistroRow`: badge, name and summary as one borderless button that opens the distro, with `DistroPowerButton` beside it. The whole row owns the hover and press highlight (secondary fill on hover, tertiary while pressed); the inner button's own highlight is switched off so the row reads as one item.
 - The state badge, labels, summary and status line come from `DistroVisuals`; take them from there rather than choosing brushes per view.
 - Destructive buttons (Stop, Force stop, the flyout's Shut down WSL) use `ClickConfirmation`: the first click turns the button red and asks, the second within 4 s confirms. A second click inside the double-click time is ignored, so a double-click cannot arm and confirm at once. Confirmation state is keyed (per distro, or for shutdown) so a rebuilt list keeps it.
-- Button content with an icon uses `IconLabelStyle` (a horizontal panel) with a `FontIcon` in `ButtonGlyphStyle` (14 px), then the label.
+- Button content with an icon uses `IconLabelStyle` (a horizontal panel) with a `FontIcon` in `ButtonGlyphStyle` (14 px), then the label. A panel gives the button no accessible name, so name it too: `l10n:Localize.Name` with the label's key in XAML, `AutomationProperties.SetName` in code. The same goes for any button whose content isn't plain text, such as the distro row and the power button's spinner.
 
 ## Text
 
