@@ -36,6 +36,12 @@ public sealed partial class GeneralPage : Page
             SettingsManager.Save();
         };
 
+        // The kit's Reset row asks on the details window, then runs the reset below (CONF-4). The window
+        // is read once the page is shown, since the page never outlives the window that hosts it.
+        Loaded += (_, _) => ResetRow.Window = DetailsWindow.Instance;
+        ResetRow.ResetAsync = ResetSettingsAsync;
+        ResetRow.ResetCompleted += DetailsWindow.ReloadSettingsPage;
+
         SystemDistrosSwitch.IsOn = SettingsManager.Current.ShowSystemDistros;
         _initializing = false;
 
@@ -60,23 +66,15 @@ public sealed partial class GeneralPage : Page
 
     // ── Reset ───────────────────────────────────────────────────────────
     /// <summary>
-    /// "Reset settings" (CONF-4): asks first (the kit's dialog defaults to Cancel), then resets, lets
-    /// the service re-apply the Docker distros setting, and opens this page again so every row shows
-    /// the defaults. Start with Windows is Windows' state; its row reads it again.
+    /// The app's part of "Reset settings", run by the kit's row once the user confirms: reset the store
+    /// (which keeps the old file and applies the default theme and language), then let the service
+    /// re-apply the Docker distros setting. The row then raises ResetCompleted, which opens this page
+    /// again so every row shows the defaults. Start with Windows is Windows' state and is left alone.
     /// </summary>
-    private async void ResetSettings_Click(object sender, RoutedEventArgs e)
+    private static Task ResetSettingsAsync()
     {
-        bool confirmed = await DetailsWindow.ConfirmAsync(
-            UiText.Get("settings.reset-title"),
-            UiText.Get("settings.reset-body"),
-            UiText.Get("settings.reset-confirm"));
-        if (!confirmed)
-        {
-            return;
-        }
-
         SettingsManager.Reset();
         MainWindow.Service.SettingsChanged();
-        DetailsWindow.ReloadSettingsPage();
+        return Task.CompletedTask;
     }
 }

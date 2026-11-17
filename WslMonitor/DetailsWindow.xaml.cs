@@ -28,6 +28,9 @@ public sealed partial class DetailsWindow : Window
 
     private string _menuSignature = "";
 
+    /// <summary>The open window, or null when it is closed. Pages use it to ask questions on it.</summary>
+    internal static Window? Instance => _instance;
+
     // ── Opening ─────────────────────────────────────────────────────────
     /// <summary>Show the window (creating it if needed) on its current page (Overview for a new window).</summary>
     public static void ShowInstance() => Show(null);
