@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}}（默认）",
   "nav.distros": "发行版",
   "nav.overview": "概览",
-  "nav.settings": "设置",
   "overview.confirm-button": "关闭",
   "overview.confirm-none": "没有正在运行的发行版；只会关闭 WSL 的虚拟机。",
   "overview.confirm-some": "{{names}} 将正常关闭，然后 WSL 的虚拟机将停止。WSL 中运行的所有内容都会结束。",

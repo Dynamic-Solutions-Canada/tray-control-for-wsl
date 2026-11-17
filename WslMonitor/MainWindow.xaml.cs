@@ -147,7 +147,7 @@ public sealed partial class MainWindow : Window
     {
         new TrayMenu()
             .Add(UiText.Get("menu.open"), DetailsWindow.ShowInstance)
-            .Add(UiText.Get("nav.settings"), DetailsWindow.ShowSettings)
+            .Add(UiText.Get("kit.settings.title"), DetailsWindow.ShowSettings)
             .Add(UiText.Get("menu.logs"), OpenLogsFolder)
             .AddSeparator()
             .Add(UiText.Get("menu.exit"), ExitApp)

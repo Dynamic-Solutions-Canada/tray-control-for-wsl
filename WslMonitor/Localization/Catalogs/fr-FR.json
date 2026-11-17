@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}} (par défaut)",
   "nav.distros": "Distributions",
   "nav.overview": "Vue d’ensemble",
-  "nav.settings": "Paramètres",
   "overview.confirm-button": "Arrêter",
   "overview.confirm-none": "Aucune distribution n’est en cours d’exécution : seule la machine virtuelle de WSL sera arrêtée.",
   "overview.confirm-some": "Arrêt propre de : {{names}}. La machine virtuelle de WSL s’arrêtera ensuite et tout ce qui s’exécute dans WSL prendra fin.",

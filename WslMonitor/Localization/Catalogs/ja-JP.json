@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}}（既定）",
   "nav.distros": "ディストリビューション",
   "nav.overview": "概要",
-  "nav.settings": "設定",
   "overview.confirm-button": "シャットダウン",
   "overview.confirm-none": "実行中のディストリビューションはありません。WSL の仮想マシンのみをシャットダウンします。",
   "overview.confirm-some": "{{names}} を正常にシャットダウンしてから、WSL の仮想マシンを停止します。WSL で実行中のものはすべて終了します。",

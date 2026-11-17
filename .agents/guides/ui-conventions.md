@@ -7,7 +7,7 @@ This app's own interface conventions. The shared family rules are in the standar
 
 ## Details window and pages
 
-- `DetailsWindow` has a custom 48 px title bar (16 px icon, caption-style title) over a left `NavigationView`. The menu is built in code: Overview, then a "Distros" header with one item per distro; Settings is the built-in settings item; "Our other apps" and About are footer items, in that order.
+- `DetailsWindow` hosts the kit's `SettingsShell` (title bar, navigation, built-in Settings, and the fixed footer: "Our other apps", then About). The window adds its own menu items in code: Overview, then a "Distros" header with one item per distro. Never add footer items or restyle the shell.
 - Every page is `ScrollViewer` then `StackPanel Style="{StaticResource PageContentStyle}"`, a `PageTitleStyle` title, then sections. A section is a `SectionHeaderStyle` heading (`FirstSectionHeaderStyle` for the first one under the title) above a `CardBorderStyle` card. These styles come from winui-app-kit's shared XAML (merged in `App.xaml`); use them rather than repeating margins or brushes.
 - The Settings page uses the kit's `StartupSetting`, `LanguageSetting` and `ThemeSetting` rows and saves what they report; app-specific controls sit in the same cards with their own `Header`. A note under a control is a secondary-coloured `CaptionTextBlockStyle` text block.
 - About is the kit's `AboutPage`, filled from `AboutContent.Create()`; never build an app About page or restyle its cards. Product-specific cards go in `AboutInfo.ExtraCards`.

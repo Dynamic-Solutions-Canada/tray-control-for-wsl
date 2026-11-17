@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}} (Standard)",
   "nav.distros": "Distributionen",
   "nav.overview": "Übersicht",
-  "nav.settings": "Einstellungen",
   "overview.confirm-button": "Herunterfahren",
   "overview.confirm-none": "Es laufen keine Distributionen; nur die virtuelle Maschine von WSL wird heruntergefahren.",
   "overview.confirm-some": "Wird sauber heruntergefahren: {{names}}. Danach wird die virtuelle Maschine von WSL beendet und alles, was in WSL läuft, endet.",

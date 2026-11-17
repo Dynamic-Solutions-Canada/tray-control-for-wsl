@@ -6,7 +6,7 @@
     xmlns:kitc="using:WinUIAppKit.Controls">
     <ScrollViewer>
         <StackPanel Style="{StaticResource PageContentStyle}">
-            <TextBlock l10n:Localize.Text="nav.settings" Style="{StaticResource PageTitleStyle}" />
+            <TextBlock l10n:Localize.Text="kit.settings.title" Style="{StaticResource PageTitleStyle}" />
 
             <!-- The kit's "settings were reset" notice goes here, after an unreadable settings file (CONF-2) -->
             <ContentPresenter x:Name="NoticeHost" />

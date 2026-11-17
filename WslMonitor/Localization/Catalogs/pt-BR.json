@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}} (padrão)",
   "nav.distros": "Distribuições",
   "nav.overview": "Visão geral",
-  "nav.settings": "Configurações",
   "overview.confirm-button": "Desligar",
   "overview.confirm-none": "Nenhuma distribuição está em execução; isso só desliga a máquina virtual do WSL.",
   "overview.confirm-some": "Desligamento correto de: {{names}}. Em seguida, a máquina virtual do WSL será parada e tudo o que estiver em execução no WSL será encerrado.",

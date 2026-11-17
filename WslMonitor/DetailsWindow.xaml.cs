@@ -1,10 +1,8 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using WinUIAppKit.Localization;
-using WinUIAppKit.Theming;
+using WinUIAppKit.Pages;
 using WinUIAppKit.Windowing;
 using WslMonitor.Classes;
 using WslMonitor.Controls;
@@ -15,31 +13,28 @@ using WslMonitor.Pages;
 namespace WslMonitor;
 
 /// <summary>
-/// The full window (Mica + NavigationView, the same shape as the sibling apps' settings windows):
-/// an Overview page, one page per distro, Settings, Our other apps and About. Opened from the
-/// flyout's Details button, a distro row, or the tray menu. One instance at a time.
+/// The full window, hosted in the kit's <see cref="SettingsShell"/> (UI-1, UI-2): an Overview page, one
+/// page per distro, Settings, Our other apps and About. Opened from the flyout's Details button, a distro
+/// row, or the tray menu. One instance at a time.
 /// </summary>
 public sealed partial class DetailsWindow : Window
 {
-    // Menu item tags. Distro items are prefixed, so a distro named like a page ("settings") can't collide.
+    // This window's own item tags. Distro items are prefixed, so a distro named like a page can't collide;
+    // Settings, Our other apps and About use the shell's tags.
     private const string OverviewTag = "overview";
-    private const string SettingsTag = "settings";
-    private const string AboutTag = "about";
-    private const string PromoTag = "promo";
     private const string DistroTagPrefix = "distro:";
 
     private static DetailsWindow? _instance;
 
     private string _menuSignature = "";
-    private bool _rebuilding;
-    private string? _pendingTag;            // a selection asked for before the NavigationView loaded
+    private string? _pendingTag;            // a selection asked for before the shell loaded
 
     // ── Opening ─────────────────────────────────────────────────────────
     /// <summary>Show the window (creating it if needed) on its current page (Overview for a new window).</summary>
     public static void ShowInstance() => Show(null);
 
     /// <summary>Show the window on the Settings page.</summary>
-    public static void ShowSettings() => Show(SettingsTag);
+    public static void ShowSettings() => Show(SettingsShell.SettingsTag);
 
     /// <summary>Show the window on a distro's page (Overview if no such distro is listed).</summary>
     public static void ShowDistro(string name) => Show(DistroTagPrefix + name);
@@ -50,9 +45,9 @@ public sealed partial class DetailsWindow : Window
     /// </summary>
     public static void ReloadSettingsPage()
     {
-        if (_instance?.ContentFrame.Content is GeneralPage)
+        if (_instance?.Shell.ContentFrame.Content is GeneralPage)
         {
-            _instance.ContentFrame.Navigate(typeof(GeneralPage), null);
+            _instance.Shell.ContentFrame.Navigate(typeof(GeneralPage), null);
         }
     }
 
@@ -72,15 +67,11 @@ public sealed partial class DetailsWindow : Window
         InitializeComponent();
         Closed += OnClosed;
 
-        SystemBackdrop = new MicaBackdrop();
-        ExtendsContentIntoTitleBar = true;
-        SetTitleBar(AppTitleBar);
-        WindowIcon.Apply(this, App.IconPath);
-        try { TitleBarIcon.Source = new BitmapImage(new Uri(App.IconPngPath)); } catch { }
-
-        WindowChrome.RestorePlacement(this, SettingsManager.Current.DetailsWindow, 980, 720);
-        AppTheme.Track(this);
-        RootNavigation.Loaded += RootNavigation_Loaded;
+        Shell.Caption = "WSL Monitor";
+        Shell.IconPngPath = App.IconPngPath;
+        WindowChrome.SetUpSettingsWindow(this, Shell.TitleBar, App.IconPath, SettingsManager.Current.DetailsWindow);
+        Shell.PageSelected += OnPageSelected;
+        Shell.Loaded += Shell_Loaded;
 
         RebuildMenu();
         Select(OverviewTag);
@@ -94,19 +85,11 @@ public sealed partial class DetailsWindow : Window
     }
 
     /// <summary>
-    /// The built-in Settings item exists only once the NavigationView's template is applied. Give it
-    /// our wording (its own label, tooltip and accessible name follow Windows' language) and apply any
-    /// selection that was asked for before then.
+    /// The shell's built-in Settings item exists only once its template is applied, so a Settings
+    /// selection asked for before then (the window opening on Settings) is applied here.
     /// </summary>
-    private void RootNavigation_Loaded(object sender, RoutedEventArgs e)
+    private void Shell_Loaded(object sender, RoutedEventArgs e)
     {
-        if (RootNavigation.SettingsItem is NavigationViewItem settingsItem)
-        {
-            Localize.SetContent(settingsItem, "nav.settings");
-            Localize.SetToolTip(settingsItem, "nav.settings");
-            Localize.SetName(settingsItem, "nav.settings");
-        }
-
         if (_pendingTag is { } tag)
         {
             _pendingTag = null;
@@ -140,20 +123,14 @@ public sealed partial class DetailsWindow : Window
     private static string MenuSignature() =>
         string.Join("|", MainWindow.Service.Distros.Select(d => $"{d.Name}:{d.IsDefault}"));
 
+    /// <summary>
+    /// Rebuild the menu and select the same item again. Clearing the menu leaves nothing selected, which
+    /// the shell does not report; selecting the item again finds its page already showing (see Navigate).
+    /// </summary>
     private void RebuildMenuKeepingSelection()
     {
-        // Clearing the menu deselects the current item; suppress the resulting navigation and put the
-        // same page back afterwards (Navigate skips it when it is already showing).
-        string tag = CurrentTag();
-        _rebuilding = true;
-        try
-        {
-            RebuildMenu();
-        }
-        finally
-        {
-            _rebuilding = false;
-        }
+        string tag = Shell.SelectedTag ?? OverviewTag;
+        RebuildMenu();
         Select(tag);
     }
 
@@ -163,22 +140,22 @@ public sealed partial class DetailsWindow : Window
         var distros = MainWindow.Service.Distros;
         _menuSignature = MenuSignature();
 
-        RootNavigation.MenuItems.Clear();
-        RootNavigation.MenuItems.Add(new NavigationViewItem
+        Shell.MenuItems.Clear();
+        Shell.MenuItems.Add(new NavigationViewItem
         {
             Content = UiText.Get("nav.overview"),
             Tag = OverviewTag,
-            Icon = new FontIcon { Glyph = "" },
+            Icon = new FontIcon { Glyph = "\uE80F" },
         });
         if (distros.Count == 0)
         {
             return;
         }
 
-        RootNavigation.MenuItems.Add(new NavigationViewItemHeader { Content = UiText.Get("nav.distros") });
+        Shell.MenuItems.Add(new NavigationViewItemHeader { Content = UiText.Get("nav.distros") });
         foreach (var d in distros)
         {
-            RootNavigation.MenuItems.Add(new NavigationViewItem
+            Shell.MenuItems.Add(new NavigationViewItem
             {
                 Content = d.IsDefault ? UiText.Format("nav.default-suffix", ("name", d.Name)) : d.Name,
                 Tag = DistroTagPrefix + d.Name,
@@ -188,64 +165,32 @@ public sealed partial class DetailsWindow : Window
     }
 
     // ── Navigation ──────────────────────────────────────────────────────
-    /// <summary>The selected item's tag.</summary>
-    private string CurrentTag()
-    {
-        var selected = RootNavigation.SelectedItem;
-        if (selected != null && selected == RootNavigation.SettingsItem)
-        {
-            return SettingsTag;
-        }
-
-        return (selected as NavigationViewItem)?.Tag as string ?? OverviewTag;
-    }
-
-    /// <summary>Select a menu item by tag. An unknown distro falls back to Overview.</summary>
+    /// <summary>Select an item by tag. Settings waits for the shell to load; an unknown distro falls back to Overview.</summary>
     private void Select(string tag)
     {
-        if (tag == SettingsTag)
+        if (tag == SettingsShell.SettingsTag && !Shell.IsLoaded)
         {
-            if (RootNavigation.SettingsItem == null)
-            {
-                _pendingTag = tag;   // applied in RootNavigation_Loaded
-                return;
-            }
-            RootNavigation.SelectedItem = RootNavigation.SettingsItem;
+            _pendingTag = tag;   // applied in Shell_Loaded
             return;
         }
 
-        if (tag == AboutTag || tag == PromoTag)
+        if (!Shell.Select(tag))
         {
-            RootNavigation.SelectedItem = RootNavigation.FooterMenuItems.OfType<NavigationViewItem>()
-                .First(i => (i.Tag as string) == tag);
-            return;
+            Shell.Select(OverviewTag);
         }
-
-        var items = RootNavigation.MenuItems.OfType<NavigationViewItem>();
-        RootNavigation.SelectedItem =
-            items.FirstOrDefault(i => string.Equals(i.Tag as string, tag, StringComparison.OrdinalIgnoreCase))
-            ?? items.First();
     }
 
-    private void RootNavigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void OnPageSelected(string tag)
     {
-        if (_rebuilding)
-        {
-            return;
-        }
-
-        if (args.IsSettingsSelected)
+        if (tag == SettingsShell.SettingsTag)
         {
             Navigate(typeof(GeneralPage), null);
-            return;
         }
-
-        string tag = (args.SelectedItem as NavigationViewItem)?.Tag as string ?? OverviewTag;
-        if (tag == AboutTag)
+        else if (tag == SettingsShell.AboutTag)
         {
-            Navigate(typeof(WinUIAppKit.Pages.AboutPage), AboutContent.Create());
+            Navigate(typeof(AboutPage), AboutContent.Create());
         }
-        else if (tag == PromoTag)
+        else if (tag == SettingsShell.OtherAppsTag)
         {
             Navigate(typeof(TechnicallyReal.Promo.PromotedAppsPage), null);
         }
@@ -260,20 +205,21 @@ public sealed partial class DetailsWindow : Window
     }
 
     /// <summary>Show a page, unless that exact page (and distro) is already showing.</summary>
-    /// <param name="parameter">The distro name for a distro page, the <see cref="WinUIAppKit.Pages.AboutInfo"/> for About, otherwise null.</param>
+    /// <param name="parameter">The distro name for a distro page, the <see cref="AboutInfo"/> for About, otherwise null.</param>
     private void Navigate(Type page, object? parameter)
     {
-        if (ContentFrame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter as string)
+        var frame = Shell.ContentFrame;
+        if (frame.Content is DistroPage current && page == typeof(DistroPage) && current.DistroName == parameter as string)
         {
             return;
         }
 
-        if (ContentFrame.Content?.GetType() == page && page != typeof(DistroPage))
+        if (frame.Content?.GetType() == page && page != typeof(DistroPage))
         {
             return;
         }
 
-        ContentFrame.Navigate(page, parameter);
+        frame.Navigate(page, parameter);
     }
 
     // ── Dialogs ─────────────────────────────────────────────────────────
@@ -341,9 +287,9 @@ public sealed partial class DetailsWindow : Window
         MainWindow.Service.SetViewerActive(this, false);
 
         // Unloaded isn't reliably raised when a window closes; drop the current page's subscriptions here.
-        switch (ContentFrame.Content)
+        if (Shell.ContentFrame.Content is LivePage page)
         {
-            case LivePage page: page.Detach(); break;
+            page.Detach();
         }
 
         if (WindowChrome.CapturePlacement(this) is { } placement)

@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}} (predeterminada)",
   "nav.distros": "Distribuciones",
   "nav.overview": "Resumen",
-  "nav.settings": "Configuración",
   "overview.confirm-button": "Apagar",
   "overview.confirm-none": "No hay distribuciones en ejecución; solo se apagará la máquina virtual de WSL.",
   "overview.confirm-some": "Apagado limpio de: {{names}}. Después se detendrá la máquina virtual de WSL y terminará todo lo que se esté ejecutando en WSL.",

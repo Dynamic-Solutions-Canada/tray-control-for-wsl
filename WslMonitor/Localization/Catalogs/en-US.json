@@ -45,7 +45,6 @@
   "nav.default-suffix": "{{name}} (default)",
   "nav.distros": "Distros",
   "nav.overview": "Overview",
-  "nav.settings": "Settings",
   "overview.confirm-button": "Shut down",
   "overview.confirm-none": "No distros are running; this only shuts down WSL's virtual machine.",
   "overview.confirm-some": "{{names}} will shut down cleanly, then WSL's virtual machine stops. Everything running in WSL ends.",
