@@ -67,7 +67,10 @@ Releases follow the `release` skill ([.agents/skills/release/SKILL.md](../.agent
 2. Set `<Version>` in `Directory.Build.props`, run `npm run validate` and `npm run verify:desktop`, and commit the version and notes together as `Bump version to v<version>`.
 3. Tag `v<version>` (annotated) and push the branch and tag together.
 4. The "Build and Package" workflow (`build-msix.yml`) runs the gate, builds x64 and ARM64 packages as a check, and creates the GitHub Release from the notes. The Release carries no package: WSL Monitor is a paid Microsoft Store app, so the Store is the only download.
-5. Submit the version in Partner Center, using the notes files as each locale's "What's new". Store submission is not automated yet: the Store workflow will call a shared reusable workflow from winui-app-kit once that is released, instead of keeping a copy here. The app is reserved as `DynamicSolutionsCA.WSLMonitor` (Store ID 9MTQWTX87B8J) but not yet published.
+5. The same tag runs "Publish to Microsoft Store" (`store-publish.yml`): the gate, then winui-app-kit's reusable Store workflow builds both architectures, uploads them to Partner Center with each locale's "What's new" from the notes files, and stops at a draft (REL-7). Its summary names the draft ID.
+6. Submitting the draft for certification is a separate, deliberate step: run "Publish to Microsoft Store" manually on the same tag with `submit_draft` set to that ID and `no_commit` unchecked. A manual run with `dry_run` checks everything without any Store call.
+
+The app is reserved as `DynamicSolutionsCA.WSLMonitor` (Store ID 9MTQWTX87B8J), paid at Tier1012, and not yet published. `credential-expiry.yml` fails weekly from 60 days before the Store secret expires (the organisation variable `STORE_SECRET_EXPIRES`). Both Store workflows call the kit's reusable ones; their `uses:` tag must equal the `external/winui-app-kit` pin.
 
 The Store listing text is in `store-assets/microsoft/listings.json`, with its limits, the claims it must keep true and the console-only fields in [listings.md](../store-assets/microsoft/listings.md). `npm run check:listing` checks it and the current version's notes.
 

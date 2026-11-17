@@ -27,7 +27,6 @@ public sealed partial class DetailsWindow : Window
     private static DetailsWindow? _instance;
 
     private string _menuSignature = "";
-    private string? _pendingTag;            // a selection asked for before the shell loaded
 
     // ── Opening ─────────────────────────────────────────────────────────
     /// <summary>Show the window (creating it if needed) on its current page (Overview for a new window).</summary>
@@ -71,7 +70,6 @@ public sealed partial class DetailsWindow : Window
         Shell.IconPngPath = App.IconPngPath;
         WindowChrome.SetUpSettingsWindow(this, Shell.TitleBar, App.IconPath, SettingsManager.Current.DetailsWindow);
         Shell.PageSelected += OnPageSelected;
-        Shell.Loaded += Shell_Loaded;
 
         RebuildMenu();
         Select(OverviewTag);
@@ -82,19 +80,6 @@ public sealed partial class DetailsWindow : Window
         // Fast polling only while the window can be seen: a minimized window doesn't need it.
         AppWindow.Changed += (_, _) => UpdateViewerState();
         UpdateViewerState();
-    }
-
-    /// <summary>
-    /// The shell's built-in Settings item exists only once its template is applied, so a Settings
-    /// selection asked for before then (the window opening on Settings) is applied here.
-    /// </summary>
-    private void Shell_Loaded(object sender, RoutedEventArgs e)
-    {
-        if (_pendingTag is { } tag)
-        {
-            _pendingTag = null;
-            Select(tag);
-        }
     }
 
     private void UpdateViewerState()
@@ -165,15 +150,12 @@ public sealed partial class DetailsWindow : Window
     }
 
     // ── Navigation ──────────────────────────────────────────────────────
-    /// <summary>Select an item by tag. Settings waits for the shell to load; an unknown distro falls back to Overview.</summary>
+    /// <summary>
+    /// Select an item by tag; the shell applies it once loaded if the window is still opening. An
+    /// unknown distro falls back to Overview.
+    /// </summary>
     private void Select(string tag)
     {
-        if (tag == SettingsShell.SettingsTag && !Shell.IsLoaded)
-        {
-            _pendingTag = tag;   // applied in Shell_Loaded
-            return;
-        }
-
         if (!Shell.Select(tag))
         {
             Shell.Select(OverviewTag);

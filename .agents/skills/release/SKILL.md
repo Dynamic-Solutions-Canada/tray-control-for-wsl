@@ -21,6 +21,7 @@ Steps:
 4. Commit only those files, with the subject `Bump version to v<version>`.
 5. Tag and push together: `git tag -a v<version> -m "WSL Monitor <version>"`, then `git push --atomic origin main v<version>`.
 6. Watch the "Build and Package" run for the tag (`gh run list --workflow build-msix.yml`, then `gh run watch <id> --exit-status`). Check that the Release is titled `WSL Monitor <version>`, its body is the `en-US` notes followed by the AI disclosure line, and it is marked Latest.
-7. The Store submission is not automated yet: tell the maintainer the version is ready to submit in Partner Center, with each locale's "What's new" taken from the notes files. Post-release steps outside this repo (the promo catalog entry, the website page) go to the maintainer as well.
+7. Watch the "Publish to Microsoft Store" run for the same tag (`gh run list --workflow store-publish.yml`). It uploads a draft with the notes and stops (REL-7); take the draft ID from its summary.
+8. Do not submit the draft: that is the maintainer's step in their Store account. Tell them the draft ID and that submitting is a manual run of "Publish to Microsoft Store" on the tag with `submit_draft` set to it and `no_commit` unchecked. Post-release steps outside this repo (the promo catalog entry, the website page) go to the maintainer as well.
 
-Report: the version, the commit and tag, who approved the notes, each CI run's result with its link, the Release link, and what is left for the maintainer (Store submission, post-release steps).
+Report: the version, the commit and tag, who approved the notes, each CI run's result with its link, the Release link, and what is left for the maintainer (submitting the Store draft, post-release steps).

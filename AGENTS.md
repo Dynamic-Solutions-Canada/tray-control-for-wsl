@@ -34,7 +34,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - **Stop needs two clicks** (red "Stop?" for 4 s). Distros running systemd stop with `systemctl poweroff` (clean); others with `wsl --terminate`. After 2 minutes still running, the distro shows "Force stop" (also two clicks).
 - **Shut down WSL** (Overview dialog, or the flyout's power button with two clicks): clean-stops every running distro in parallel, asks before forcing any that miss the limit, then `wsl --shutdown`.
 - **Start** runs a no-op in the distro. Whether it stays up depends on `instanceIdleTimeout` in `%UserProfile%\.wslconfig`; the Overview page explains the current setting.
-- Docker Desktop's `docker-desktop*` distros are hidden unless enabled in Settings.
+- Docker Desktop's `docker-desktop*` distros are hidden unless enabled.
 
 ## Conventions and gotchas
 
@@ -61,15 +61,15 @@ Source is authoritative in WSL, with submodules initialised (`git submodule upda
 | `npm run check:l10n` | The kit's catalog check: keys, placeholders, no em dashes, manifest languages, no app `kit.` keys | That the text is translated well |
 | `npm test` | Every harness under `tests/` passes on Linux: the distro state rules and the settings file | What needs WSL, Windows or the installed app (see each README) |
 | `npm run check:listing` | Listing text and the current version's notes fit the Store's limits; the README tagline matches | That the listing is live or accurate |
-| `npm run check:notices` | The notices file matches the restored packages | That each licence was read correctly |
+| `npm run check:notices` | The notices file matches the restored packages | That licences were read right |
 | `npm run validate` | The Linux gate: format, gitignore, l10n, listing and notices checks, then `npm test` | A Windows compile; also run `verify:desktop` |
-| `npm run format` | Rewrites C# (not `external/`) to the kit's `.editorconfig` | Behaviour; review the diff |
+| `npm run format` | Rewrites C# outside `external/` to the kit's style | Behaviour |
 
 Before finishing a change, run `npm run validate` and `npm run verify:desktop`; use the `desktop` skill for builds and installs.
 
 ## Release
 
-A `v*` tag makes `build-msix.yml` run the gate, build both architectures as a check, and create a notes-only GitHub Release (a paid Store app attaches no package). Store submission is manual for now. Use the `release` skill.
+A `v*` tag makes `build-msix.yml` create a notes-only GitHub Release (a paid Store app attaches no package) and `store-publish.yml` upload a Store draft through the kit's reusable workflow; submitting the draft is a separate manual run. Use the `release` skill.
 
 ## Guidance map
 
@@ -94,7 +94,7 @@ A `v*` tag makes `build-msix.yml` run the gate, build both architectures as a ch
 | A state rule in `WslMonitorService` | Behaviour above, `tests/WslMonitor.State.Tests/` |
 | A workflow, or what CI runs | The CI section of `docs/development.md` |
 | A setting's shape | A step in `Classes/SettingsMigrations.cs` and a scenario in `tests/WslMonitor.Settings.Tests/` |
-| winui-app-kit pin bumped | Copy the kit's `.editorconfig` at that tag unchanged, then `npm run format` |
+| winui-app-kit pin bumped | The `uses:` tag in both Store workflows; the kit's `.editorconfig` if it changed, then `npm run format` |
 | A language or catalog rule | Conventions above, the `localization` block in `windows-build.json` |
 | A NuGet package added, removed or updated | `npm run generate:notices`, and commit the notices file |
 | A feature, requirement, language or privacy behaviour users can see | Behaviour above, `README.md`, `store-assets/microsoft/listings.json` and the claims in `listings.md` |
