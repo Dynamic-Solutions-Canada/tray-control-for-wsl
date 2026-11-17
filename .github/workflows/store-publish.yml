@@ -2,7 +2,7 @@
 # Keep the `uses:` tag equal to the external/winui-app-kit pin; the kit's workflow stops at its first
 # step if they differ. A v* tag uploads both architectures to Partner Center as a draft with the notes
 # from release-notes/; a manual run on that tag with submit_draft set submits it. dry_run builds and
-# checks everything without any Store call. The app's own gate runs first (CI-4).
+# checks everything without any Store call. The kit's workflow runs the app's gate first (CI-4).
 name: Publish to Microsoft Store
 
 on:
@@ -49,35 +49,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # CI-4: the same gate a developer runs, before anything reaches the Store.
-  validate:
-    name: Validate (Linux)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      # Submodules too: `dotnet format` loads the app project, which references winui-app-kit.
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v6
-        with:
-          global-json-file: global.json
-
-      - name: Validate
-        run: npm run validate
-
   publish:
-    needs: validate
-    uses: Dynamic-Solutions-Canada/winui-app-kit/.github/workflows/store-publish.yml@v1.8.0
+    uses: Dynamic-Solutions-Canada/winui-app-kit/.github/workflows/store-publish.yml@v1.9.0
     with:
       store_product_id: 9MTQWTX87B8J
       # Paid, US $0.99 with the family's free trial (D-014).
       price_tier: Tier1012
-      # No steps of its own: the MSIX images are committed, and the gate ran in the validate job.
+      # No steps of its own: the MSIX images are committed.
       pre_build: ''
+      # The gate run first, on Linux (CI-4); this is the default.
+      gate_command: 'npm run validate'
       # A tag run is always a draft (REL-7); these only matter for manual runs.
       dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
       no_commit: ${{ github.event_name == 'push' || inputs.no_commit }}
