@@ -17,7 +17,7 @@ internal static class AboutContent
 
     /// <summary>
     /// Where the generated notices live in the repo, relative to its root. `npm run check:notices`
-    /// fails if this stops matching the file scripts/generate-notices.py writes.
+    /// fails if this stops matching the notices output (`notices.about_source` in windows-build.json).
     /// </summary>
     public const string NoticesPath = "WslMonitor/THIRD-PARTY-NOTICES.txt";
 

@@ -20,6 +20,9 @@
       "DescriptionKey\\s*=\\s*\"([^\"]+)\""
     ]
   },
+  "notices": {
+    "about_source": "WslMonitor/Classes/AboutContent.cs"
+  },
   "listing": {
     "product_name": "WSL Monitor"
   }

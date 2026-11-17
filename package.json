@@ -14,7 +14,7 @@
     "check:l10n": "python3 external/winui-app-kit/scripts/check-localization.py",
     "check:listing": "python3 external/winui-app-kit/scripts/check-listing.py",
     "check:gitignore": "external/winui-app-kit/scripts/check-gitignore .",
-    "check:notices": "python3 scripts/generate-notices.py --check",
-    "generate:notices": "python3 scripts/generate-notices.py"
+    "check:notices": "python3 external/winui-app-kit/scripts/generate-notices.py --check",
+    "generate:notices": "python3 external/winui-app-kit/scripts/generate-notices.py"
   }
 }
