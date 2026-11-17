@@ -2,7 +2,8 @@
 """Generate WslMonitor/THIRD-PARTY-NOTICES.txt from the app's NuGet restore graph (HYG-3, D-085).
 
     python3 scripts/generate-notices.py          write the file
-    python3 scripts/generate-notices.py --check  fail if the committed file is out of date (validate)
+    python3 scripts/generate-notices.py --check  fail if the committed file is out of date, or if the
+                                                 About page's notices link names another path (validate)
 
 Reads WslMonitor/obj/project.assets.json, which any restore writes (`npm run format:check` restores
 the project first in `validate`), and each package's .nuspec and licence files from the NuGet package
@@ -26,6 +27,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "WslMonitor" / "obj" / "project.assets.json"
 OUTPUT = ROOT / "WslMonitor" / "THIRD-PARTY-NOTICES.txt"
+# The About page links to the notices in the repo through this constant; --check keeps it on OUTPUT.
+ABOUT_CONTENT = ROOT / "WslMonitor" / "Classes" / "AboutContent.cs"
 PACKAGES = Path(os.environ.get("NUGET_PACKAGES", Path.home() / ".nuget" / "packages"))
 
 # Standard texts for the SPDX expressions in use. The copyright line comes from each package's nuspec.
@@ -167,10 +170,21 @@ def render():
     return "\n".join(body).rstrip() + "\n"
 
 
+def check_about_link():
+    """Fail unless AboutContent.NoticesPath names the file this script writes, so About's link can't 404."""
+    match = re.search(r'NoticesPath\s*=\s*"([^"]+)"', ABOUT_CONTENT.read_text(encoding="utf-8"))
+    expected = OUTPUT.relative_to(ROOT).as_posix()
+    if not match:
+        fail(f"{ABOUT_CONTENT.relative_to(ROOT)} has no NoticesPath constant for the About page's notices link")
+    if match.group(1) != expected:
+        fail(f"AboutContent.NoticesPath is {match.group(1)!r} but the notices are written to {expected!r}")
+
+
 def main():
     """Write the notices, or with --check compare them with the committed file."""
     content = render()
     if "--check" in sys.argv[1:]:
+        check_about_link()
         current = OUTPUT.read_text(encoding="utf-8") if OUTPUT.is_file() else ""
         if current != content:
             fail(f"{OUTPUT.relative_to(ROOT)} is out of date; run `npm run generate:notices` and commit it")

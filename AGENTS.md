@@ -62,7 +62,7 @@ Source is authoritative in WSL, with submodules initialised (`git submodule upda
 | `npm run check:l10n` | The kit's catalog check: keys, placeholders, no em dashes, manifest languages, no app `kit.` keys | That the text is translated well |
 | `npm test` | Every harness under `tests/` passes on Linux: the distro state rules and the settings file | What needs WSL, Windows or the installed app (see each README) |
 | `npm run check:listing` | Listing text and the current version's notes fit the Store's limits; the README tagline matches | That the listing is live or accurate |
-| `npm run check:notices` | The notices file matches the restored packages | That licences were read right |
+| `npm run check:notices` | The notices file matches the restored packages, and About links to its real path | That licences were read right |
 | `npm run validate` | The Linux gate: format, gitignore, l10n, listing and notices checks, then `npm test` | A Windows compile; also run `verify:desktop` |
 | `npm run format` | Rewrites C# outside `external/` to the kit's style | Behaviour |
 

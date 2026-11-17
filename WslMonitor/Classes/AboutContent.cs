@@ -15,6 +15,12 @@ internal static class AboutContent
     /// <summary>The repository name.</summary>
     public const string RepoName = "wsl-monitor";
 
+    /// <summary>
+    /// Where the generated notices live in the repo, relative to its root. `npm run check:notices`
+    /// fails if this stops matching the file scripts/generate-notices.py writes.
+    /// </summary>
+    public const string NoticesPath = "WslMonitor/THIRD-PARTY-NOTICES.txt";
+
     /// <summary>The product's registered privacy policy (DOCS-8). Permanent once the app ships (BRAND-11).</summary>
     public static readonly Uri PrivacyPolicy = new("https://www.dynamic-solutions.ca/privacy/wsl-monitor");
 
@@ -41,7 +47,7 @@ internal static class AboutContent
 
             // The generated notices ship in the package (HYG-3); the link opens the same file in the
             // repo, since a packaged app cannot hand a file inside its install folder to the browser.
-            ThirdPartyNotices = new Uri(source + "/blob/main/THIRD-PARTY-NOTICES.txt"),
+            ThirdPartyNotices = new Uri(source + "/blob/main/" + NoticesPath),
         };
     }
 }
