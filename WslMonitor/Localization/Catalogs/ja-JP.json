@@ -69,6 +69,7 @@
   "settings.appearance": "外観",
   "settings.behaviour": "全般",
   "settings.reset": "リセット",
+  "settings.reset-kept": "「Windows の起動時に開始」は変わりません。",
   "settings.system-distros": "Docker Desktop の内部ディストリビューションを表示する（Docker Desktop が自動で管理します）",
   "shutdown.failed": "WSL をシャットダウンできませんでした: {{detail}}",
   "shutdown.stopping": "{{names}} を停止しています…",

@@ -69,6 +69,7 @@
   "settings.appearance": "Aparência",
   "settings.behaviour": "Geral",
   "settings.reset": "Redefinir",
+  "settings.reset-kept": "“Iniciar com o Windows” não muda.",
   "settings.system-distros": "Mostrar as distribuições internas do Docker Desktop (o Docker Desktop as gerencia por conta própria)",
   "shutdown.failed": "O WSL não foi desligado: {{detail}}",
   "shutdown.stopping": "Parando {{names}}…",

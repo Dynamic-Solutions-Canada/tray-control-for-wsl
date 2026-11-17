@@ -40,6 +40,7 @@ public sealed partial class GeneralPage : Page
         // is read once the page is shown, since the page never outlives the window that hosts it.
         Loaded += (_, _) => ResetRow.Window = DetailsWindow.Instance;
         ResetRow.ResetAsync = ResetSettingsAsync;
+        ResetRow.KeptNote = () => UiText.Get("settings.reset-kept");
         ResetRow.ResetCompleted += DetailsWindow.ReloadSettingsPage;
 
         SystemDistrosSwitch.IsOn = SettingsManager.Current.ShowSystemDistros;

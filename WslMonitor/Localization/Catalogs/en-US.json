@@ -69,6 +69,7 @@
   "settings.appearance": "Appearance",
   "settings.behaviour": "General",
   "settings.reset": "Reset",
+  "settings.reset-kept": "Start with Windows stays as it is.",
   "settings.system-distros": "Show Docker Desktop's internal distros (Docker Desktop manages these itself)",
   "shutdown.failed": "WSL didn't shut down: {{detail}}",
   "shutdown.stopping": "Stopping {{names}}…",
