@@ -1,0 +1,34 @@
+{
+  "microsoft": [
+    {
+      "file": "screenshots/00-tray-dark.png",
+      "source": "raw/microsoft/00-tray-dark.png",
+      "theme": "dark",
+      "crop": "tray",
+      "caption": "The tray list: every distro with a Start or Stop button.",
+      "alt": "WSL Monitor's tray flyout above the Windows taskbar in the dark theme: Debian is stopped with a Start button, Ubuntu is running and the default with a Stop button, and the footer reads 1 of 2 running, with the Shut down WSL power button and Details."
+    },
+    {
+      "file": "screenshots/01-stop-confirm-dark.png",
+      "source": "raw/microsoft/01-stop-confirm-dark.png",
+      "theme": "dark",
+      "crop": "tray",
+      "caption": "Stop asks for a second click before it ends a distro.",
+      "alt": "The tray flyout in the dark theme after one click on Ubuntu's Stop button: the button has turned red and reads Stop?, waiting for a second click."
+    },
+    {
+      "file": "screenshots/02-overview-dark.png",
+      "source": "raw/microsoft/02-overview-dark.png",
+      "theme": "dark",
+      "caption": "The overview: your distros, Shut down WSL and the idle timeout.",
+      "alt": "WSL Monitor's Overview page in the dark theme: Debian stopped and Ubuntu running, a note on WSL's idle timeout with the installed WSL version details, and the Shut down WSL button."
+    },
+    {
+      "file": "screenshots/03-distro-dark.png",
+      "source": "raw/microsoft/03-distro-dark.png",
+      "theme": "dark",
+      "caption": "A distro's page: WSL version, location, init system and shortcuts.",
+      "alt": "Ubuntu's page in the dark theme: running, with a note on how Stop ends it, Terminal and Files shortcuts, and details listing WSL 1, Ubuntu 26.04, default distro, init system and the location C:\\WSL\\Ubuntu."
+    }
+  ]
+}

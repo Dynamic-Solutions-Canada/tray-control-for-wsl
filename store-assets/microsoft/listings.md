@@ -42,9 +42,9 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 | Age rating | Questionnaire not completed |
 | Privacy policy URL | https://www.dynamic-solutions.ca/privacy/wsl-monitor (registered, BRAND-10; the About page links it, and the page must be live before the first submission) |
 
-## Screenshots (not captured yet)
+## Screenshots
 
-Planned set, in caption order: the tray list above the taskbar, a distro's Stop button asking for the second click, the Overview page, and a distro's page. English captures can serve every listing, or capture each language by switching Language in Settings. Capture the real installed app with no personal distro names, user names or paths visible (use stock distro names such as Ubuntu and Debian), and alternate light and dark themes. Files, their order and alt text go in `store-assets/manifest.json` when they exist (LIST-8). Microsoft requires at least one 1366 x 768 or larger PNG; see [screenshots and images](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/screenshots-and-images).
+Four dark-mode screenshots, in caption order: the tray list above the taskbar, a distro's Stop button asking for the second click, the Overview page, and a distro's page. They are real captures of the installed app on the Windows 11 test VM with stock Ubuntu and Debian distros (WSL 1, since the test VM can't run WSL 2) installed under `C:\WSL`, so no personal distro names, user names or paths show. English captures serve every listing. Files, their order, captions and alt text are in `store-assets/manifest.json` (LIST-8), the raw desktop captures and their sidecars in `store-assets/raw/microsoft/`; `npm run shots:render` crops them and `npm run check:screenshots` (part of `npm run validate`) checks them, using winui-app-kit's renderer. Caption 4 names what a WSL 1 distro's page shows (no disk size). A UI change that shows in a screenshot means recapturing it.
 
 ## Open questions before submission
 

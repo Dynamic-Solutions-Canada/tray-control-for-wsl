@@ -4,6 +4,14 @@
   See at a glance which of your WSL distros are running, and start or stop them from the Windows tray.
 </p>
 
+<p align="center">
+  <img src="store-assets/microsoft/screenshots/00-tray-dark.png" alt="The tray list: Debian stopped with a Start button, Ubuntu running with a Stop button" width="250">
+  &nbsp;
+  <img src="store-assets/microsoft/screenshots/02-overview-dark.png" alt="The Overview page: your distros, WSL's idle timeout and Shut down WSL" width="250">
+  &nbsp;
+  <img src="store-assets/microsoft/screenshots/03-distro-dark.png" alt="A distro's page: WSL version, location, init system and shortcuts" width="250">
+</p>
+
 WSL distros keep running in the background, using memory, long after the terminal that started them is closed, and Windows gives no sign of which ones are up. WSL Monitor puts that answer in the tray for developers and anyone else who uses WSL: one look shows what is running, and one click starts or stops a distro, without typing `wsl` commands.
 
 ## Features

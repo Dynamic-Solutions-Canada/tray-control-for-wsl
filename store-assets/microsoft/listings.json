@@ -33,7 +33,7 @@
         "The tray list: every distro with a Start or Stop button.",
         "Stop asks for a second click before it ends a distro.",
         "The overview: your distros, Shut down WSL and the idle timeout.",
-        "A distro's page: version, location, disk size and shortcuts."
+        "A distro's page: WSL version, location, init system and shortcuts."
       ]
     },
     "en-CA": {
@@ -71,7 +71,7 @@
         "La lista de la bandeja: cada distribución con un botón Iniciar o Detener.",
         "Detener pide un segundo clic antes de terminar una distribución.",
         "El resumen: tus distribuciones, Apagar WSL y el tiempo de inactividad.",
-        "La página de una distribución: versión, ubicación, tamaño del disco y accesos directos."
+        "La página de una distribución: versión de WSL, ubicación, sistema de inicio y accesos directos."
       ]
     },
     "fr-FR": {
@@ -106,7 +106,7 @@
         "La liste de la zone de notification : chaque distribution avec un bouton Démarrer ou Arrêter.",
         "Arrêter demande un second clic avant d’arrêter une distribution.",
         "La vue d’ensemble : vos distributions, Arrêter WSL et le délai d’inactivité.",
-        "La page d’une distribution : version, emplacement, taille du disque et raccourcis."
+        "La page d’une distribution : version de WSL, emplacement, système d’initialisation et raccourcis."
       ]
     },
     "fr-CA": {
@@ -144,7 +144,7 @@
         "Die Liste im Infobereich: jede Distribution mit einer Schaltfläche Starten oder Beenden.",
         "Beenden verlangt einen zweiten Klick, bevor eine Distribution beendet wird.",
         "Die Übersicht: deine Distributionen, WSL herunterfahren und das Leerlauf-Timeout.",
-        "Die Seite einer Distribution: Version, Speicherort, Datenträgergröße und Verknüpfungen."
+        "Die Seite einer Distribution: WSL-Version, Speicherort, Init-System und Verknüpfungen."
       ]
     },
     "zh-CN": {
@@ -179,7 +179,7 @@
         "托盘列表：每个发行版都有“启动”或“停止”按钮。",
         "“停止”在结束发行版之前需要再次单击确认。",
         "概览：你的发行版、关闭 WSL 和空闲超时。",
-        "发行版页面：版本、位置、磁盘大小和快捷方式。"
+        "发行版页面：WSL 版本、位置、初始化系统和快捷方式。"
       ]
     },
     "pt-BR": {
@@ -214,7 +214,7 @@
         "A lista na bandeja: cada distribuição com um botão Iniciar ou Parar.",
         "Parar pede um segundo clique antes de encerrar uma distribuição.",
         "A visão geral: suas distribuições, Desligar o WSL e o tempo limite de inatividade.",
-        "A página de uma distribuição: versão, local, tamanho do disco e atalhos."
+        "A página de uma distribuição: versão do WSL, local, sistema de inicialização e atalhos."
       ]
     },
     "ja-JP": {
@@ -249,7 +249,7 @@
         "トレイの一覧: 各ディストリビューションに [起動] または [停止] ボタンがあります。",
         "ディストリビューションを停止する前に、[停止] は 2 回目のクリックを求めます。",
         "概要: ディストリビューション、WSL のシャットダウン、アイドル タイムアウト。",
-        "ディストリビューションのページ: バージョン、場所、ディスク サイズ、ショートカット。"
+        "ディストリビューションのページ: WSL のバージョン、場所、init システム、ショートカット。"
       ]
     }
   }

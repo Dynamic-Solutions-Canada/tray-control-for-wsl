@@ -63,7 +63,9 @@ Source is authoritative in WSL, with submodules initialised (`git submodule upda
 | `npm test` | Every harness under `tests/` passes on Linux: the distro state rules and the settings file | What needs WSL, Windows or the installed app (see each README) |
 | `npm run check:listing` | Listing text and the current version's notes fit the Store's limits; the README tagline matches | That the listing is live or accurate |
 | `npm run check:notices` | The notices file matches the restored packages, and About links to its real path | That licences were read right |
-| `npm run validate` | The Linux gate: format, gitignore, l10n, listing and notices checks, then `npm test` | A Windows compile; also run `verify:desktop` |
+| `npm run check:screenshots` | The Store screenshots are the kit renderer's 1366 x 768 crops of dark, unscaled test-VM captures, with captions matching the listing | That they show the current UI |
+| `npm run shots:render` | Re-crops `store-assets/raw/microsoft/` into `store-assets/microsoft/screenshots/` | That the captures are current; recapture on the test VM |
+| `npm run validate` | The Linux gate: format, gitignore, l10n, listing, notices and screenshot checks, then `npm test` | A Windows compile; also run `verify:desktop` |
 | `npm run format` | Rewrites C# outside `external/` to the kit's style | Behaviour |
 
 Before finishing a change, run `npm run validate` and `npm run verify:desktop`; use the `desktop` skill for builds and installs.
