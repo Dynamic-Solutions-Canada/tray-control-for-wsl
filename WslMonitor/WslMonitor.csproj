@@ -23,7 +23,7 @@
     <!-- System.Drawing for runtime tray-icon rendering -->
     <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
 
-    <!-- WinUI 3 (Windows App SDK); the manifest's Microsoft.WindowsAppRuntime.1.8 dependency moves with it -->
+    <!-- WinUI 3 (Windows App SDK); the manifest's Microsoft.WindowsAppRuntime dependency moves with it -->
     <PackageReference Include="Microsoft.WindowsAppSDK" />
 
     <!-- Structured logging; the shared NLog.config is linked by the kit's build targets -->
