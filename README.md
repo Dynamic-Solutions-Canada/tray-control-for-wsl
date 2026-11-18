@@ -20,7 +20,7 @@ WSL distros keep running in the background, using memory, long after the termina
 - **Start and stop with a click:** click the tray icon for a list of your distros with a Start or Stop button for each, and a Details button for the full window.
 - **Safe stops:** stopping asks for a second click. Distros that use systemd (Ubuntu's default) shut down cleanly, so services stop in order and programs get a chance to exit. If one hasn't stopped after 2 minutes, you can force it.
 - **Shut down WSL:** stop every distro cleanly at once, then free WSL's memory, from the tray or the Overview page.
-- **Details for each distro:** its version, location and disk size, with shortcuts to a terminal or its files.
+- **Details for each distro:** its WSL version, location and, for WSL 2, disk size, with shortcuts to a terminal or its files.
 - **Fits in:** follows Windows' light or dark theme and language, and can start when you sign in.
 
 ## Get it
