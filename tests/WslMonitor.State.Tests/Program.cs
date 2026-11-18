@@ -13,6 +13,7 @@ var scenarios = new List<(string Name, Func<Task> Body)>
     ("the service says it has not polled until its first poll finishes", HasPolledAfterFirstPoll),
     ("Docker Desktop's distros are hidden unless the setting is on", SystemDistrosHidden),
     ("a registry busy state wins over running state", BusyWins),
+    ("the WSL version comes from the registration's VM-mode flag", WslVersionFromFlags),
     ("when WSL can't say what is running, the last state is kept", UnknownKeepsState),
     ("Starting holds until WSL lists the distro running", StartingHolds),
     ("a failed start leaves the distro stopped with the error", FailedStart),
@@ -96,6 +97,18 @@ static async Task HasPolledAfterFirstPoll()
     await service.RefreshAsync();
     Check(service.HasPolled, "the first poll marks the service as polled");
     Check(changes == 1, "the first poll raises Changed even when the list stays empty");
+}
+
+static Task WslVersionFromFlags()
+{
+    // Real registrations: WSL 1 distros have Flags 0x7 (and Version 2, the file-system format);
+    // WSL 2 distros add the VM-mode bit, 0xF.
+    Check(WslDistroFlags.WslVersion(0x7) == 1, "Flags without the VM-mode bit is WSL 1");
+    Check(WslDistroFlags.WslVersion(0xF) == 2, "Flags with the VM-mode bit is WSL 2");
+    Check(WslDistroFlags.WslVersion(0x8) == 2, "the VM-mode bit alone is WSL 2");
+    Check(WslDistroFlags.WslVersion(null) == 2, "a registration without Flags is taken as WSL 2");
+    Check(WslDistroFlags.WslVersion("7") == 2, "a non-numeric Flags is taken as WSL 2");
+    return Task.CompletedTask;
 }
 
 static async Task SystemDistrosHidden()

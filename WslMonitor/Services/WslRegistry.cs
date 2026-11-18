@@ -49,7 +49,7 @@ public static class WslRegistry
 
     private static RegisteredDistro Read(RegistryKey key, Guid id, string name, bool isDefault)
     {
-        int version = key.GetValue("Version") is int v ? v : 2;
+        int version = WslDistroFlags.WslVersion(key.GetValue("Flags"));
         string basePath = key.GetValue("BasePath") as string ?? "";
         string vhd = key.GetValue("VhdFileName") as string ?? "";
         string diskPath = version >= 2 && basePath.Length > 0 && vhd.Length > 0 ? Path.Combine(basePath, vhd) : "";

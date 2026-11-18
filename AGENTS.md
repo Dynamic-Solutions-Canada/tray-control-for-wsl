@@ -21,7 +21,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Page styles and Settings rows | The kit's shared XAML (`Styles.xaml` merged in `App.xaml`) |
 | Polling, state machine, actions | `Services/WslMonitorService.cs` |
 | `wsl.exe` calls | `Services/WslCli.cs` |
-| Distro list and details (HKCU `...\Lxss`) | `Services/WslRegistry.cs` |
+| Distro list and details (HKCU `...\Lxss`); WSL 1 or 2 from a registration's flags | `Services/WslRegistry.cs`, `Services/WslDistroFlags.cs` |
 | `.wslconfig` idle timeouts | `Services/WslConfigFile.cs` |
 | Settings (the kit's versioned store, with Reset) | `ViewModels/UserSettings.cs`, `Classes/SettingsManager.cs`, `Classes/SettingsMigrations.cs` |
 | Interface text (9 languages) | `Localization/Catalogs/*.json`, `Classes/AppLanguages.cs` |
