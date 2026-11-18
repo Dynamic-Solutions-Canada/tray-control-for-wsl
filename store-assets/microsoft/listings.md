@@ -36,7 +36,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 | Field | Value |
 | --- | --- |
 | Store ID | 9MTQWTX87B8J (https://apps.microsoft.com/detail/9MTQWTX87B8J, live once the first submission is published) |
-| Package identity | `DynamicSolutionsCA.WSLMonitor`, publisher `CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E` (dev builds use `TechnicallyReal.WslMonitor`) |
+| Package identity | `DynamicSolutionsCA.WSLMonitor`, publisher `CN=B55B96A5-F10C-49D3-8D0B-7260EDBE7625` (dev builds use `TechnicallyReal.WslMonitor`) |
 | Category | Not set; suggested Developer tools |
 | Pricing | Paid, US $0.99 (price tier Tier1012, sent by `store-publish.yml`), with a 7-day free trial, matching ImmichDrive; not offered in Lebanon or Western Sahara. The trial and markets are set in Partner Center, not by the workflow (D-014) |
 | Age rating | Questionnaire not completed |

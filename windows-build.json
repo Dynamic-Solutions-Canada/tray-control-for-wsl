@@ -12,7 +12,7 @@
   "signing": "shared-dev",
   "trusted_certificate": true,
   "store_identity": "DynamicSolutionsCA.WSLMonitor",
-  "store_publisher": "CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E",
+  "store_publisher": "CN=B55B96A5-F10C-49D3-8D0B-7260EDBE7625",
   "store_identity_switch": "-StoreIdentity",
   "localization": {
     "catalog_dir": "WslMonitor/Localization/Catalogs",

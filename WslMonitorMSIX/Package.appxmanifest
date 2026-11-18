@@ -12,7 +12,7 @@
        the signing cert's publisher by the kit's build-msix.ps1; Store uploads (-NoSign) keep these values. -->
   <Identity
     Name="DynamicSolutionsCA.WSLMonitor"
-    Publisher="CN=C21E6CEF-D0D1-4497-93F9-3718D054DA0E"
+    Publisher="CN=B55B96A5-F10C-49D3-8D0B-7260EDBE7625"
     Version="VERSION_PLACEHOLDER"
     ProcessorArchitecture="ARCH_PLACEHOLDER" />
 
