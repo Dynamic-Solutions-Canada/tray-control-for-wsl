@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using System.IO;
+using WinUIAppKit;
 using WinUIAppKit.Hosting;
 using WinUIAppKit.Localization;
 using WinUIAppKit.Logging;
@@ -45,7 +46,7 @@ public partial class App : Application
     {
         if (!MainWindow.ClaimSingleInstance())
         {
-            Environment.Exit(0);
+            SingleInstance.ExitThisLaunch();
         }
 
         SettingsManager.Restore();
