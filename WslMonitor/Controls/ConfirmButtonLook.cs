@@ -52,20 +52,16 @@ internal static class ConfirmButtonLook
             return;
         }
 
-        // The panel takes the button's whole face: no padding or border of the button's own around it.
-        var padding = DefaultPadding(button);
-        button.Padding = new Thickness(0);
+        // The panel takes the button's whole face: no border of the button's own around it.
         button.BorderThickness = new Thickness(0);
         button.HorizontalContentAlignment = HorizontalAlignment.Stretch;
         button.VerticalContentAlignment = VerticalAlignment.Stretch;
 
         var panel = new Border
         {
-            Background = button.IsPointerOver ? Hover : Rest,
+            Background = Rest,
             BorderBrush = Edge,
             BorderThickness = new Thickness(1),
-            CornerRadius = button.CornerRadius,
-            Padding = padding,
             Child = new TextBlock
             {
                 Text = text,
@@ -76,6 +72,41 @@ internal static class ConfirmButtonLook
         };
         ShadeOnPointer(panel);
         button.Content = panel;
+
+        // A button rebuilt while its confirmation is pending (the lists are rebuilt on every change)
+        // is armed before it is in the tree, when its style's padding and corners are not applied yet.
+        if (button.IsLoaded)
+        {
+            FitToButton(button, panel);
+        }
+        else
+        {
+            void OnLoaded(object sender, RoutedEventArgs e)
+            {
+                button.Loaded -= OnLoaded;
+                if (ReferenceEquals(button.Content, panel))
+                {
+                    FitToButton(button, panel);
+                }
+            }
+
+            button.Loaded += OnLoaded;
+        }
+    }
+
+    /// <summary>
+    /// Give the panel the button's own padding (so the text sits where the plain label did) and
+    /// corners, zero the button's padding so the panel fills it, and start in the hover shade if the
+    /// pointer is already over the button, as it is right after the first click. Needs the button's
+    /// style applied, so only once it has loaded.
+    /// </summary>
+    private static void FitToButton(Button button, Border panel)
+    {
+        button.ClearValue(Control.PaddingProperty);
+        panel.Padding = button.Padding;
+        panel.CornerRadius = button.CornerRadius;
+        button.Padding = new Thickness(0);
+        panel.Background = button.IsPointerOver ? Hover : Rest;
     }
 
     /// <summary>Put back the button's own padding, border and alignment after <see cref="ShowArmed"/>.</summary>
@@ -85,16 +116,6 @@ internal static class ConfirmButtonLook
         button.ClearValue(Control.BorderThicknessProperty);
         button.ClearValue(Control.HorizontalContentAlignmentProperty);
         button.ClearValue(Control.VerticalContentAlignmentProperty);
-    }
-
-    /// <summary>
-    /// The padding the button has from its style, read with any local value set by an earlier
-    /// <see cref="ShowArmed"/> cleared first, so the armed text sits where the plain label did.
-    /// </summary>
-    private static Thickness DefaultPadding(Button button)
-    {
-        button.ClearValue(Control.PaddingProperty);
-        return button.Padding;
     }
 
     /// <summary>
