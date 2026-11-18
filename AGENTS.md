@@ -17,7 +17,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | About (the kit's page); the repo and privacy URL, named once | `Classes/AboutContent.cs` |
 | Distro model and state | `Models/Distro.cs` |
 | Shared distro UI (list, row, Start/Stop button, labels, Stop policy) | `Controls/Distro*.cs` |
-| Two-click confirmation; flyout shutdown button | `Controls/ClickConfirmation.cs`, `Controls/ShutdownButton.cs` |
+| Two-click confirmation, its red armed look; flyout shutdown button | `Controls/ClickConfirmation.cs`, `Controls/ConfirmButtonLook.cs`, `Controls/ShutdownButton.cs` |
 | Page styles and Settings rows | The kit's shared XAML (`Styles.xaml` merged in `App.xaml`) |
 | Polling, state machine, actions | `Services/WslMonitorService.cs` |
 | `wsl.exe` calls | `Services/WslCli.cs` |

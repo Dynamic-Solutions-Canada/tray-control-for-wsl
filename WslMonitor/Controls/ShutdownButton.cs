@@ -33,16 +33,13 @@ public sealed partial class ShutdownButton : Button
     private void Render()
     {
         var res = Application.Current.Resources;
-        ClearValue(BackgroundProperty);
-        ClearValue(ForegroundProperty);
+        ConfirmButtonLook.Clear(this);
         IsEnabled = _service.IsWslInstalled && !_service.IsShuttingDown;
         AutomationProperties.SetName(this, UiText.Get("overview.shutdown"));
 
         if (ClickConfirmation.IsArmed(ConfirmKey))
         {
-            Content = UiText.Get("overview.confirm-title");
-            Background = (Brush)res["SystemFillColorCriticalBrush"];
-            Foreground = (Brush)res["TextOnAccentFillColorPrimaryBrush"];
+            ConfirmButtonLook.ShowArmed(this, UiText.Get("overview.confirm-title"));
             ClickConfirmation.OnLapse(ConfirmKey, DispatcherQueue, Render);
         }
         else

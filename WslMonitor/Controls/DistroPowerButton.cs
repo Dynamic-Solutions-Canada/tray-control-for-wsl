@@ -38,10 +38,8 @@ public sealed partial class DistroPowerButton : Button
     /// <summary>Set the label, colours, tooltip and enabled state for the distro's current state.</summary>
     private void Render()
     {
-        var res = Application.Current.Resources;
-        ClearValue(BackgroundProperty);
-        ClearValue(ForegroundProperty);
         ClearValue(AutomationProperties.NameProperty);   // text content names the button itself
+        ConfirmButtonLook.Clear(this);
         IsEnabled = !_service.IsShuttingDown;
 
         switch (_distro.State)
@@ -56,9 +54,7 @@ public sealed partial class DistroPowerButton : Button
                 bool force = _distro.State == DistroState.StopTimedOut;
                 if (ClickConfirmation.IsArmed(ConfirmKey))
                 {
-                    Content = UiText.Get(force ? "power.force-confirm" : "power.stop-confirm");
-                    Background = (Brush)res["SystemFillColorCriticalBrush"];
-                    Foreground = (Brush)res["TextOnAccentFillColorPrimaryBrush"];
+                    ConfirmButtonLook.ShowArmed(this, UiText.Get(force ? "power.force-confirm" : "power.stop-confirm"));
                     ClickConfirmation.OnLapse(ConfirmKey, DispatcherQueue, Render);
                 }
                 else
