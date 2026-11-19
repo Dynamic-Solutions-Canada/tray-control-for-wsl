@@ -6,7 +6,7 @@
 ## Prerequisites
 
 - WSL with this repository cloned inside it, including submodules: clone with `--recurse-submodules`, or run `git submodule update --init` (the app builds on `external/winui-app-kit` and `external/promo`).
-- [lefthook](https://lefthook.dev) for the git hooks in `lefthook.yml`: run `lefthook install` once after cloning.
+- [lefthook](https://lefthook.dev) for the git hooks in `lefthook.yml`: run `lefthook install` once after cloning. Its secrets check is the kit's `scripts/devkit precommit`, which needs Node 22.12 or later, below 25, and installs its pinned tools inside the kit on first use.
 - Node.js for the root `npm run` commands, and Python 3 for the catalog check.
 - The [shared Windows build tools](https://github.com/Dynamic-Solutions-Canada/windows-build-tools), which run the Windows build from WSL and document their own Windows-side requirements, the disposable Windows TEMP copy and the local build VM. The link resolves once that repository is published.
 
