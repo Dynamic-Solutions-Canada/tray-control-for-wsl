@@ -4,7 +4,7 @@ using WinUIAppKit.Updates;
 namespace WslMonitor.Classes;
 
 /// <summary>
-/// What the kit's shared About page shows for WSL Monitor (UI-5, BRAND-8), and the one place the
+/// What the kit's shared About page shows for WSL Status (UI-5, BRAND-8), and the one place the
 /// repository and the privacy policy are named (BRAND-5): every link is built from these values.
 /// </summary>
 internal static class AboutContent
@@ -22,7 +22,7 @@ internal static class AboutContent
     public const string NoticesPath = "WslMonitor/THIRD-PARTY-NOTICES.txt";
 
     /// <summary>The product's registered privacy policy (DOCS-8). Permanent once the app ships (BRAND-11).</summary>
-    public static readonly Uri PrivacyPolicy = new("https://www.dynamic-solutions.ca/privacy/wsl-monitor");
+    public static readonly Uri PrivacyPolicy = new("https://www.dynamic-solutions.ca/privacy/wsl-status");
 
     /// <summary>
     /// "Check for updates" (DIST-6): the Store's updates page when packaged, this repo's GitHub Releases
@@ -36,7 +36,7 @@ internal static class AboutContent
         var (source, support, license) = AboutInfo.GitHubLinks(RepoOwner, RepoName);
         return new AboutInfo
         {
-            ProductName = "WSL Monitor",
+            ProductName = "WSL Status",
             DescriptionKey = "AppDescription",
             IconPngPath = App.IconPngPath,
             PrivacyPolicy = PrivacyPolicy,

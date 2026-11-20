@@ -1,6 +1,6 @@
 ---
 name: desktop
-description: Build, verify, or install WSL Monitor's Windows desktop app from WSL through the shared disposable Windows build bridge. Use for local desktop development, not releases or Store publishing.
+description: Build, verify, or install WSL Status's Windows desktop app from WSL through the shared disposable Windows build bridge. Use for local desktop development, not releases or Store publishing.
 ---
 
 # Windows desktop development

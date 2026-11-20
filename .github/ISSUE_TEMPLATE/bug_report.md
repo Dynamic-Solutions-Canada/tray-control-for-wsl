@@ -1,9 +1,9 @@
 ---
 name: Bug report
-about: Something in WSL Monitor does not work as expected
+about: Something in WSL Status does not work as expected
 ---
 
-**WSL Monitor version:** (About page)
+**WSL Status version:** (About page)
 
 **Windows version:** (Settings > System > About, for example 11 24H2 build 26100)
 

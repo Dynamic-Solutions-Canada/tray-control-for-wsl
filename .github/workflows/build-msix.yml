@@ -6,7 +6,7 @@ name: Build and Package
 # On a v* tag: run the gate (CI-4), build the x64 and ARM64 packages, then create the GitHub Release
 # from the committed notes (REL-5, REL-6). workflow_dispatch runs the gate and the build only.
 #
-# This workflow publishes no binaries anywhere, on purpose (DIST-5). WSL Monitor is a paid
+# This workflow publishes no binaries anywhere, on purpose (DIST-5). WSL Status is a paid
 # Microsoft Store app in a public repo, and an Actions artifact or Release asset on a public repo can
 # be downloaded by anyone, so attaching a signed package would give the paid app away. The install
 # route is the Microsoft Store; anyone who wants to run it from source can build it themselves
@@ -125,7 +125,7 @@ jobs:
             echo ""
             echo "## Get it"
             echo ""
-            echo "WSL Monitor is not in the Microsoft Store yet. Until it is, build and install it from source with the [development guide](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/development.md)."
+            echo "WSL Status is not in the Microsoft Store yet. Until it is, build and install it from source with the [development guide](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/development.md)."
             echo ""
             echo "*AI disclosure: this release and the related code were written with the assistance of AI.*"
             echo "RELEASE_EOF"
@@ -135,7 +135,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
-          name: WSL Monitor ${{ steps.notes.outputs.version }}
+          name: WSL Status ${{ steps.notes.outputs.version }}
           body: ${{ steps.notes.outputs.body }}
           make_latest: true
           generate_release_notes: false

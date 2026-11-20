@@ -35,12 +35,13 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 
 | Field | Value |
 | --- | --- |
+| Product name | WSL Status in every language (D-118, 2026-11-20). "WSL Monitor" was rejected under policy 10.1.1.1 as too close to an existing app, "WSL Tray Monitor"; the identifiers below keep the old name so installs and settings carry over |
 | Store ID | 9MTQWTX87B8J (https://apps.microsoft.com/detail/9MTQWTX87B8J, live once the first submission is published) |
 | Package identity | `DynamicSolutionsCA.WSLMonitor`, publisher `CN=B55B96A5-F10C-49D3-8D0B-7260EDBE7625` (dev builds use `TechnicallyReal.WslMonitor`) |
 | Category | Not set; suggested Developer tools |
 | Pricing | Paid, US $0.99 (price tier Tier1012, sent by `store-publish.yml`), with a 7-day free trial, matching ImmichDrive; not offered in Lebanon or Western Sahara. The trial and markets are set in Partner Center, not by the workflow (D-014) |
 | Age rating | Questionnaire not completed |
-| Privacy policy URL | https://www.dynamic-solutions.ca/privacy/wsl-monitor (registered, BRAND-10; the About page links it, and the page must be live before the first submission) |
+| Privacy policy URL | https://www.dynamic-solutions.ca/privacy/wsl-status (registered, BRAND-10; the About page links it, and the page must be live before the first submission) |
 
 ## Screenshots
 

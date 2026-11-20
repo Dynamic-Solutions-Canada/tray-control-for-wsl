@@ -33,7 +33,7 @@ public sealed partial class MainWindow : Window
     private static readonly Guid TrayGuid = new("d3b6a0f2-6c4e-4f0b-9a7e-2f51c8e4a913");
 
     /// <summary>"Start with Windows" (manifest task id / unpackaged Run value).</summary>
-    public static StartupRegistration Startup { get; } = new("WslMonitorStartup", "WSL Monitor");
+    public static StartupRegistration Startup { get; } = new("WslMonitorStartup", "WSL Status");
 
     public static WslMonitorService Service { get; private set; } = null!;
 

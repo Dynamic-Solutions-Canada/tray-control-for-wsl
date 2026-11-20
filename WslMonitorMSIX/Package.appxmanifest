@@ -17,7 +17,7 @@
     ProcessorArchitecture="ARCH_PLACEHOLDER" />
 
   <Properties>
-    <DisplayName>WSL Monitor</DisplayName>
+    <DisplayName>WSL Status</DisplayName>
     <PublisherDisplayName>Dynamic Solutions (CA)</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
@@ -48,7 +48,7 @@
       Executable="WslMonitor.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="WSL Monitor"
+        DisplayName="WSL Status"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png"
@@ -58,7 +58,7 @@
       <Extensions>
         <!-- desktop: (not uap:) namespace - makeappx rejects uap: startup tasks for full-trust apps. -->
         <desktop:Extension Category="windows.startupTask">
-          <desktop:StartupTask TaskId="WslMonitorStartup" Enabled="true" DisplayName="WSL Monitor" />
+          <desktop:StartupTask TaskId="WslMonitorStartup" Enabled="true" DisplayName="WSL Status" />
         </desktop:Extension>
       </Extensions>
     </Application>

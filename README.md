@@ -1,4 +1,4 @@
-<h1 align="center">WSL Monitor</h1>
+<h1 align="center">WSL Status</h1>
 
 <p align="center">
   See at a glance which of your WSL distros are running, and start or stop them from the Windows tray.
@@ -12,7 +12,7 @@
   <img src="store-assets/microsoft/screenshots/03-distro-dark.png" alt="A distro's page: WSL version, location, init system and shortcuts" width="250">
 </p>
 
-WSL distros keep running in the background, using memory, long after the terminal that started them is closed, and Windows gives no sign of which ones are up. WSL Monitor puts that answer in the tray for developers and anyone else who uses WSL: one look shows what is running, and one click starts or stops a distro, without typing `wsl` commands.
+WSL distros keep running in the background, using memory, long after the terminal that started them is closed, and Windows gives no sign of which ones are up. WSL Status puts that answer in the tray for developers and anyone else who uses WSL: one look shows what is running, and one click starts or stops a distro, without typing `wsl` commands.
 
 ## Features
 
@@ -25,9 +25,9 @@ WSL distros keep running in the background, using memory, long after the termina
 
 ## Get it
 
-WSL Monitor is not in the Microsoft Store yet. Until it is, you can build and install it yourself by following the [development guide](docs/development.md).
+WSL Status is not in the Microsoft Store yet. Until it is, you can build and install it yourself by following the [development guide](docs/development.md).
 
-WSL Monitor collects no telemetry or crash reports.
+WSL Status collects no telemetry or crash reports.
 
 ### Requirements
 
@@ -36,13 +36,13 @@ WSL Monitor collects no telemetry or crash reports.
 
 ## How it works
 
-WSL Monitor reads your distros from Windows and checks which ones are running every few seconds. Starting a distro runs an empty command in it. Whether it then keeps running with nothing open in it depends on WSL's idle timeout: the Overview page tells you how yours is set, and how to keep distros running (`instanceIdleTimeout=-1` in `.wslconfig`).
+WSL Status reads your distros from Windows and checks which ones are running every few seconds. Starting a distro runs an empty command in it. Whether it then keeps running with nothing open in it depends on WSL's idle timeout: the Overview page tells you how yours is set, and how to keep distros running (`instanceIdleTimeout=-1` in `.wslconfig`).
 
 Docker Desktop's own distros are hidden unless you turn them on in Settings.
 
 ## Languages
 
-WSL Monitor is available in English (United States and Canada), Spanish, French (France and Canada), German, Simplified Chinese, Brazilian Portuguese and Japanese. It follows Windows' language unless you pick one in Settings.
+WSL Status is available in English (United States and Canada), Spanish, French (France and Canada), German, Simplified Chinese, Brazilian Portuguese and Japanese. It follows Windows' language unless you pick one in Settings.
 
 ## Developers
 

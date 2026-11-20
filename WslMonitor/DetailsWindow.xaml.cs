@@ -69,7 +69,7 @@ public sealed partial class DetailsWindow : Window
         InitializeComponent();
         Closed += OnClosed;
 
-        Shell.Caption = "WSL Monitor";
+        Shell.Caption = "WSL Status";
         Shell.IconPngPath = App.IconPngPath;
         WindowChrome.SetUpSettingsWindow(this, Shell.TitleBar, App.IconPath, SettingsManager.Current.DetailsWindow);
         Shell.PageSelected += OnPageSelected;
