@@ -18,7 +18,7 @@ var scenarios = new List<(string Name, Action<string> Body)>
     ("Reset keeps the old file and writes defaults", ResetKeepsOldFile),
 };
 
-string root = Path.Combine(Path.GetTempPath(), "wsl-monitor-settings-tests-" + Guid.NewGuid().ToString("N"));
+string root = Path.Combine(Path.GetTempPath(), "wsl-status-settings-tests-" + Guid.NewGuid().ToString("N"));
 try
 {
     for (int i = 0; i < scenarios.Count; i++)

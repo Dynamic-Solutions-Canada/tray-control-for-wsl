@@ -13,7 +13,7 @@ internal static class AboutContent
     public const string RepoOwner = "Dynamic-Solutions-Canada";
 
     /// <summary>The repository name.</summary>
-    public const string RepoName = "wsl-monitor";
+    public const string RepoName = "wsl-status";
 
     /// <summary>
     /// Where the generated notices live in the repo, relative to its root. `npm run check:notices`
