@@ -24,6 +24,6 @@
     "about_source": "WslMonitor/Classes/AboutContent.cs"
   },
   "listing": {
-    "product_name": "WSL Status"
+    "product_name": "Tray Control for WSL"
   }
 }

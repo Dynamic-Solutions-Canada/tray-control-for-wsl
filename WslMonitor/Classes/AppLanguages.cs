@@ -3,7 +3,7 @@ using WinUIAppKit.Localization;
 namespace WslMonitor.Classes;
 
 /// <summary>
-/// The interface languages WSL Status ships: the same nine identities, in the same order, as
+/// The interface languages Tray Control for WSL ships: the same nine identities, in the same order, as
 /// Persistent. Canadian English reuses US wording and Canadian French reuses French wording; they stay
 /// separate choices so the picker and Windows' preferences match them exactly. Keep this list,
 /// <c>Localization/Catalogs/*.json</c> and the manifest's <c>&lt;Resource Language&gt;</c> entries in step.

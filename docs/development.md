@@ -1,7 +1,7 @@
-> **Scope:** Building, checking and installing WSL Status, and where it stores data.
+> **Scope:** Building, checking and installing Tray Control for WSL, and where it stores data.
 > **Governs:** `Directory.Build.props`, `package.json`, `windows-build.json`, `scripts/**`, `WslMonitorMSIX/**`
 
-# WSL Status development
+# Tray Control for WSL development
 
 ## Prerequisites
 
@@ -67,7 +67,7 @@ Releases follow the `release` skill ([.agents/skills/release/SKILL.md](../.agent
 1. Write the notes for the new version as user-facing bullets in `release-notes/<version>.md`, plus one translated file per other wording catalog, and get them approved before anything else changes.
 2. Set `<Version>` in `Directory.Build.props`, run `npm run validate` and `npm run verify:desktop`, and commit the version and notes together as `Bump version to v<version>`.
 3. Tag `v<version>` (annotated) and push the branch and tag together.
-4. The "Build and Package" workflow (`build-msix.yml`) runs the gate, builds x64 and ARM64 packages as a check, and creates the GitHub Release from the notes. The Release carries no package: WSL Status is a paid Microsoft Store app, so the Store is the only download.
+4. The "Build and Package" workflow (`build-msix.yml`) runs the gate, builds x64 and ARM64 packages as a check, and creates the GitHub Release from the notes. The Release carries no package: Tray Control for WSL is a paid Microsoft Store app, so the Store is the only download.
 5. The same tag runs "Publish to Microsoft Store" (`store-publish.yml`): the gate, then winui-app-kit's reusable Store workflow builds both architectures, uploads them to Partner Center with each locale's "What's new" from the notes files, and stops at a draft (REL-7). Its summary names the draft ID.
 6. Submitting the draft for certification is a separate, deliberate step: run "Publish to Microsoft Store" manually on the same tag with `submit_draft` set to that ID and `no_commit` unchecked. A manual run with `dry_run` checks everything without any Store call.
 
@@ -77,7 +77,7 @@ The Store listing text is in `store-assets/microsoft/listings.json`, with its li
 
 ## Where the app stores data
 
-WSL Status collects no telemetry or crash reports. It reads WSL's distro list from the registry (`HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss`) and `%UserProfile%\.wslconfig`, and never edits either file or key directly. Starting and stopping distros goes through `wsl.exe`.
+Tray Control for WSL collects no telemetry or crash reports. It reads WSL's distro list from the registry (`HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss`) and `%UserProfile%\.wslconfig`, and never edits either file or key directly. Starting and stopping distros goes through `wsl.exe`.
 
 The app makes two network requests, both only when the user acts, and sends nothing about the user or their distros:
 
