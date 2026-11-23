@@ -1,7 +1,20 @@
 {
   "microsoft": [
     {
-      "file": "screenshots/00-tray-dark.png",
+      "file": "screenshots/{locale}/00-hero-dark.png",
+      "source": "raw/microsoft/00-tray-dark.png",
+      "theme": "dark",
+      "hero": {
+        "layout": "split",
+        "icon": "assets/generated/icon-256.png",
+        "primary": "#22C55E",
+        "accent": "#8B93A1"
+      },
+      "caption": "See at a glance which distros are running.",
+      "alt": "Tray Control for WSL's name and the headline \"Start and stop WSL distros from the tray.\" on a green panel, beside the app's real tray flyout, enlarged: Debian stopped with a Start button, Ubuntu running with a Stop button, and 1 of 2 running."
+    },
+    {
+      "file": "screenshots/01-tray-dark.png",
       "source": "raw/microsoft/00-tray-dark.png",
       "theme": "dark",
       "crop": "tray",
@@ -9,7 +22,7 @@
       "alt": "The Tray Control for WSL flyout above the Windows taskbar in the dark theme: Debian is stopped with a Start button, Ubuntu is running and the default with a Stop button, and the footer reads 1 of 2 running, with the Shut down WSL power button and Details."
     },
     {
-      "file": "screenshots/01-stop-confirm-dark.png",
+      "file": "screenshots/02-stop-confirm-dark.png",
       "source": "raw/microsoft/01-stop-confirm-dark.png",
       "theme": "dark",
       "crop": "tray",
@@ -17,14 +30,14 @@
       "alt": "The tray flyout in the dark theme after one click on Ubuntu's Stop button: the button has turned red and reads Stop?, waiting for a second click."
     },
     {
-      "file": "screenshots/02-overview-dark.png",
+      "file": "screenshots/03-overview-dark.png",
       "source": "raw/microsoft/02-overview-dark.png",
       "theme": "dark",
       "caption": "The overview: your distros, Shut down WSL and the idle timeout.",
       "alt": "The Overview page of Tray Control for WSL in the dark theme: Debian stopped and Ubuntu running, a note on WSL's idle timeout with the installed WSL version details, and the Shut down WSL button."
     },
     {
-      "file": "screenshots/03-distro-dark.png",
+      "file": "screenshots/04-distro-dark.png",
       "source": "raw/microsoft/03-distro-dark.png",
       "theme": "dark",
       "caption": "A distro's page: WSL version, location, init system and shortcuts.",
