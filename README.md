@@ -5,6 +5,12 @@
 </p>
 
 <p align="center">
+  <a href="https://apps.microsoft.com/detail/9MTQWTX87B8J">
+    <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get Tray Control for WSL from the Microsoft Store" height="56">
+  </a>
+</p>
+
+<p align="center">
   <img src="store-assets/microsoft/screenshots/00-tray-dark.png" alt="The tray list: Debian stopped with a Start button, Ubuntu running with a Stop button" width="250">
   &nbsp;
   <img src="store-assets/microsoft/screenshots/02-overview-dark.png" alt="The Overview page: your distros, WSL's idle timeout and Shut down WSL" width="250">
@@ -25,7 +31,7 @@ WSL distros keep running in the background, using memory, long after the termina
 
 ## Get it
 
-Tray Control for WSL is not in the Microsoft Store yet. Until it is, you can build and install it yourself by following the [development guide](docs/development.md).
+Get Tray Control for WSL from the **[Microsoft Store](https://apps.microsoft.com/detail/9MTQWTX87B8J)**. It installs and stays up to date automatically. To build it yourself instead, follow the [development guide](docs/development.md).
 
 Tray Control for WSL collects no telemetry or crash reports.
 

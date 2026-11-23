@@ -125,7 +125,7 @@ jobs:
             echo ""
             echo "## Get it"
             echo ""
-            echo "Tray Control for WSL is not in the Microsoft Store yet. Until it is, build and install it from source with the [development guide](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/development.md)."
+            echo "Get Tray Control for WSL from the [Microsoft Store](https://apps.microsoft.com/detail/9MTQWTX87B8J). It installs and stays up to date automatically."
             echo ""
             echo "*AI disclosure: this release and the related code were written with the assistance of AI.*"
             echo "RELEASE_EOF"
