@@ -90,7 +90,8 @@ public sealed partial class MainWindow : Window
         _uiSettings.ColorValuesChanged += (_, _) => DispatcherQueue.TryEnqueue(UpdateTrayIcon);
         UpdateTrayIcon();
 
-        // Exit steps run in this order when the user picks Exit (HostWindow.Exit).
+        // Exit steps run in this order when the user picks Exit (HostWindow.Exit), and when Windows signs out,
+        // shuts down or closes the app for an update.
         _host.AddExitStep("save settings", SettingsManager.Save);
         _host.AddExitStep("stop the WSL monitor", Service.Dispose);
         _host.AddExitStep("remove the tray icon", _tray.Dispose);

@@ -55,7 +55,7 @@ The harness cannot see the screen, WSL or Windows. Before a release, install the
 - The Overview page's idle timeout explanation matches `%UserProfile%\.wslconfig`.
 - Settings: start at sign-in, Docker Desktop's distros, theme, and a language change that relabels the flyout, the window and the tray tooltip without reopening them. Reset settings asks first, then puts theme, language and Docker distros back to their defaults without changing Start with Windows.
 - Settings from an earlier version survive the update, and a second launch opens the window of the copy already running instead of starting another.
-- Exit from the tray menu removes the tray icon and ends the app, and the log for that run ends with "Exit requested".
+- Exit from the tray menu removes the tray icon and ends the app at once, without a pause, and the log for that run ends with "Exit requested" and has no "Orderly shutdown took longer" warning.
 - About: the identity card with the icon and version, Check for updates (opens the Store's updates page when installed from a package), each link (the privacy policy page must be live before the first release), and "Open logs folder" opening the folder with the current log.
 - A settings file that can't be read (replace `settings.json` with text that isn't JSON, then start the app): the window opens on Settings with the "settings were reset" notice naming the `.bad` backup, also when started at sign-in.
 - Light, dark and high contrast.
