@@ -5,6 +5,6 @@
 
   <!-- Single source of truth for the app version (REL-1) -->
   <PropertyGroup>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 </Project>
