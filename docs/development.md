@@ -25,12 +25,15 @@ Signed dev builds (`package:desktop:dev`, `install:desktop`) install under the s
 
 Packaging runs winui-app-kit's `build/build-msix.ps1`, configured by `windows-build.json` (the manifest folder, the dev and Store identities, and `manifest_strings`, which writes the manifest's translated text from the catalogs). `<Version>` in `Directory.Build.props` is the only version source. Dev builds raise the revision only in the staged copy, so the tracked version changes only for a release.
 
+The app icon and MSIX images come from the SVG masters in `assets/brand/` (`icon.svg`, and `icon-mono.svg` for the light taskbar), sized by devkit through `npm run icons`, which writes `WslMonitorMSIX/Images/`, `WslMonitor/Resources/WslMonitor.ico` and `.png`, and `assets/generated/` (the README, website and promo icon). The output is committed; never edit it by hand.
+
 ## Checks
 
 `npm run validate` is the Linux gate. It runs, in order:
 
 - `npm run format:check`: every C# project outside `external/` matches the root `.editorconfig`, which is winui-app-kit's file copied unchanged from the tag the app pins; never hand-edit it. `npm run format` rewrites the files.
 - `npm run check:gitignore`: `.gitignore` ends with winui-app-kit's shared block, unchanged.
+- `npm run check:icons`: the committed app icons (`WslMonitorMSIX/Images/`, the `.ico` and `.png` and `assets/generated/`) are exactly what devkit makes from the masters in `assets/brand/`. After changing a master, run `npm run icons` and commit the output. It needs Node 22.12 or later, below 25.
 - `npm run check:l10n`: winui-app-kit's catalog check, set up by the `localization` block in `windows-build.json`. Every catalog has the same keys and `{{placeholders}}`, every key is used and every used key exists, no text contains an em dash, the app defines no `kit.` key, and the manifest languages match the family's list.
 - `npm run check:listing`: the Store listing text and the current version's release notes fit the Store's limits and match the README tagline.
 - `npm run check:notices`: `WslMonitor/THIRD-PARTY-NOTICES.txt` matches the packages the project restores, and `AboutContent.NoticesPath` (the About page's link) names that file. After adding, removing or updating a NuGet package, run `npm run generate:notices` and commit the file. The script lists every package except build tooling, with its full licence text, and fails on a licence it has no text for.

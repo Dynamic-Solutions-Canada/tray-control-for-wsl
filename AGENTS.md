@@ -13,6 +13,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Host (the kit's `HostWindow`, started by `AppBootstrap`; owns tray + service) | `App.xaml.cs`, `MainWindow.xaml(.cs)` |
 | Tray flyout | `Windows/DistroFlyout.xaml(.cs)` |
 | Tray icon artwork (idle / running / changing) | `Classes/TrayIconRenderer.cs` |
+| App icon masters (MSIX images, `.ico`, README and promo icon) | `assets/brand/icon.svg`, `icon-mono.svg`, `icons.json`; output written by `npm run icons` |
 | Full window (Overview, distro pages, Settings) | `DetailsWindow.xaml(.cs)`, `Pages/*`; live pages derive from `Pages/LivePage.cs` |
 | About (the kit's page); the repo and privacy URL, named once | `Classes/AboutContent.cs` |
 | Distro model and state | `Models/Distro.cs` |
@@ -48,7 +49,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - **Every user-visible string goes through the catalogs.** Add the key to all seven `Localization/Catalogs/*.json` (en-CA and fr-CA reuse en-US and fr-FR); never define a `kit.` key, use the kit's shared labels. On models and services, store keys, not text (`Distro.BusyReason`, `LocalizedMessage` for `Distro.LastError` and `ShutdownStatus`; pass a `WslResult` or `NameList` as a value). Names, paths and WSL's own output are never translated. The promo page translates itself through `PromoLocalization.LocaleProvider`, set in `MainWindow`. Translations are unreviewed machine translations.
 - **Language changes apply live:** code-built UI refreshes on `UiText.Changed` (live pages in `LivePage.OnAttach`, the details menu, the flyout, the tray tooltip); pages are never re-navigated for it. Reset settings is the one re-navigation, because the kit's rows read their state when created.
 - **Actions and polling:** every state change made by an action calls `Stamp(d)`; a poll that started before the latest stamp leaves that distro's state alone. Actions only write their outcome if the distro is still in the state they set. "Shut down WSL" progress lives in the service (`ShutdownStatus`) and its questions go through `DetailsWindow.ConfirmAsync`, never a specific page.
-- **Packaging** is winui-app-kit's `build/build-msix.ps1`, driven by `windows-build.json` (`manifest_strings` turns the catalogs into the manifest's `ms-resource:Resources/<Key>` text). MSIX images come from `WslMonitorMSIX/generate-msix-images.ps1` (committed output; ASCII only).
+- **Packaging** is winui-app-kit's `build/build-msix.ps1`, driven by `windows-build.json` (`manifest_strings` turns the catalogs into the manifest's `ms-resource:Resources/<Key>` text). The app icon comes from the SVG masters `assets/brand/icon.svg` and `icon-mono.svg` with `icons.json`, from which `npm run icons` (devkit) writes `WslMonitorMSIX/Images/`, the `.ico` and `.png` in `WslMonitor/Resources/`, and `assets/generated/` (committed output; never edit it by hand).
 
 ## Commands
 
@@ -66,7 +67,8 @@ Source is authoritative in WSL, with submodules initialised (`git submodule upda
 | `npm run check:notices` | The notices file matches the restored packages, and About links to its real path | That licences were read right |
 | `npm run check:screenshots` | The Store screenshots are the kit renderer's 1366 x 768 crops of dark, unscaled test-VM captures, with captions matching the listing | That they show the current UI |
 | `npm run shots:render` | Re-crops `store-assets/raw/microsoft/` into `store-assets/microsoft/screenshots/` | That the captures are current; recapture on the test VM |
-| `npm run validate` | The Linux gate: format, gitignore, l10n, listing, notices and screenshot checks, then `npm test` | A Windows compile; also run `verify:desktop` |
+| `npm run validate` | The Linux gate: format, gitignore, icons, l10n, listing, notices and screenshot checks, then `npm test` | A Windows compile; also run `verify:desktop` |
+| `npm run icons` | Writes every app icon from `assets/brand/` (devkit; `check:icons` in `validate` fails when a committed icon differs from what the masters make) | How the icon looks; check it on a light and a dark taskbar |
 | `npm run format` | Rewrites C# outside `external/` to the kit's style | Behaviour |
 
 Before finishing a change, run `npm run validate` and `npm run verify:desktop`; use the `desktop` skill for builds and installs.

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/generated/icon-256.png" alt="Tray Control for WSL" width="120">
+</p>
+
 <h1 align="center">Tray Control for WSL</h1>
 
 <p align="center">

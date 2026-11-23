@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <clipPath id="dot-gap">
+      <path clip-rule="evenodd" d="M0 0H256V256H0ZM164.608 181.248A39.68 39.68 0 1 0 243.968 181.248A39.68 39.68 0 1 0 164.608 181.248Z"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#dot-gap)">
+    <rect x="38.4" y="51.2" width="179.2" height="143.36" rx="17.92" fill="#8B93A1"/>
+    <rect x="47.36" y="74.24" width="161.28" height="111.36" rx="8.96" fill="#181C24"/>
+    <path d="M70.656 105.344L93.696 128.384L70.656 151.424M107.52 151.424H144.384" fill="none" stroke="#22C55E" stroke-width="14.08" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <circle cx="204.288" cy="181.248" r="33.28" fill="#22C55E"/>
+</svg>

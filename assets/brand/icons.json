@@ -1,0 +1,9 @@
+{
+  "targets": {
+    "windows": {
+      "images": "WslMonitorMSIX/Images",
+      "ico": "WslMonitor/Resources/WslMonitor.ico",
+      "tiles": false
+    }
+  }
+}
