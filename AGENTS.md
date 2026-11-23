@@ -67,8 +67,9 @@ Source is authoritative in WSL, with submodules initialised (`git submodule upda
 | `npm run check:notices` | The notices file matches the restored packages, and About links to its real path | That licences were read right |
 | `npm run check:screenshots` | The Store screenshots are the kit renderer's 1366 x 768 crops of dark, unscaled test-VM captures, with captions matching the listing | That they show the current UI |
 | `npm run shots:render` | Re-crops `store-assets/raw/microsoft/` into `store-assets/microsoft/screenshots/` | That the captures are current; recapture on the test VM |
-| `npm run validate` | The Linux gate: format, gitignore, icons, l10n, listing, notices and screenshot checks, then `npm test` | A Windows compile; also run `verify:desktop` |
+| `npm run validate` | The Linux gate: format, gitignore, icons, l10n, listing, notices, screenshot and hero checks, then `npm test` | A Windows compile; also run `verify:desktop` |
 | `npm run icons` | Writes every app icon from `assets/brand/` (devkit; `check:icons` in `validate` fails when a committed icon differs from what the masters make) | How the icon looks; check it on a light and a dark taskbar |
+| `npm run hero` | Draws the first Store screenshot in every listing locale (devkit; `check:hero` in `validate` compares the pixels) | That the text reads well; the maintainer approves new heroes |
 | `npm run format` | Rewrites C# outside `external/` to the kit's style | Behaviour |
 
 Before finishing a change, run `npm run validate` and `npm run verify:desktop`; use the `desktop` skill for builds and installs.
