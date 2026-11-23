@@ -5,7 +5,7 @@
                },
     "scale":  100,
     "window":  {
-                   "x":  1536,
+                   "x":  1532,
                    "y":  797,
                    "width":  380,
                    "height":  227
@@ -23,5 +23,5 @@
     "wallpaper":  "img19.jpg",
     "effects":  true,
     "os":  "10.0.26200",
-    "capturedUtc":  "2026-11-18T16:27:42Z"
+    "capturedUtc":  "2026-11-23T16:42:45Z"
 }

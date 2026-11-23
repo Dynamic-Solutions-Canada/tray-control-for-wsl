@@ -1,9 +1,9 @@
 ---
 name: Bug report
-about: Something in WSL Status does not work as expected
+about: Something in Tray Control for WSL does not work as expected
 ---
 
-**WSL Status version:** (About page)
+**Tray Control for WSL version:** (About page)
 
 **Windows version:** (Settings > System > About, for example 11 24H2 build 26100)
 

@@ -12,7 +12,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 
 | Text | Limit | Longest draft |
 | --- | --- | --- |
-| Full description | 4,000 characters | 2,715 (de-DE) |
+| Full description | 4,000 characters | 2,752 (de-DE) |
 | Short description | 270 characters | 237 (de-DE) |
 | Features | Up to 20, each up to 200 characters | 13, longest 116 (de-DE) |
 | Keywords | Up to 7, each up to 40 characters, 21 words combined | 7 per locale, at most 16 words (es-ES, pt-BR) |
@@ -35,13 +35,13 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 
 | Field | Value |
 | --- | --- |
-| Product name | WSL Status in every language (D-118, 2026-11-20). "WSL Monitor" was rejected under policy 10.1.1.1 as too close to an existing app, "WSL Tray Monitor"; the identifiers below keep the old name so installs and settings carry over |
+| Product name | Tray Control for WSL in every language, untranslated (reserved 2026-11-23). "WSL Status" was rejected under policy 10.1.1.1 because a name leading with "WSL" contains the title of Microsoft's software; before it, "WSL Monitor" was rejected as too close to an existing app, "WSL Tray Monitor" (D-118). The identifiers below keep the oldest name so installs and settings carry over |
 | Store ID | 9MTQWTX87B8J (https://apps.microsoft.com/detail/9MTQWTX87B8J, live once the first submission is published) |
 | Package identity | `DynamicSolutionsCA.WSLMonitor`, publisher `CN=B55B96A5-F10C-49D3-8D0B-7260EDBE7625` (dev builds use `TechnicallyReal.WslMonitor`) |
 | Category | Not set; suggested Developer tools |
 | Pricing | Paid, US $0.99 (price tier Tier1012, sent by `store-publish.yml`), with a 7-day free trial, matching ImmichDrive; not offered in Lebanon or Western Sahara. The trial and markets are set in Partner Center, not by the workflow (D-014) |
 | Age rating | Questionnaire not completed |
-| Privacy policy URL | https://www.dynamic-solutions.ca/privacy/wsl-status (registered, BRAND-10; the About page links it, and the page must be live before the first submission) |
+| Privacy policy URL | https://www.dynamic-solutions.ca/privacy/tray-control-for-wsl (BRAND-10; the About page links it; the old /privacy/wsl-status address redirects there permanently) |
 
 ## Screenshots
 
@@ -49,5 +49,5 @@ Four dark-mode screenshots, in caption order: the tray list above the taskbar, a
 
 ## Open questions before submission
 
-- Category and age rating (above), and the privacy policy page going live.
+- Category and age rating (above).
 - Add the product ID to the shared promo catalog (apps-promo) once the listing is live.

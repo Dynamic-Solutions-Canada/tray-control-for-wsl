@@ -6,7 +6,7 @@
       "theme": "dark",
       "crop": "tray",
       "caption": "The tray list: every distro with a Start or Stop button.",
-      "alt": "WSL Status's tray flyout above the Windows taskbar in the dark theme: Debian is stopped with a Start button, Ubuntu is running and the default with a Stop button, and the footer reads 1 of 2 running, with the Shut down WSL power button and Details."
+      "alt": "The Tray Control for WSL flyout above the Windows taskbar in the dark theme: Debian is stopped with a Start button, Ubuntu is running and the default with a Stop button, and the footer reads 1 of 2 running, with the Shut down WSL power button and Details."
     },
     {
       "file": "screenshots/01-stop-confirm-dark.png",
@@ -21,7 +21,7 @@
       "source": "raw/microsoft/02-overview-dark.png",
       "theme": "dark",
       "caption": "The overview: your distros, Shut down WSL and the idle timeout.",
-      "alt": "WSL Status's Overview page in the dark theme: Debian stopped and Ubuntu running, a note on WSL's idle timeout with the installed WSL version details, and the Shut down WSL button."
+      "alt": "The Overview page of Tray Control for WSL in the dark theme: Debian stopped and Ubuntu running, a note on WSL's idle timeout with the installed WSL version details, and the Shut down WSL button."
     },
     {
       "file": "screenshots/03-distro-dark.png",
