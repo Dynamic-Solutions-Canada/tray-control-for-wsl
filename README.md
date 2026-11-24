@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img src="store-assets/microsoft/screenshots/01-tray-dark.png" alt="The tray list: Debian stopped with a Start button, Ubuntu running with a Stop button" width="250">
+  <img src="store-assets/microsoft/screenshots/01-tray-dark.png" alt="The tray popup: Debian stopped with a Start button, Ubuntu running with a Stop button" width="250">
   &nbsp;
   <img src="store-assets/microsoft/screenshots/03-overview-dark.png" alt="The Overview page: your distros, WSL's idle timeout and Shut down WSL" width="250">
   &nbsp;
@@ -29,7 +29,7 @@ WSL distros keep running in the background, using memory, long after the termina
 - **Status in the tray:** a green dot means at least one distro is running, amber means one is starting or stopping, and no dot means nothing is running. Hover for a summary.
 - **Start and stop with a click:** click the tray icon for a list of your distros with a Start or Stop button for each, and a Details button for the full window.
 - **Safe stops:** stopping asks for a second click. Distros that use systemd (Ubuntu's default) shut down cleanly, so services stop in order and programs get a chance to exit. If one hasn't stopped after 2 minutes, you can force it.
-- **Shut down WSL:** stop every distro cleanly at once, then free WSL's memory, from the tray or the Overview page.
+- **Shut down WSL:** stop every distro at once, then free WSL's memory, from the tray or the Overview page.
 - **Details for each distro:** its WSL version, location and, for WSL 2, disk size, with shortcuts to a terminal or its files.
 - **Fits in:** follows Windows' light or dark theme and language, and can start when you sign in.
 
@@ -46,7 +46,7 @@ Tray Control for WSL collects no telemetry or crash reports.
 
 ## How it works
 
-Tray Control for WSL reads your distros from Windows and checks which ones are running every few seconds. Starting a distro runs an empty command in it. Whether it then keeps running with nothing open in it depends on WSL's idle timeout: the Overview page tells you how yours is set, and how to keep distros running (`instanceIdleTimeout=-1` in `.wslconfig`).
+Tray Control for WSL reads your distros from Windows and checks which ones are running every few seconds. To keep a started distro running with nothing open in it, the Overview page shows WSL's idle timeout and how to change it (`instanceIdleTimeout=-1` in `.wslconfig`).
 
 Docker Desktop's own distros are hidden unless you turn them on in Settings.
 
@@ -57,8 +57,8 @@ Tray Control for WSL is available in English (United States and Canada), Spanish
 ## Developers
 
 - [Development guide](docs/development.md): build, install, checks, and where the app stores data.
-- [Agent instructions](AGENTS.md): architecture, behaviour rules and conventions.
+- [Agent instructions](AGENTS.md): architecture, behavior rules and conventions.
 
 ## License
 
-Licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE): free for any **personal and other noncommercial use**, including modifying and redistributing it. **Commercial use is not permitted.** Copyright (c) 2026 Dynamic Solutions.
+Copyright (c) 2026 Dynamic Solutions. Licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE), free for personal and other noncommercial use.
