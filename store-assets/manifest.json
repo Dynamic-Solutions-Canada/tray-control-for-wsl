@@ -8,7 +8,8 @@
         "layout": "split",
         "icon": "assets/generated/icon-256.png",
         "primary": "#22C55E",
-        "accent": "#8B93A1"
+        "accent": "#8B93A1",
+        "textFreeFile": "text-free/00-hero-dark.png"
       },
       "caption": "See at a glance which distros are running.",
       "alt": "Tray Control for WSL's name and the headline \"Start and stop WSL distros from the tray.\" on a green panel, beside the app's real tray popup, enlarged: Debian stopped with a Start button, Ubuntu running with a Stop button, and 1 of 2 running."
