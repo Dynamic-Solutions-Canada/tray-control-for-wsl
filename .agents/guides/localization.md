@@ -26,6 +26,7 @@ These are deliberate, not gaps:
 - Distro names, paths, and WSL's own output (`wsl.exe` messages shown as errors), which come from the user's system.
 - Log files and settings values, which are for diagnosis and must read the same on every machine.
 - The product name, "Tray Control for WSL", in every language.
+- Legal text: the licence, the third-party notices and the privacy policy page, which the About page links to as they are.
 - WinUI's own control text (for example a text box's Cut, Copy and Paste menu), which follows the Windows display language rather than the in-app choice: the kit does not set `PrimaryLanguageOverride`, because that would make "Use system setting" resolve to the last chosen language.
 
 ## Adding a locale
