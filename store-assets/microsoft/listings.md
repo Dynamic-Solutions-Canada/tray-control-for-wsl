@@ -27,7 +27,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 - "Make default" changes WSL's default distro for every program.
 - Docker Desktop's internal distros are hidden unless turned on in Settings.
 - Privacy: no account, ads, analytics or telemetry. Settings and logs are local. The only network request a Store install makes is the "Our other apps" page fetching the public promo list from GitHub when it opens; Check for updates opens the Store instead (a copy run without a package asks GitHub Releases).
-- The "Our other apps" page follows the app's language; only the app descriptions it downloads (from the shared apps-promo catalog) are in English.
+- The "Our other apps" page follows the app's language, including the app descriptions it downloads from the shared apps-promo catalog.
 - The interface is in English, Spanish, French, German, Simplified Chinese, Brazilian Portuguese and Japanese, following Windows or a choice in Settings. Distro names, paths and WSL's own messages are never translated.
 - Requires Windows 11 (the manifest's minimum version) and WSL with at least one installed distro.
 
