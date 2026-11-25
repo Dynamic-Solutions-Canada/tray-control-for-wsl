@@ -10,7 +10,7 @@ name: Build and Package
 # Microsoft Store app in a public repo, and an Actions artifact or Release asset on a public repo can
 # be downloaded by anyone, so attaching a signed package would give the paid app away. The install
 # route is the Microsoft Store; anyone who wants to run it from source can build it themselves
-# (docs/development.md). Store submission is not automated yet.
+# (docs/development.md). Store submission is store-publish.yml, which the same tag runs.
 
 on:
   workflow_dispatch:

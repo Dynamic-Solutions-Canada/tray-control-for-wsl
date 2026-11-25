@@ -1,5 +1,5 @@
 > **Scope:** Building, checking and installing Tray Control for WSL, and where it stores data.
-> **Governs:** `Directory.Build.props`, `package.json`, `windows-build.json`, `scripts/**`, `WslMonitorMSIX/**`
+> **Governs:** `Directory.Build.props`, `package.json`, `windows-build.json`, `WslMonitorMSIX/**`
 
 # Tray Control for WSL development
 
@@ -8,7 +8,7 @@
 - WSL with this repository cloned inside it, including submodules: clone with `--recurse-submodules`, or run `git submodule update --init` (the app builds on `external/winui-app-kit` and `external/promo`).
 - [lefthook](https://lefthook.dev) for the git hooks in `lefthook.yml`: run `lefthook install` once after cloning. Its secrets check is the kit's `scripts/devkit precommit`, which needs Node 22.12 or later, below 25, and installs its pinned tools inside the kit on first use.
 - Node.js for the root `npm run` commands, and Python 3 for the catalog check.
-- The [shared Windows build tools](https://github.com/Dynamic-Solutions-Canada/windows-build-tools), which run the Windows build from WSL and document their own Windows-side requirements, the disposable Windows TEMP copy and the local build VM. The link resolves once that repository is published.
+- The [shared Windows build tools](https://github.com/Dynamic-Solutions-Canada/windows-build-tools), which run the Windows build from WSL and document their own Windows-side requirements, the disposable Windows TEMP copy and the local build VM.
 
 ## Build and install
 
@@ -60,7 +60,7 @@ The harness cannot see the screen, WSL or Windows. Before a release, install the
 - Settings: start at sign-in, Docker Desktop's distros, theme, and a language change that relabels the flyout, the window and the tray tooltip without reopening them. Reset settings asks first, then puts theme, language and Docker distros back to their defaults without changing Start with Windows.
 - Settings from an earlier version survive the update, and a second launch opens the window of the copy already running instead of starting another.
 - Exit from the tray menu removes the tray icon and ends the app at once, without a pause, and the log for that run ends with "Exit requested" and has no "Orderly shutdown took longer" warning.
-- About: the identity card with the icon and version, Check for updates (opens the Store's updates page when installed from a package), each link (the privacy policy page must be live before the first release), and "Open logs folder" opening the folder with the current log.
+- About: the identity card with the icon and version, Check for updates (opens the Store's updates page when installed from a package), each link, and "Open logs folder" opening the folder with the current log.
 - A settings file that can't be read (replace `settings.json` with text that isn't JSON, then start the app): the window opens on Settings with the "settings were reset" notice naming the `.bad` backup, also when started at sign-in.
 - Light, dark and high contrast.
 
@@ -75,7 +75,7 @@ Releases follow the `release` skill ([.agents/skills/release/SKILL.md](../.agent
 5. The same tag runs "Publish to Microsoft Store" (`store-publish.yml`): the gate, then winui-app-kit's reusable Store workflow builds both architectures, uploads them to Partner Center with each locale's "What's new" from the notes files, and stops at a draft (REL-7). Its summary names the draft ID.
 6. Submitting the draft for certification is a separate, deliberate step: run "Publish to Microsoft Store" manually on the same tag with `submit_draft` set to that ID and `no_commit` unchecked. A manual run with `dry_run` checks everything without any Store call.
 
-The app is reserved as `DynamicSolutionsCA.WSLMonitor` (Store ID 9MTQWTX87B8J), paid at Tier1012, and not yet published. `credential-expiry.yml` fails weekly from 60 days before the Store secret expires (the organisation variable `STORE_SECRET_EXPIRES`). Both Store workflows call the kit's reusable ones; their `uses:` tag must equal the `external/winui-app-kit` pin.
+The app is reserved as `DynamicSolutionsCA.WSLMonitor` (Store ID 9MTQWTX87B8J), paid at Tier1012, and published in the Microsoft Store. `credential-expiry.yml` fails weekly from 60 days before the Store secret expires (the organisation variable `STORE_SECRET_EXPIRES`). Both Store workflows call the kit's reusable ones; their `uses:` tag must equal the `external/winui-app-kit` pin.
 
 The Store listing text is in `store-assets/microsoft/listings.json`, with its limits, the claims it must keep true and the console-only fields in [listings.md](../store-assets/microsoft/listings.md). `npm run check:listing` checks it and the current version's notes.
 
@@ -104,7 +104,7 @@ It writes:
 
 Every install, including dev installs from `install:desktop`, is an MSIX package, so Windows redirects `%AppData%\WslMonitor\` into the package's own data folder and deletes it on uninstall. The About page's "Open logs folder" opens the real location. A copy run without a package (straight from a build output folder) writes to the real `%AppData%\WslMonitor\`, keeps the promo cache in `%LocalAppData%\TechnicallyReal\PromotedApps\` and, for start at sign-in, sets a `HKCU\...\CurrentVersion\Run` value; all three remain until removed by hand. A packaged copy removes such Run values when it starts.
 
-Windows redirects only folders the packaged app creates itself: if `%AppData%\WslMonitor\` already existed when the package was first installed (from a copy run without a package), the packaged app keeps using the real folder, and it remains after uninstall. Hub Display Switch saw this on 2026-11-16; it applies to this app the same way.
+Windows redirects only folders the packaged app creates itself: if `%AppData%\WslMonitor\` already existed when the package was first installed (from a copy run without a package), the packaged app keeps using the real folder, and it remains after uninstall. DisplaySwitchr saw this on 2026-11-16; it applies to this app the same way.
 
 This list has not yet been confirmed against a real uninstall.
 
