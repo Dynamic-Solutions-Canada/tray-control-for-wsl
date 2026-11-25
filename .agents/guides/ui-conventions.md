@@ -29,4 +29,4 @@ This app's own interface conventions. The shared family rules are in the standar
 
 ## Text
 
-- Visible text follows the catalog rule under "Conventions and gotchas" in [AGENTS.md](../../AGENTS.md).
+- Visible text follows [localization.md](localization.md).
