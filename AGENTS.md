@@ -78,7 +78,7 @@ Use the `release` skill. A `v*` tag creates a notes-only GitHub Release (`build-
 | [.agents/guides/localization.md](.agents/guides/localization.md) | Any user-visible text, a language, or the language setting; what stays English; translation review status | `WslMonitor/Localization/**`, `Classes/AppLanguages.cs`, `release-notes/**` |
 | [WinUI App Kit README](external/winui-app-kit/README.md) | Using any kit API or shared XAML | `external/winui-app-kit/**` (read only) |
 | [Windows build tools README](https://github.com/Dynamic-Solutions-Canada/windows-build-tools) | A Windows build, install or packaging problem | `windows-build.json`, the kit's `scripts/windows-build` |
-| [store-assets/microsoft/listings.md](store-assets/microsoft/listings.md) | Changing Store listing text or anything a listing claim depends on | `store-assets/microsoft/**` |
+| [store-assets/microsoft/listings.md](store-assets/microsoft/listings.md), [store-assets/README.md](store-assets/README.md) | Changing Store listing text, anything a listing claim depends on, or the screenshots | `store-assets/**` |
 | `desktop` skill | Building, verifying or installing locally | Local Windows builds |
 | `release` skill | Cutting a release | `Directory.Build.props`, `release-notes/**`, tags |
 
