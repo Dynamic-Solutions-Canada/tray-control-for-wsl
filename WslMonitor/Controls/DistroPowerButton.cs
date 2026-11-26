@@ -28,6 +28,10 @@ public sealed partial class DistroPowerButton : Button
         MinWidth = 104;
         VerticalAlignment = VerticalAlignment.Center;
         Click += OnClick;
+
+        // A language-neutral handle for UI automation (the Store capture script); the label changes
+        // with the state and the language, the distro's name does not.
+        AutomationProperties.SetAutomationId(this, "DistroPower_" + distro.Name);
         Render();
     }
 

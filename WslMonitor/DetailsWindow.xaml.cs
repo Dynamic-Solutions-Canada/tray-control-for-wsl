@@ -1,5 +1,6 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using WinUIAppKit.Localization;
 using WinUIAppKit.Pages;
@@ -129,12 +130,16 @@ public sealed partial class DetailsWindow : Window
         _menuSignature = MenuSignature();
 
         Shell.MenuItems.Clear();
-        Shell.MenuItems.Add(new NavigationViewItem
+        // Each item gets a language-neutral automation id for UI automation (the Store capture script):
+        // its label is translated, and a distro's carries a translated "(default)" suffix.
+        var overview = new NavigationViewItem
         {
             Content = UiText.Get("nav.overview"),
             Tag = OverviewTag,
             Icon = new FontIcon { Glyph = "\uE80F" },
-        });
+        };
+        AutomationProperties.SetAutomationId(overview, "OverviewNavItem");
+        Shell.MenuItems.Add(overview);
         if (distros.Count == 0)
         {
             return;
@@ -143,12 +148,14 @@ public sealed partial class DetailsWindow : Window
         Shell.MenuItems.Add(new NavigationViewItemHeader { Content = UiText.Get("nav.distros") });
         foreach (var d in distros)
         {
-            Shell.MenuItems.Add(new NavigationViewItem
+            var item = new NavigationViewItem
             {
                 Content = d.IsDefault ? UiText.Format("nav.default-suffix", ("name", d.Name)) : d.Name,
                 Tag = DistroTagPrefix + d.Name,
                 Icon = new FontIcon { Glyph = DistroVisuals.Glyph },
-            });
+            };
+            AutomationProperties.SetAutomationId(item, "DistroNavItem_" + d.Name);
+            Shell.MenuItems.Add(item);
         }
     }
 

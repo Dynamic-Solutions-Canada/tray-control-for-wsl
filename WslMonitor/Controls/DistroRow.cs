@@ -51,6 +51,7 @@ public static class DistroRow
         ToolTipService.SetToolTip(open, UiText.Format("row.details-tip", ("name", d.Name)));
         // The content is a badge and text in a grid, which gives the button no accessible name of its own.
         AutomationProperties.SetName(open, d.Name);
+        AutomationProperties.SetAutomationId(open, "DistroRow_" + d.Name);
         open.Click += (_, _) => onOpen();
 
         var power = new DistroPowerButton(d, service) { Margin = new Thickness(0, 0, 10, 0) };

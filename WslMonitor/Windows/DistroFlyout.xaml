@@ -13,7 +13,7 @@
 
         <!-- Header -->
         <Grid Padding="18,14,14,8">
-            <TextBlock l10n:Localize.Text="flyout.header" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center" />
+            <TextBlock l10n:Localize.Text="flyout.header" AutomationProperties.AutomationId="FlyoutHeader" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center" />
         </Grid>
 
         <!-- One row per distro, or an empty/unavailable message (built in code) -->
@@ -32,7 +32,7 @@
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
             <!-- Shut down WSL (built in code: it follows the service's state) -->
             <ContentPresenter x:Name="ShutdownHost" Grid.Column="1" VerticalAlignment="Center" />
-            <Button Grid.Column="2" Click="Details_Click" l10n:Localize.Name="flyout.details" l10n:Localize.ToolTip="flyout.details-tip">
+            <Button Grid.Column="2" AutomationProperties.AutomationId="DetailsButton" Click="Details_Click" l10n:Localize.Name="flyout.details" l10n:Localize.ToolTip="flyout.details-tip">
                 <StackPanel Style="{StaticResource IconLabelStyle}">
                     <FontIcon Glyph="&#xE8A7;" Style="{StaticResource ButtonGlyphStyle}" />
                     <TextBlock l10n:Localize.Text="flyout.details" />
