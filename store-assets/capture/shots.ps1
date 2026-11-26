@@ -18,7 +18,7 @@ element is found by its automation ID or the tray tooltip's app name, never by t
 are written in logical pixels (the 1920 x 1080 desktop) and multiplied by the display scale, because UI
 Automation, the cursor and the window helpers all work in physical pixels.
 
-Not yet run on the VM.
+Run on the VM at 200% in en-US and ja-JP (November 26, 2026).
 #>
 param(
     # The listing locale to capture, such as de-DE: the app's language and the output folder.
