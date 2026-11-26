@@ -29,13 +29,13 @@ public static class DistroVisuals
 
     /// <summary>
     /// Summary under the name: state · OS · WSL version · default. When it wraps (German, French and
-    /// Japanese run past the flyout's width), it breaks only after a separator: the spaces inside the
-    /// OS label and "WSL 2", and those before each separator, are non-breaking, so neither
-    /// "Ubuntu / 26.04" nor a line starting with "·" can happen.
+    /// Japanese run past the flyout's width), it breaks only after a separator: the spaces inside every
+    /// part and those before each separator are non-breaking, so neither "Ubuntu / 26.04",
+    /// "Par / défaut" nor a line starting with "·" can happen.
     /// </summary>
     public static string Summary(Distro d)
     {
-        var parts = new List<string> { StateText(d) };
+        var parts = new List<string> { KeepTogether(StateText(d)) };
         if (d.OsLabel.Length > 0)
         {
             parts.Add(KeepTogether(d.OsLabel));
@@ -44,7 +44,7 @@ public static class DistroVisuals
         parts.Add(KeepTogether($"WSL {d.WslVersion}"));
         if (d.IsDefault)
         {
-            parts.Add(UiText.Get("distro.default"));
+            parts.Add(KeepTogether(UiText.Get("distro.default")));
         }
 
         return string.Join(SummarySeparator, parts);
