@@ -27,23 +27,34 @@ public static class DistroVisuals
         _ => "state.stopped",
     });
 
-    /// <summary>One-line summary: state · OS · WSL version · default.</summary>
+    /// <summary>
+    /// Summary under the name: state · OS · WSL version · default. When it wraps (German, French and
+    /// Japanese run past the flyout's width), it breaks only after a separator: the spaces inside the
+    /// OS label and "WSL 2", and those before each separator, are non-breaking, so neither
+    /// "Ubuntu / 26.04" nor a line starting with "·" can happen.
+    /// </summary>
     public static string Summary(Distro d)
     {
         var parts = new List<string> { StateText(d) };
         if (d.OsLabel.Length > 0)
         {
-            parts.Add(d.OsLabel);
+            parts.Add(KeepTogether(d.OsLabel));
         }
 
-        parts.Add($"WSL {d.WslVersion}");
+        parts.Add(KeepTogether($"WSL {d.WslVersion}"));
         if (d.IsDefault)
         {
             parts.Add(UiText.Get("distro.default"));
         }
 
-        return string.Join("  ·  ", parts);
+        return string.Join(SummarySeparator, parts);
     }
+
+    /// <summary>Two non-breaking spaces, the dot, then two ordinary spaces: a line may end after the dot, never before it.</summary>
+    private const string SummarySeparator = "\u00A0\u00A0·  ";
+
+    /// <summary>The text with its spaces made non-breaking, so a short label never splits across lines.</summary>
+    private static string KeepTogether(string text) => text.Replace(' ', '\u00A0');
 
     /// <summary>
     /// What Stop will do, the one place this policy is decided for every label and tooltip:
