@@ -2,7 +2,7 @@
   "microsoft": [
     {
       "file": "screenshots/{locale}/00-hero-dark.png",
-      "source": "raw/microsoft/00-tray-dark.png",
+      "source": "raw/microsoft/{locale}/00-tray-dark.png",
       "theme": "dark",
       "hero": {
         "layout": "split",
@@ -15,31 +15,31 @@
       "alt": "Tray Control for WSL's name and the headline \"Start and stop WSL distros from the tray.\" on a green panel, beside the app's real tray popup, enlarged: Debian stopped with a Start button, Ubuntu running with a Stop button, and 1 of 2 running."
     },
     {
-      "file": "screenshots/01-tray-dark.png",
-      "source": "raw/microsoft/00-tray-dark.png",
+      "file": "screenshots/{locale}/01-tray-dark.png",
+      "source": "raw/microsoft/{locale}/00-tray-dark.png",
       "theme": "dark",
       "crop": "tray",
       "caption": "The tray popup: every distro with a Start or Stop button.",
       "alt": "Tray Control for WSL's tray popup above the Windows taskbar in the dark theme: Debian is stopped with a Start button, Ubuntu is running and the default with a Stop button, and the footer reads 1 of 2 running, with the Shut down WSL power button and Details."
     },
     {
-      "file": "screenshots/02-stop-confirm-dark.png",
-      "source": "raw/microsoft/01-stop-confirm-dark.png",
+      "file": "screenshots/{locale}/02-stop-confirm-dark.png",
+      "source": "raw/microsoft/{locale}/01-stop-confirm-dark.png",
       "theme": "dark",
       "crop": "tray",
       "caption": "Stop asks for a second click before it ends a distro.",
       "alt": "The tray popup in the dark theme after one click on Ubuntu's Stop button: the button has turned red and reads Stop?, waiting for a second click."
     },
     {
-      "file": "screenshots/03-overview-dark.png",
-      "source": "raw/microsoft/02-overview-dark.png",
+      "file": "screenshots/{locale}/03-overview-dark.png",
+      "source": "raw/microsoft/{locale}/02-overview-dark.png",
       "theme": "dark",
       "caption": "The overview: your distros, Shut down WSL and the idle timeout.",
       "alt": "The Overview page of Tray Control for WSL in the dark theme: Debian stopped and Ubuntu running, a note on WSL's idle timeout with the installed WSL version details, and the Shut down WSL button."
     },
     {
-      "file": "screenshots/04-distro-dark.png",
-      "source": "raw/microsoft/03-distro-dark.png",
+      "file": "screenshots/{locale}/04-distro-dark.png",
+      "source": "raw/microsoft/{locale}/03-distro-dark.png",
       "theme": "dark",
       "caption": "A distro's page: WSL version, location, init system and shortcuts.",
       "alt": "Ubuntu's page in the dark theme: running, with a note on how Stop ends it, Terminal and Files shortcuts, and details listing WSL 1, Ubuntu 26.04, default distro, init system and the location C:\\WSL\\Ubuntu."
