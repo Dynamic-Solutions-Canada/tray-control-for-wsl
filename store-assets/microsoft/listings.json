@@ -199,7 +199,7 @@
     },
     "pt-BR": {
       "title": "Tray Control for WSL",
-      "shortDescription": "Veja num relance quais distribuições do WSL estão em execução e inicie ou pare-as pela bandeja do sistema. Parar pergunta antes de encerrar uma distribuição, e Desligar o WSL libera a memória do WSL.",
+      "shortDescription": "Veja de relance quais distribuições do WSL estão em execução e inicie ou pare-as pela bandeja do sistema. Parar pergunta antes de encerrar uma distribuição, e Desligar o WSL libera a memória do WSL.",
       "fullDescription": "As distribuições do WSL continuam em execução em segundo plano muito depois de o terminal que as iniciou ser fechado, e o Windows não mostra quais estão ativas. O Tray Control for WSL coloca essa resposta na bandeja do sistema: um olhar mostra o que está em execução, e um clique inicia ou para uma distribuição, sem digitar comandos wsl.\n\nNa bandeja do sistema\n• Um ponto verde no ícone significa que pelo menos uma distribuição está em execução, âmbar que uma está iniciando ou parando, e nenhum ponto que nada está em execução. Passe o ponteiro sobre o ícone para ver um resumo.\n• Clique no ícone para ver a lista das suas distribuições, cada uma com um botão Iniciar ou Parar.\n• Clique com o botão direito para abrir a janela, as configurações ou a pasta de logs, ou para sair.\n\nParadas seguras\n• Parar pede um segundo clique, para que um clique acidental não encerre o que está em execução numa distribuição.\n• Distribuições que usam o systemd (o padrão do Ubuntu) desligam corretamente: os serviços param na ordem certa e os programas têm tempo para fechar.\n• Desligar o WSL para todas as distribuições em execução e depois desliga a máquina virtual do WSL para liberar a memória.\n\nDetalhes de cada distribuição\nA janela de detalhes tem uma visão geral de todas as suas distribuições e uma página para cada uma, com a versão do WSL, o local e, no WSL 2, o tamanho do disco, atalhos para um terminal ou para os arquivos dela, e um botão para torná-la a padrão. A visão geral mostra o tempo limite de inatividade do WSL e como manter em execução as distribuições que você inicia.\n\nSeu idioma\nUse o Tray Control for WSL em inglês, espanhol, francês, alemão, chinês simplificado, português do Brasil ou japonês. Ele segue o idioma do Windows, ou escolha um nas configurações, junto com o tema claro ou escuro e a inicialização com o Windows.\n\nBom saber\nAs distribuições internas do Docker Desktop ficam fora da lista, a menos que você as mostre nas configurações.\n\nPrivacidade\nSem conta, sem anúncios e sem rastreamento. Suas configurações e logs ficam no seu PC.\n\nRequer o Windows 11 e o WSL com pelo menos uma distribuição.",
       "features": [
         "Veja quais distribuições do WSL estão em execução por um ponto colorido no ícone.",
@@ -226,14 +226,14 @@
         "systemd"
       ],
       "screenshotCaptions": [
-        "Veja num relance quais distribuições estão em execução.",
+        "Veja de relance quais distribuições estão em execução.",
         "O pop-up da bandeja: cada distribuição com um botão Iniciar ou Parar.",
         "Parar pede um segundo clique antes de encerrar uma distribuição.",
         "A visão geral: suas distribuições, Desligar o WSL e o tempo limite de inatividade.",
         "A página de uma distribuição: versão do WSL, local, sistema de inicialização e atalhos."
       ],
       "heroHeadline": "Inicie e pare distribuições do WSL pela bandeja.",
-      "heroSubline": "Veja num relance quais distribuições estão em execução."
+      "heroSubline": "Veja de relance quais distribuições estão em execução."
     },
     "ja-JP": {
       "title": "Tray Control for WSL",
