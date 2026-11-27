@@ -94,6 +94,13 @@
   "unit.gb": "{{value}} GB",
   "unit.kb": "{{value}} KB",
   "unit.mb": "{{value}} MB",
+  "usage.cpu": "CPU",
+  "usage.cpu-tip": "Uso de CPU de la máquina virtual de WSL en el último minuto, compartido por todas las distribuciones en ejecución. Un 100 % significa que todos los procesadores que WSL puede usar están ocupados.",
+  "usage.memory": "Memoria",
+  "usage.memory-tip-config": "Memoria que usa en Windows la máquina virtual de WSL, compartida por todas las distribuciones en ejecución. Su límite es {{limit}}, fijado por memory en .wslconfig.",
+  "usage.memory-tip-default": "Memoria que usa en Windows la máquina virtual de WSL, compartida por todas las distribuciones en ejecución. Su límite es {{limit}}, el valor predeterminado de WSL: la mitad de la memoria de este PC.",
+  "usage.of-limit": "de {{limit}}",
+  "usage.percent": "{{percent}} %",
   "wslconfig.default": "Las distribuciones iniciadas se detienen poco después de que no quede nada en ejecución en ellas (tiempo de inactividad predeterminado de WSL). Establece instanceIdleTimeout=-1 en [general] de .wslconfig para que sigan en ejecución.",
   "wslconfig.keep": "Las distribuciones iniciadas siguen en ejecución hasta que las detengas (instanceIdleTimeout=-1 en .wslconfig).",
   "wslconfig.timeout": "Las distribuciones iniciadas se detienen tras {{seconds}} s sin nada en ejecución (instanceIdleTimeout en .wslconfig). Establécelo en -1 para que sigan en ejecución."

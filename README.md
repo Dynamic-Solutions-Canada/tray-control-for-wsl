@@ -28,6 +28,7 @@ WSL distros keep running in the background, using memory, long after the termina
 
 - **Status in the tray:** a green dot means at least one distro is running, amber means one is starting or stopping, and no dot means nothing is running. Hover for a summary.
 - **Start and stop with a click:** click the tray icon for a list of your distros with a Start or Stop button for each, and a Details button for the full window.
+- **CPU and memory at a glance:** above the list, two cards show how much CPU WSL is using (with the last minute as a small graph) and how much memory, against the limits WSL runs with. They are measured from Windows only while the list is open, so they never keep a distro running.
 - **Safe stops:** stopping asks for a second click. Distros that use systemd (Ubuntu's default) shut down cleanly, so services stop in order and programs get a chance to exit. If one hasn't stopped after 2 minutes, you can force it.
 - **Shut down WSL:** stop every distro at once, then free WSL's memory, from the tray or the Overview page.
 - **Details for each distro:** its WSL version, location and, for WSL 2, disk size, with shortcuts to a terminal or its files.

@@ -14,7 +14,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 | --- | --- | --- |
 | Full description | 4,000 characters | 2,338 (de-DE) |
 | Short description | 270 characters | 248 (fr-FR) |
-| Features | Up to 20, each up to 200 characters | 13, longest 116 (de-DE) |
+| Features | Up to 20, each up to 200 characters | 14, longest 116 (de-DE) |
 | Keywords | Up to 7, each up to 40 characters, 21 words combined | 7 per locale, at most 15 words (es-ES, pt-BR) |
 | Screenshot captions | One per screenshot, up to 200 characters | 5 per locale |
 | Release notes (`release-notes/`) | 1,500 characters | 704 (1.0.0, fr-FR) |
@@ -26,6 +26,7 @@ Translated wording uses the same terms as the in-app catalogs (`WslMonitor/Local
 - Start runs a no-op in the distro; whether it stays running depends on WSL's idle timeout, which the Overview page explains. Don't promise that a started distro keeps running.
 - "Make default" changes WSL's default distro for every program.
 - Docker Desktop's internal distros are hidden unless turned on in Settings.
+- The flyout's CPU and memory are the WSL 2 virtual machine's as a whole (shared by every running distro), not each distro's, and show only while a WSL 2 distro runs. Don't promise per-distro usage, or usage for WSL 1 distros.
 - Privacy: no account, ads, analytics or telemetry. Settings and logs are local. The only network request a Store install makes is the "Our other apps" page fetching the public promo list from GitHub when it opens; Check for updates opens the Store instead (a copy run without a package asks GitHub Releases).
 - The "Our other apps" page follows the app's language, including the app descriptions it downloads from the shared apps-promo catalog.
 - The interface is in English, Spanish, French, German, Simplified Chinese, Brazilian Portuguese and Japanese, following Windows or a choice in Settings. Distro names, paths and WSL's own messages are never translated.

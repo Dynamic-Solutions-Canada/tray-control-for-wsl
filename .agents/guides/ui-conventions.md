@@ -16,8 +16,9 @@ This app's own interface conventions. The shared family rules are in the standar
 
 ## Tray flyout
 
-- `DistroFlyout` is three rows: a `BodyStrongTextBlockStyle` header, the distro rows (built in code), and a footer on `LayerOnAcrylicFillColorDefaultBrush` with a top `CardStrokeColorDefaultBrush` border holding the status line, the Shut down WSL button and Details.
-- The flyout is rebuilt from scratch on every service change and every language change; anything stateful (a pending confirmation) is keyed outside the controls.
+- `DistroFlyout` is four rows: a `BodyStrongTextBlockStyle` header, the VM usage cards (`VmUsageStrip`, hidden while the VM is off), the distro rows (built in code), and a footer on `LayerOnAcrylicFillColorDefaultBrush` with a top `CardStrokeColorDefaultBrush` border holding the status line, the Shut down WSL button and Details.
+- The flyout's distro rows are rebuilt from scratch on every service change and every language change; anything stateful (a pending confirmation) is keyed outside the controls. The usage cards are the exception: they are declared in XAML and updated in place on each reading, since they change every second and a rebuild would flicker and drop an open tooltip. Re-place the flyout (`UpdateSize`) only when they show or hide.
+- The usage cards follow one figure rule: a `CaptionTextBlockStyle` secondary label and a right-aligned `BodyStrongTextBlockStyle` figure, over a 28 px graphic in the accent colour (`AccentFillColorDefaultBrush`), with the meter's track and the sparkline's fill as lighter opacities of the same brush. Scales are fixed (CPU 0 to 100%), never fitted to the data. They are measurements, not status: no warning or error colours. Each card's tooltip says what the figure measures, and its help text repeats the figure for screen readers.
 
 ## Distro rows and buttons
 

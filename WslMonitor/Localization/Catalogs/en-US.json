@@ -94,6 +94,13 @@
   "unit.gb": "{{value}} GB",
   "unit.kb": "{{value}} KB",
   "unit.mb": "{{value}} MB",
+  "usage.cpu": "CPU",
+  "usage.cpu-tip": "CPU use of the WSL virtual machine over the last minute, shared by every running distro. 100% means all the processors WSL may use are busy.",
+  "usage.memory": "Memory",
+  "usage.memory-tip-config": "Memory the WSL virtual machine is using on Windows, shared by every running distro. Its limit is {{limit}}, set by memory in .wslconfig.",
+  "usage.memory-tip-default": "Memory the WSL virtual machine is using on Windows, shared by every running distro. Its limit is {{limit}}, WSL's default of half this PC's memory.",
+  "usage.of-limit": "of {{limit}}",
+  "usage.percent": "{{percent}}%",
   "wslconfig.default": "Started distros stop again shortly after nothing is running in them (WSL's default idle timeout). Set instanceIdleTimeout=-1 under [general] in .wslconfig to keep them running.",
   "wslconfig.keep": "Started distros keep running until you stop them (instanceIdleTimeout=-1 in .wslconfig).",
   "wslconfig.timeout": "Started distros stop again after {{seconds}} s with nothing running in them (instanceIdleTimeout in .wslconfig). Set it to -1 to keep them running."

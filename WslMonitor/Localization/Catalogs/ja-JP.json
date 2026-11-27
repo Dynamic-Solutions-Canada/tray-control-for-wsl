@@ -94,6 +94,13 @@
   "unit.gb": "{{value}} GB",
   "unit.kb": "{{value}} KB",
   "unit.mb": "{{value}} MB",
+  "usage.cpu": "CPU",
+  "usage.cpu-tip": "直近 1 分間の WSL 仮想マシンの CPU 使用率です。実行中のすべてのディストリビューションで共有されます。100% は、WSL が使用できるすべてのプロセッサがビジー状態であることを示します。",
+  "usage.memory": "メモリ",
+  "usage.memory-tip-config": "WSL 仮想マシンが Windows 上で使用しているメモリです。実行中のすべてのディストリビューションで共有されます。上限は {{limit}} で、.wslconfig の memory で設定されています。",
+  "usage.memory-tip-default": "WSL 仮想マシンが Windows 上で使用しているメモリです。実行中のすべてのディストリビューションで共有されます。上限は {{limit}} で、WSL の既定値 (この PC のメモリの半分) です。",
+  "usage.of-limit": "/ {{limit}}",
+  "usage.percent": "{{percent}}%",
   "wslconfig.default": "起動したディストリビューションは、中で何も実行されなくなるとすぐに再び停止します（WSL の既定のアイドル タイムアウト）。実行し続けるには、.wslconfig の [general] に instanceIdleTimeout=-1 を設定してください。",
   "wslconfig.keep": "起動したディストリビューションは、停止するまで実行し続けます（.wslconfig の instanceIdleTimeout=-1）。",
   "wslconfig.timeout": "起動したディストリビューションは、何も実行されない状態が {{seconds}} 秒続くと再び停止します（.wslconfig の instanceIdleTimeout）。実行し続けるには -1 に設定してください。"

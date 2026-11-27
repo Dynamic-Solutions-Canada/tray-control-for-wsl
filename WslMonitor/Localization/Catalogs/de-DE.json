@@ -94,6 +94,13 @@
   "unit.gb": "{{value}} GB",
   "unit.kb": "{{value}} KB",
   "unit.mb": "{{value}} MB",
+  "usage.cpu": "CPU",
+  "usage.cpu-tip": "CPU-Auslastung der virtuellen WSL-Maschine in der letzten Minute, geteilt von allen laufenden Distributionen. 100 % heißt, dass alle Prozessoren ausgelastet sind, die WSL nutzen darf.",
+  "usage.memory": "Arbeitsspeicher",
+  "usage.memory-tip-config": "Arbeitsspeicher, den die virtuelle WSL-Maschine unter Windows belegt, geteilt von allen laufenden Distributionen. Das Limit ist {{limit}}, festgelegt durch memory in der .wslconfig.",
+  "usage.memory-tip-default": "Arbeitsspeicher, den die virtuelle WSL-Maschine unter Windows belegt, geteilt von allen laufenden Distributionen. Das Limit ist {{limit}}, der WSL-Standard: die Hälfte des Arbeitsspeichers dieses PCs.",
+  "usage.of-limit": "von {{limit}}",
+  "usage.percent": "{{percent}} %",
   "wslconfig.default": "Gestartete Distributionen werden, kurz nachdem nichts mehr darin läuft, wieder beendet (Standard-Leerlaufzeit von WSL). Setze instanceIdleTimeout=-1 unter [general] in .wslconfig, damit sie weiterlaufen.",
   "wslconfig.keep": "Gestartete Distributionen laufen weiter, bis du sie beendest (instanceIdleTimeout=-1 in .wslconfig).",
   "wslconfig.timeout": "Gestartete Distributionen werden nach {{seconds}} s ohne laufende Programme wieder beendet (instanceIdleTimeout in .wslconfig). Setze den Wert auf -1, damit sie weiterlaufen."

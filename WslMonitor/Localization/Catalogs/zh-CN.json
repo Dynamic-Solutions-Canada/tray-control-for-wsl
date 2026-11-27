@@ -94,6 +94,13 @@
   "unit.gb": "{{value}} GB",
   "unit.kb": "{{value}} KB",
   "unit.mb": "{{value}} MB",
+  "usage.cpu": "CPU",
+  "usage.cpu-tip": "WSL 虚拟机在过去一分钟内的 CPU 使用率，由所有正在运行的发行版共享。100% 表示 WSL 可使用的所有处理器都已占满。",
+  "usage.memory": "内存",
+  "usage.memory-tip-config": "WSL 虚拟机在 Windows 上使用的内存，由所有正在运行的发行版共享。上限为 {{limit}}，由 .wslconfig 中的 memory 设置。",
+  "usage.memory-tip-default": "WSL 虚拟机在 Windows 上使用的内存，由所有正在运行的发行版共享。上限为 {{limit}}，即 WSL 的默认值：此电脑内存的一半。",
+  "usage.of-limit": "共 {{limit}}",
+  "usage.percent": "{{percent}}%",
   "wslconfig.default": "启动的发行版在其中没有任何内容运行后不久会再次停止（WSL 的默认空闲超时）。在 .wslconfig 的 [general] 下设置 instanceIdleTimeout=-1 可让它们保持运行。",
   "wslconfig.keep": "启动的发行版会一直运行，直到你停止它们（.wslconfig 中的 instanceIdleTimeout=-1）。",
   "wslconfig.timeout": "启动的发行版在没有任何内容运行 {{seconds}} 秒后会再次停止（.wslconfig 中的 instanceIdleTimeout）。将其设为 -1 可让它们保持运行。"
