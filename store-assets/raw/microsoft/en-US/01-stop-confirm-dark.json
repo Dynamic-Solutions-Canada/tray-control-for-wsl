@@ -1,20 +1,20 @@
 {
     "screen":  {
-                   "height":  1080,
-                   "width":  1920
+                   "height":  2160,
+                   "width":  3840
                },
-    "scale":  100,
+    "scale":  200,
     "window":  {
-                   "x":  1532,
-                   "y":  797,
-                   "width":  380,
-                   "height":  227
+                   "x":  3064,
+                   "y":  1594,
+                   "width":  760,
+                   "height":  454
                },
     "workArea":  {
                      "x":  0,
                      "y":  0,
-                     "width":  1920,
-                     "height":  1032
+                     "width":  3840,
+                     "height":  2064
                  },
     "theme":  {
                   "apps":  "dark",
@@ -23,5 +23,5 @@
     "wallpaper":  "img19.jpg",
     "effects":  true,
     "os":  "10.0.26200",
-    "capturedUtc":  "2026-11-23T16:42:47Z"
+    "capturedUtc":  "2026-11-27T15:30:06Z"
 }
