@@ -88,7 +88,7 @@ Use the `release` skill. A `v*` tag creates a notes-only GitHub Release (`build-
 | --- | --- |
 | A file, service or control added, moved or removed | The Architecture table above |
 | A UI pattern, shared style or control | `.agents/guides/ui-conventions.md` |
-| An npm command | The Commands table above, `docs/development.md`, the `desktop` skill, `paseo.json` |
+| An npm command | The Commands table above, `docs/development.md`, the `desktop` skill |
 | Where the app writes data, or a new kind of data | The data table in `docs/development.md` |
 | A state rule in `WslMonitorService` | Behaviour above, `tests/WslMonitor.State.Tests/` |
 | A workflow, or what CI runs | The CI section of `docs/development.md` |
